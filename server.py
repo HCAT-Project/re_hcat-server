@@ -1,0 +1,46 @@
+import logging
+import sys
+import threading
+
+from flask import Flask, request
+from gevent import pywsgi
+from RPDB.database import RPDB
+
+import util
+
+
+class Server:
+    def __init__(self, address: tuple[str, int] = None, debug: bool = False):
+        self.app = Flask(__name__)
+        self.host, self.port = address if address is not None else ('0.0.0.0', 8080)
+        self.debug = debug
+        self.logger = logging.getLogger(__name__)
+        self.key = util.get_random_token(16)
+        self.db_auth=RPDB()
+
+    def server_thread(self):
+        if self.debug:
+            self.app.run(self.host, self.port, debug=True)
+        else:
+            server = pywsgi.WSGIServer((self.host, self.port), self.app)
+            server.serve_forever()
+
+    def start(self):
+        self.logger.info('Starting server...')
+        self.logger.info('Creating route...')
+
+        @self.app.route('/<path:path>')
+        def recv(path):
+            ...
+
+        self.logger.info('Starting server thread...')
+        t_server = threading.Thread(target=self.server_thread, daemon=True, name='server_thread')
+        t_server.start()
+        self.logger.info('Server is already started.')
+        while True:
+            try:
+                t_server.join(0.1)
+            except KeyboardInterrupt:
+                sys.exit()
+
+    def auth_token(self, user_id: str, token: str):
