@@ -19,6 +19,7 @@ class BaseEvent:
 
     def run(self):
         req_data = util.request_parse(self.req)
+
         if util.ins(self.requirements, req_data):
             if len(self.requirements) > 0:
                 return self._run([req_data[k] for k in self.requirements])
@@ -26,7 +27,7 @@ class BaseEvent:
                 return self._run()
         else:
             return ReturnData(ReturnData.ERROR,
-                              f'Parameters do not meet the requirements:[{",".join(self.requirements)}]')
+                              f'Parameters do not meet the requirements:[{",".join(self.requirements)}]').json()
 
     def _run(self, *args):
         ...
