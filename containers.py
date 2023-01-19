@@ -2,14 +2,14 @@ import time
 
 from flask import jsonify
 
+import util
+from RPDB.database import RPDB
 from jelly import Jelly
 from util import get_random_token
 
 
 class EventContainer:
-    def __init__(self, data_base, lock):
-        self.lock = lock
-        self.lock.acquire()
+    def __init__(self, data_base: RPDB):
         self.data_base = data_base
         while True:
             rid = get_random_token(8)
@@ -18,19 +18,16 @@ class EventContainer:
         self.rid = rid
         self.json = {}
         self.can_write = True
+        self. \
+            add('rid', self.rid). \
+            add('time', time.time())
 
     def __call__(self, key, value):
         self.json[key] = value
 
-    def write(self):
-        if self.can_write:
-            self.data_base.set(self.rid, self.json)
-            self.lock.release()
-            self.can_write = False
-
-    def __del__(self):
-        if self.lock.locked():
-            self.lock.release()
+    def write_in(self):
+        with self.data_base.with_get(self.rid) as v:
+            v.value = self.json
 
     def add(self, key, value):
         self.json[key] = value
@@ -62,6 +59,25 @@ class ReturnData:
 
     def __call__(self):
         return self.json_data
+
+
+class User(Jelly):
+    def __init__(self, user_id, password, user_name):
+        super().__init__()
+        self.user_id = user_id
+        self.user_name = user_name
+        self.salt = util.get_random_token(16)
+
+        self.hash_password = util.salted_hash(password, self.salt, self.user_id)
+
+    def _var_init(self):
+        self.todo_list = []
+
+    def auth(self, password):
+        return util.salted_hash(password, self.salt, self.user_id) == self.hash_password
+
+    def add_user_event(self, ec: EventContainer):
+        self.todo_list.append(ec.json)
 
 
 class Group(Jelly):
