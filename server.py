@@ -19,7 +19,7 @@ class Server:
         self.debug = debug
         self.logger = logging.getLogger(__name__)
         self.key = util.get_random_token(16)
-        self.db_auth = RPDB(os.path.join('data', 'auth'))
+        self.db_account = RPDB(os.path.join('data', 'account'))
         self.e_mgr = EventManager(self)
 
     def server_thread(self):
@@ -47,5 +47,6 @@ class Server:
             except KeyboardInterrupt:
                 sys.exit()
 
-    def auth_token(self, user_id: str, token: str):
-        ...
+    def open_user(self, user_id):
+        return self.db_account.enter(user_id)
+
