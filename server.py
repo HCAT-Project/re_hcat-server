@@ -2,6 +2,7 @@ import logging
 import os.path
 import sys
 import threading
+import time
 
 from flask import Flask, request
 from gevent import pywsgi
@@ -14,20 +15,45 @@ from event.recv_event import RecvEvent
 
 class Server:
     def __init__(self, address: tuple[str, int] = None, debug: bool = False):
+        # init Flask object
         self.app = Flask(__name__)
+        # get the host and port from the address
         self.host, self.port = address if address is not None else ('0.0.0.0', 8080)
+        # set debug mode
         self.debug = debug
+
+        # get logger
         self.logger = logging.getLogger(__name__)
+        # generate aes token
         self.key = util.get_random_token(16)
-        self.db_account = RPDB(os.path.join('data', 'account'))
+        # set event manager
         self.e_mgr = EventManager(self)
+        # set timeout
+        self.event_timeout = 604_800
+
+        # init database
+        self.db_account = RPDB(os.path.join('data', 'account'))
+        self.db_event = RPDB(os.path.join('data', 'event'))
 
     def server_thread(self):
         if self.debug:
+            # start temp
             self.app.run(self.host, self.port, debug=True)
         else:
+            # start wsgi server
             server = pywsgi.WSGIServer((self.host, self.port), self.app)
             server.serve_forever()
+
+    def event_cleaner_thread(self):
+        while True:
+            for i in self.db_event.keys:
+                with self.db_event.enter(i) as v:
+                    # THERE IS NO BUG HERE!!!
+                    # I don't understand why PyCharm think it is a bug
+                    if time.time() - v.value['time'] > self.event_timeout:
+                        # del event if event timeout
+                        v.value = None
+            time.sleep(30)
 
     def start(self):
         self.logger.info('Starting server...')
@@ -39,7 +65,9 @@ class Server:
 
         self.logger.info('Starting server thread...')
         t_server = threading.Thread(target=self.server_thread, daemon=True, name='server_thread')
+        t_cleaner = threading.Thread(target=self.event_cleaner_thread, daemon=True, name='event_cleaner_thread')
         t_server.start()
+        t_cleaner.start()
         self.logger.info('Server is already started.')
         while True:
             try:
@@ -49,4 +77,3 @@ class Server:
 
     def open_user(self, user_id):
         return self.db_account.enter(user_id)
-
