@@ -1,4 +1,5 @@
 import logging
+import os.path
 import sys
 import threading
 
@@ -7,6 +8,8 @@ from gevent import pywsgi
 from RPDB.database import RPDB
 
 import util
+from event.event_manager import EventManager
+from event.recv_event import RecvEvent
 
 
 class Server:
@@ -16,7 +19,8 @@ class Server:
         self.debug = debug
         self.logger = logging.getLogger(__name__)
         self.key = util.get_random_token(16)
-        self.db_auth=RPDB()
+        self.db_auth = RPDB(os.path.join('data', 'auth'))
+        self.e_mgr = EventManager(self)
 
     def server_thread(self):
         if self.debug:
@@ -29,9 +33,9 @@ class Server:
         self.logger.info('Starting server...')
         self.logger.info('Creating route...')
 
-        @self.app.route('/<path:path>')
+        @self.app.route('/api/<path:path>')
         def recv(path):
-            ...
+            return self.e_mgr.create_event(RecvEvent, request, path)
 
         self.logger.info('Starting server thread...')
         t_server = threading.Thread(target=self.server_thread, daemon=True, name='server_thread')
@@ -44,3 +48,4 @@ class Server:
                 sys.exit()
 
     def auth_token(self, user_id: str, token: str):
+        ...

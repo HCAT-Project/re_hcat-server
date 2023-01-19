@@ -33,3 +33,30 @@ class AesCrypto:
 def get_random_token(key_len=128):
     return ''.join(
         [chr(random.choice(list(range(65, 91)) + list(range(97, 123)) + list(range(48, 58)))) for _ in range(key_len)])
+
+
+def ins(obj: iter, collection) -> bool:
+    res = True
+    for i in obj:
+        res = res and (i in collection)
+    return res
+
+
+def not_ins(obj: iter, collection) -> bool:
+    res = True
+    for i in obj:
+        res = res and (i not in collection)
+    return res
+
+
+def request_parse(req_data):
+    if req_data.method == 'POST':
+        data = dict(req_data.form)
+    elif req_data.method == 'GET':
+        data_dict = {}
+        for i in req_data.args.items():
+            data_dict[i[0]] = i[1]
+        data = data_dict
+    else:
+        data = {}
+    return data
