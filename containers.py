@@ -110,14 +110,14 @@ class Group(Jelly):
 
     def send_msg(self, server, username, msg):
         # 创建事件
-        ec = EventContainer(server.event_log_db, server.event_log_db_lock)
+        ec = EventContainer(server.db_event)
         ec.add('type', 'group_msg'). \
             add('rid', ec.rid). \
             add('username', username). \
             add('group_id', self.id). \
             add('msg', msg). \
             add('time', time.time())
-        ec.write()
+        ec.write_in()
 
         for i in filter(lambda j: j != username, self.member_list):
             # 将群聊消息事件写入成员的todo_list
