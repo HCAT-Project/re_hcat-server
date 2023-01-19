@@ -1,6 +1,6 @@
 import json
 
-from containers import ReturnData
+from containers import ReturnData, User
 from util import AesCrypto
 
 
@@ -16,10 +16,12 @@ class EventManager:
                 auth_data = req.cookies['auth_data']
                 auth_data_decrypto = AesCrypto(self.server.key).decrypto(auth_data)
                 j = json.loads(auth_data_decrypto)
-                auth_success = self.server.auth_token(j['user_id'], j['token'])
+                with self.server.open_user(j['user_id']) as v:
+                    user: User = v.value
+                    auth_success = user.auth_token(j['token'])
         if auth_success:
-            e = event(self.server, req, path,self)
-            rt=e.run()
+            e = event(self.server, req, path, self)
+            rt = e.run()
             return rt if rt is not None else ReturnData(ReturnData.OK, '').json()
         else:
             return ReturnData(ReturnData.ERROR, 'Invalid token.').json()
