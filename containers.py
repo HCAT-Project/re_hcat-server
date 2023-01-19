@@ -26,7 +26,7 @@ class EventContainer:
         self.json[key] = value
 
     def write_in(self):
-        with self.data_base.with_get(self.rid) as v:
+        with self.data_base.enter(self.rid) as v:
             v.value = self.json
 
     def add(self, key, value):
@@ -67,17 +67,20 @@ class User(Jelly):
         self.user_id = user_id
         self.user_name = user_name
         self.salt = util.get_random_token(16)
-
         self.hash_password = util.salted_hash(password, self.salt, self.user_id)
 
     def _var_init(self):
         self.todo_list = []
+        self.token = ''
 
     def auth(self, password):
         return util.salted_hash(password, self.salt, self.user_id) == self.hash_password
 
     def add_user_event(self, ec: EventContainer):
         self.todo_list.append(ec.json)
+
+    def auth_token(self, token):
+        return self.token == token
 
 
 class Group(Jelly):
