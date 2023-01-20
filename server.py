@@ -77,4 +77,4 @@ class Server:
 
     def is_user_exist(self, user_id):
         with self.open_user(user_id) as u:
-            return u.value is None
+            return u.value is not None
