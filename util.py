@@ -7,6 +7,7 @@ import pyaes
 
 class AesCrypto:
     def __init__(self, key: str, mode=pyaes.aes.AESModeOfOperationECB):
+        # get mode
         self.mode = mode
         if 16 <= len(key) <= 32 and len(key) % 4 == 0:
             self.key = key
