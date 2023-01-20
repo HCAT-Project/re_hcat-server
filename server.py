@@ -36,13 +36,10 @@ class Server:
         self.db_event = RPDB(os.path.join('data', 'event'))
 
     def server_thread(self):
-        if self.debug:
-            # start temp
-            self.app.run(self.host, self.port, debug=True)
-        else:
-            # start wsgi server
-            server = pywsgi.WSGIServer((self.host, self.port), self.app)
-            server.serve_forever()
+
+        # start wsgi server
+        server = pywsgi.WSGIServer((self.host, self.port), self.app)
+        server.serve_forever()
 
     def event_cleaner_thread(self):
         while True:
@@ -77,3 +74,7 @@ class Server:
 
     def open_user(self, user_id):
         return self.db_account.enter(user_id)
+
+    def is_user_exist(self, user_id):
+        with self.open_user(user_id) as u:
+            return u.value is None
