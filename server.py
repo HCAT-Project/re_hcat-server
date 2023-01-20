@@ -14,7 +14,7 @@ from event.recv_event import RecvEvent
 
 
 class Server:
-    def __init__(self, address: tuple[str, int] = None, debug: bool = False):
+    def __init__(self, address: tuple[str, int] = None, debug: bool = False, name=__name__):
         # init Flask object
         self.app = Flask(__name__)
         # get the host and port from the address
@@ -25,7 +25,14 @@ class Server:
         # get logger
         self.logger = logging.getLogger(__name__)
         # generate aes token
-        self.key = util.get_random_token(16)
+        if not os.path.exists(f'{name}.key'):
+            self.key = util.get_random_token(16)
+            with open(f'{name}.key', 'w', encoding='utf8') as f:
+                f.write(self.key)
+        else:
+            with open(f'{name}.key', 'r', encoding='utf8') as f:
+                self.key = f.read()
+
         # set event manager
         self.e_mgr = EventManager(self)
         # set timeout
