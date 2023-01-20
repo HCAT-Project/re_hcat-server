@@ -11,12 +11,12 @@ from event.event_manager import EventManager
 class BaseEvent:
     auth = True
 
-    def __init__(self, server, req, path: str, e_mgr: EventManager):
+    def __init__(self, server, req, path: str, e_mgr: EventManager,user_id=None):
         self.req = req
         self.server = server
         self.path = path
         self.e_mgr = e_mgr
-
+        self.user_id=user_id
     def run(self):
         req_data = util.request_parse(self.req)
         requirements = [i for i in inspect.signature(self._run).parameters]
