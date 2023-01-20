@@ -9,6 +9,6 @@ class GetUserName(BaseEvent):
         if self.server.is_user_exist(user_id):
             with self.server.open_user(user_id) as u:
                 user: User = u.value
-                return ReturnData(ReturnData.OK).add('data', user.user_name)
+                return ReturnData(ReturnData.OK).add('data', user.user_name).jsonify()
         else:
-            return ReturnData(ReturnData.NULL, 'User does not exist.')
+            return ReturnData(ReturnData.NULL, 'User does not exist.').jsonify()
