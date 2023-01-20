@@ -22,6 +22,6 @@ class EventManager:
         if auth_success:
             e = event(self.server, req, path, self)
             rt = e.run()
-            return rt if rt is not None else ReturnData(ReturnData.OK, '').json()
+            return rt if rt is not None else ReturnData(ReturnData.OK, '').jsonify()
         else:
-            return ReturnData(ReturnData.ERROR, 'Invalid token.').json()
+            return ReturnData(ReturnData.ERROR, 'Invalid token.').jsonify()

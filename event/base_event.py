@@ -27,7 +27,7 @@ class BaseEvent:
                 return self._run()
         else:
             return ReturnData(ReturnData.ERROR,
-                              f'Parameters do not meet the requirements:[{",".join(requirements)}]').json()
+                              f'Parameters do not meet the requirements:[{",".join(requirements)}]').jsonify()
 
     def _run(self, *args):
         ...

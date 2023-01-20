@@ -11,13 +11,13 @@ class Register(BaseEvent):
 
     def _run(self, user_id, password, username):
         if self.server.is_user_exist(user_id):
-            return ReturnData(ReturnData.ERROR, 'ID has been registered.').json()
+            return ReturnData(ReturnData.ERROR, 'ID has been registered.').jsonify()
 
         # check if user_id is legal
         reg = r'^[a-zA-Z][a-zA-Z0-9_]{4,15}$'
         if not re.match(reg, user_id):
             return ReturnData(ReturnData.ERROR,
-                              f'User ID does not match {reg} .').json()
+                              f'User ID does not match {reg} .').jsonify()
 
         # check if the password is longer than 6 digits
         if len(password) < 6:

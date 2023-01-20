@@ -11,7 +11,7 @@ class Login(BaseEvent):
 
     def _run(self, user_id, password):
         if not self.server.is_user_exist(user_id):
-            return ReturnData(ReturnData.NULL, 'User does not exist.').json()
+            return ReturnData(ReturnData.NULL, 'User does not exist.').jsonify()
 
         with self.server.open_user(user_id) as u:
             user: User = u.value
@@ -20,7 +20,7 @@ class Login(BaseEvent):
                 user.token = util.get_random_token()
 
                 # init a response
-                resp = make_response(ReturnData(ReturnData.OK).json(), 200)
+                resp = make_response(ReturnData(ReturnData.OK).jsonify(), 200)
 
                 # generate auth_data
                 auth_data = json.dumps({'user_id': user_id, 'token': user.token, 'salt': util.get_random_token()})

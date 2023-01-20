@@ -54,7 +54,7 @@ class ReturnData:
         self.json_data[key] = value
         return self
 
-    def json(self):
+    def jsonify(self):
         return jsonify(self.json_data)
 
     def __call__(self):
