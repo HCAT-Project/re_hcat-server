@@ -18,11 +18,16 @@ class AgreeFriendRequire(BaseEvent):
         if event['req_user_id'] != self.user_id:
             return ReturnData(ReturnData.ERROR, 'The person did not send you a friend request.')
 
+        with self.server.open_user(event['user_id']) as u:
+            user: User = u.value
+            fri_user_name = user.user_name
+
         with self.server.open_user(self.user_id) as u:
             user: User = u.value
             if event['user_id'] in user.friend_dict:
                 return ReturnData(ReturnData.ERROR, 'You are already friends with each other.')
-            user.friend_dict[event['user_id']] = {'nick': event['user_id'], 'time': agree_time}
+            user.friend_dict[event['user_id']] = {'nick': fri_user_name, 'time': agree_time}
+            user_name = user.user_name
 
         ec = EventContainer(self.server.db_event)
         ec. \
@@ -34,6 +39,6 @@ class AgreeFriendRequire(BaseEvent):
 
         with self.server.open_user(event['user_id']) as u:
             user: User = u.value
-            user.friend_dict[self.user_id] = {'nick': self.user_id, 'time': agree_time}
+            user.friend_dict[self.user_id] = {'nick': user_name, 'time': agree_time}
             user.add_user_event(ec)
         return ReturnData(ReturnData.OK)
