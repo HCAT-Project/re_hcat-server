@@ -9,5 +9,6 @@ class Logout(BaseEvent):
     def _run(self):
         with self.server.open_user(self.user_id) as u:
             user: User = u.value
+            user.status = 'offline'
             user.token = util.get_random_token(256)
         return ReturnData(ReturnData.OK)

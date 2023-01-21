@@ -16,6 +16,7 @@ class Login(BaseEvent):
         with self.server.open_user(user_id) as u:
             user: User = u.value
             if user.auth(password):
+                user.status = 'online'
                 # generate token
                 user.token = util.get_random_token()
 
