@@ -12,7 +12,9 @@ class Login(BaseEvent):
     def _run(self, user_id, password):
         if not self.server.is_user_exist(user_id):
             return ReturnData(ReturnData.NULL, 'User does not exist.').jsonify()
-
+        self.server.activity_dict_lock.acquire()
+        self.server.activity_dict[user_id] = 30
+        self.server.activity_dict_lock.release()
         with self.server.open_user(user_id) as u:
             user: User = u.value
             if user.auth(password):
