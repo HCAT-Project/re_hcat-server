@@ -64,8 +64,13 @@ class ReturnData:
 class User(Jelly):
     def __init__(self, user_id, password, user_name):
         super().__init__()
+        self.hash_password = None
+        self.salt = None
         self.user_id = user_id
         self.user_name = user_name
+        self.change_password(password)
+
+    def change_password(self, password):
         self.salt = util.get_random_token(16)
         self.hash_password = util.salted_hash(password, self.salt, self.user_id)
 
