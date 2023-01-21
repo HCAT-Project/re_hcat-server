@@ -27,3 +27,4 @@ class SendFriendMsg(BaseEvent):
         with self.server.open_user(friend_id) as u:
             user: User = u.value
             user.add_user_event(ec)
+            return ReturnData(ReturnData.OK)
