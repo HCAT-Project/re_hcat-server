@@ -78,6 +78,7 @@ class User(Jelly):
         self.todo_list = []
         self.token = ''
         self.status = 'offline'
+        self.friend_dict = {}
 
     def auth(self, password):
         return util.salted_hash(password, self.salt, self.user_id) == self.hash_password
