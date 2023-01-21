@@ -2,6 +2,7 @@ import time
 
 from containers import User, ReturnData, EventContainer
 from event.base_event import BaseEvent
+from html import escape
 
 
 class SendFriendMsg(BaseEvent):
@@ -14,12 +15,13 @@ class SendFriendMsg(BaseEvent):
             user: User = u.value
             if friend_id not in user.friend_dict:
                 return ReturnData(ReturnData.NULL, 'The person is not your friend.')
+
         ec = EventContainer(self.server.db_event)
         ec. \
             add('type', 'friend_msg'). \
             add('rid', ec.rid). \
             add('user_id', self.user_id). \
-            add('msg', msg). \
+            add('msg', escape(msg)). \
             add('time', time.time())
         ec.write_in()
         with self.server.open_user(friend_id) as u:
