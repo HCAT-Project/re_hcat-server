@@ -25,3 +25,4 @@ class Register(BaseEvent):
 
         with self.server.open_user(user_id) as u:
             u.value = User(user_id, password, username)
+            return ReturnData(ReturnData.OK)
