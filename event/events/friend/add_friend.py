@@ -19,8 +19,9 @@ class AddFriend(BaseEvent):
         ec. \
             add('type', 'friend_request'). \
             add('rid', ec.rid). \
-            add('username', self.user_id). \
-            add('additional_information', add_info). \
+            add('user_id', self.user_id). \
+            add('req_user_id', user_id). \
+            add('add_info', add_info). \
             add('time', time.time())
         ec.write_in()
 
