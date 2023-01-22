@@ -39,9 +39,14 @@ def salted_hash(data, salt, additional_string=None):
     return hashlib.sha1((data + hash_salt).encode('utf8')).hexdigest()
 
 
-def get_random_token(key_len=128):
-    return ''.join(
-        [chr(random.choice(list(range(65, 91)) + list(range(97, 123)) + list(range(48, 58)))) for _ in range(key_len)])
+def get_random_token(key_len=128, upper=True):
+    if upper:
+        return ''.join(
+            [chr(random.choice(list(range(65, 91)) + list(range(97, 123)) + list(range(48, 58)))) for _ in
+             range(key_len)])
+    else:
+        return ''.join(
+            [chr(random.choice(list(range(97, 123)) + list(range(48, 58)))) for _ in range(key_len)])
 
 
 def ins(obj: iter, collection) -> bool:
