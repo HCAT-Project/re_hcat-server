@@ -70,15 +70,16 @@ class User(Jelly):
         self.user_name = user_name
         self.change_password(password)
 
-    def change_password(self, password):
-        self.salt = util.get_random_token(16)
-        self.hash_password = util.salted_hash(password, self.salt, self.user_id)
-
     def _var_init(self):
         self.todo_list = []
         self.token = ''
         self.status = 'offline'
         self.friend_dict = {}
+        self.groups_dict = {}
+
+    def change_password(self, password):
+        self.salt = util.get_random_token(16)
+        self.hash_password = util.salted_hash(password, self.salt, self.user_id)
 
     def auth(self, password):
         return util.salted_hash(password, self.salt, self.user_id) == self.hash_password
@@ -100,8 +101,7 @@ class Group(Jelly):
 
     def _var_init(self):
         self.name = ''
-        self.member_list = set()
-        self.member_data = {}
+        self.member_dict = {}
         self.owner = ''
         self.admin_list = set()
         self.member_settings = {}
