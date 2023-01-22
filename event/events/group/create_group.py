@@ -17,13 +17,14 @@ class CreateGroup(BaseEvent):
         group = Group(group_id)
         with self.server.open_user(self.user_id) as u:
             user: User = u.value
-            user.groups_dict[group_id] = {'remark': group.name, 'time': time.time()}
+            user.groups_dict[group_id] = {'remark': group_name, 'time': time.time()}
             user_name = user.user_name
 
         # set group
         group.name = group_name
         # todo:change user nick
         # todo:change group remark
+        # todo:create group limit
         group.member_dict[self.user_id] = {'nick': user_name,
                                            'time': time.time()}
         group.owner = self.user_id
