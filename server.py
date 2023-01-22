@@ -42,6 +42,7 @@ class Server:
         # init database
         self.db_account = RPDB(os.path.join('data', 'account'))
         self.db_event = RPDB(os.path.join('data', 'event'))
+        self.db_group = RPDB(os.path.join('data', 'group'))
 
     def server_thread(self):
 
