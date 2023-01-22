@@ -2,7 +2,7 @@ from containers import User, ReturnData
 from event.base_event import BaseEvent
 
 
-class GetGroupList(BaseEvent):
+class GetGroupsList(BaseEvent):
     auth = True
 
     def _run(self):
