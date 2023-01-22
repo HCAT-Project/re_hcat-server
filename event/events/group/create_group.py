@@ -27,6 +27,6 @@ class CreateGroup(BaseEvent):
         group.member_dict[self.user_id] = {'nick': user_name,
                                            'time': time.time()}
         group.owner = self.user_id
-        with self.server.db_groups.enter(group_id) as g:
+        with self.server.db_group.enter(group_id) as g:
             g.value = group
         return ReturnData(ReturnData.OK, '').add('group_id', group_id)
