@@ -12,7 +12,7 @@ class CreateGroup(BaseEvent):
 
         while True:
             group_id = '0g' + util.get_random_token(5, upper=False)
-            if not self.server.db_groups.exists(group_id):
+            if not self.server.db_group.exists(group_id):
                 break
         group = Group(group_id)
         with self.server.open_user(self.user_id) as u:
