@@ -11,7 +11,7 @@ class EventManager:
         self.logger = logging.getLogger(__name__)
 
     def create_event(self, event, req, path):
-        auth_success = True
+        auth_success = False
         j = {'user_id': None}
 
         if 'auth_data' in req.cookies:
