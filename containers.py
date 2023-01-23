@@ -115,16 +115,7 @@ class Group(Jelly):
         '''
         self.group_settings = {'verification_method': 'ac', 'question': '', 'answer': ''}
 
-    def send_msg(self, server, user_id, msg):
-        # create event
-        ec = EventContainer(server.db_event)
-        ec.add('type', 'group_msg'). \
-            add('rid', ec.rid). \
-            add('user_id', user_id). \
-            add('group_id', self.id). \
-            add('msg', msg). \
-            add('time', time.time())
-        ec.write_in()
+    def broadcast(self, server, user_id, ec):
 
         for i in filter(lambda j: j != user_id, list(self.member_dict)):
             # add to member's todo_list
