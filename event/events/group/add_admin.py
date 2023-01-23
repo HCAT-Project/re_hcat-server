@@ -14,10 +14,10 @@ class AddAdmin(BaseEvent):
                 return ReturnData(ReturnData.NULL, 'Group does not exist.')
 
             if member_id not in group.member_dict:
-                return ReturnData(ReturnData.NULL, f'No members with id:"{member_id}"')
+                return ReturnData(ReturnData.NULL, f'No member with id:"{member_id}"')
 
-            if self.user_id not in list(group.admin_list) + [group_id.owner]:
-                return ReturnData(ReturnData.ERROR, 'You are not the admin.')
+            if self.user_id != group.owner:
+                return ReturnData(ReturnData.ERROR, 'You are not the owner.')
 
             if member_id in group.admin_list or member_id == group.owner:
                 return ReturnData(ReturnData.ERROR, 'the member is already an admin')
@@ -25,7 +25,7 @@ class AddAdmin(BaseEvent):
             group.admin_list.add(member_id)
         ec = EventContainer(self.server.db_event)
         ec. \
-            add('type', 'admin_add'). \
+            add('type', 'admin_added'). \
             add('rid', ec.rid). \
             add('group_id', group_id). \
             add('time', time.time()). \
