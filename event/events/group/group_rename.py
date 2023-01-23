@@ -15,3 +15,4 @@ class GroupRename(BaseEvent):
                 return ReturnData(ReturnData.ERROR, 'You are not the admin.')
 
             group.name = name
+            return ReturnData(ReturnData.OK)

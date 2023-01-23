@@ -22,3 +22,4 @@ class ChangeGroupSetting(BaseEvent):
                 return ReturnData(ReturnData.NULL, f'key:"{str(error_list)}" does not exist')
             group.group_settings = {k: (setting[k] if k in setting else group.group_settings[k]) for k in
                                     group.group_settings}
+            return ReturnData(ReturnData.OK)
