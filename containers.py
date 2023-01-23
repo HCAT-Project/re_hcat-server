@@ -115,20 +115,22 @@ class Group(Jelly):
         '''
         self.group_settings = {'verification_method': 'ac', 'question': '', 'answer': ''}
 
-    def send_msg(self, server, username, msg):
-        # 创建事件
+    def send_msg(self, server, user_id, msg):
+        # create event
         ec = EventContainer(server.db_event)
         ec.add('type', 'group_msg'). \
             add('rid', ec.rid). \
-            add('username', username). \
+            add('user_id', user_id). \
             add('group_id', self.id). \
             add('msg', msg). \
             add('time', time.time())
         ec.write_in()
 
-        for i in filter(lambda j: j != username, self.member_list):
-            # 将群聊消息事件写入成员的todo_list
-            server.set_user_todo_list(i, ec)
+        for i in filter(lambda j: j != user_id, list(self.member_dict)):
+            # add to member's todo_list
+            with server.open_user(user_id) as u:
+                user: User = u.value
+                user.add_user_event(ec)
 
     def permission_match(self, username: str, permission=Permission_ADMIN) -> bool:
         """
