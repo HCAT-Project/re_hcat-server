@@ -34,6 +34,7 @@ class JoinGroup(BaseEvent):
             join_success = False
             with self.server.db_group.enter(group_id) as g:
                 group: Group = g.value
+                group_name = group.name
                 verif_method = group.group_settings['verification_method']
                 answer = group.group_settings['answer']
                 admin_list = group.admin_list + [group.owner]
@@ -53,6 +54,7 @@ class JoinGroup(BaseEvent):
             if join_success:
                 with self.server.open_user(self.user_id) as u:
                     user: User = u.value
+                    user.groups_dict = {'remark': group_name, 'time': time.time()}
                     user.add_user_event(agreed_ec)
 
         if verif_method == 'na':
