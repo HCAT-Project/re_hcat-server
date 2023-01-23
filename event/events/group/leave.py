@@ -15,7 +15,7 @@ class Leave(BaseEvent):
                 return ReturnData(ReturnData.NULL, 'You are not in the group.')
 
             if self.user_id == group_id.owner:
-                return ReturnData(ReturnData.ERROR, 'You are the group leader, you can not leave the group.')
+                return ReturnData(ReturnData.ERROR, 'You are the group owner, you can not leave the group.')
 
             if self.user_id in list(group.admin_list):
                 group.admin_list.remove(self.user_id)
