@@ -8,7 +8,7 @@ class AgreeJoinGroupRequest(BaseEvent):
     auth = True
 
     def _run(self, rid):
-
+        print(self.server.db_group.getall())
         if not self.server.db_event.exists(rid):
             return ReturnData(ReturnData.NULL, 'Event does not exist.')
 
@@ -24,7 +24,7 @@ class AgreeJoinGroupRequest(BaseEvent):
         with self.server.db_group.enter(group_id) as g:
             group: Group = g.value
             group_name = group.name
-            if self.user_id not in group.admin_list + [group.owner]:
+            if self.user_id not in list(group.admin_list) + [group.owner]:
                 return ReturnData(ReturnData.ERROR, 'You are not the admin.')
             group.member_dict[req_user_id] = {'nick': req_user_name}
 

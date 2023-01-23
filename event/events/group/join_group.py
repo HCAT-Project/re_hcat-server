@@ -37,7 +37,7 @@ class JoinGroup(BaseEvent):
                 group_name = group.name
                 verif_method = group.group_settings['verification_method']
                 answer = group.group_settings['answer']
-                admin_list = group.admin_list + [group.owner]
+                admin_list = list(group.admin_list) + [group.owner]
                 if verif_method == 'fr':
                     agreed_ec.write_in()
                     group.member_dict[self.user_id] = {'nick': user_name}
