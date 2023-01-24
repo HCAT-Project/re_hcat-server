@@ -8,6 +8,8 @@ class GetGroupMembers(BaseEvent):
     def _run(self, group_id):
         with self.server.db_group.enter(group_id) as g:
             group: Group = g.value
+            if group is None:
+                return ReturnData(ReturnData.NULL, 'Group does not exist.')
             if self.user_id in group.member_dict:
                 return ReturnData(ReturnData.OK).add('data', {
                     k: {
