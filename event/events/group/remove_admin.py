@@ -13,7 +13,7 @@ class RemoveAdmin(BaseEvent):
             if group is None:
                 return ReturnData(ReturnData.NULL, 'Group does not exist.')
 
-            if group_id not in group.admin_list:
+            if admin_id not in group.admin_list:
                 return ReturnData(ReturnData.NULL, f'No admin with id:"{admin_id}"')
 
             if self.user_id != group.owner:
@@ -36,3 +36,4 @@ class RemoveAdmin(BaseEvent):
             with self.server.open_user(m) as u:
                 user: User = u.value
                 user.add_user_event(ec)
+        return ReturnData(ReturnData.OK)

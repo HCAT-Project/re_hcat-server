@@ -36,3 +36,4 @@ class AddAdmin(BaseEvent):
             with self.server.open_user(m) as u:
                 user: User = u.value
                 user.add_user_event(ec)
+        return ReturnData(ReturnData.OK)

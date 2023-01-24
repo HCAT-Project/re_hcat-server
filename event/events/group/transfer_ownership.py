@@ -19,3 +19,4 @@ class TransferOwnership(BaseEvent):
 
             group.owner = member_id
             group.admin_list.add(self.user_id)
+            return ReturnData(ReturnData.OK)
