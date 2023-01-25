@@ -25,12 +25,13 @@ class Server:
         # get logger
         self.logger = logging.getLogger(__name__)
         # generate aes token
-        if not os.path.exists(f'{name}.key'):
+        key_path=os.path.join(os.getcwd(),f'{name}.key')
+        if not os.path.exists(key_path):
             self.key = util.get_random_token(16)
-            with open(f'{name}.key', 'w', encoding='utf8') as f:
+            with open(key_path, 'w', encoding='utf8') as f:
                 f.write(self.key)
         else:
-            with open(f'{name}.key', 'r', encoding='utf8') as f:
+            with open(key_path, 'r', encoding='utf8') as f:
                 self.key = f.read()
 
         # set event manager
