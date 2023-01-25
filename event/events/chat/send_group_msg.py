@@ -14,12 +14,18 @@ class SendGroupMsg(BaseEvent):
             if group_id not in user.groups_dict:
                 return ReturnData(ReturnData.NULL, 'You are not in the group.')
 
+        if 'msg_chain' not in msg or len(msg['msg_chain']):
+            return ReturnData(ReturnData.ERROR, 'Illegal messages.')
+        for i in range(len(msg['msg_chain'])):
+            if msg['msg_chain'][i]['type'] == 'text':
+                msg['msg_chain'][i]['msg'] = escape(msg['msg_chain'][i]['msg'])
+
         ec = EventContainer(self.server.db_event)
         ec. \
             add('type', 'group_msg'). \
             add('rid', ec.rid). \
             add('user_id', self.user_id). \
-            add('msg', escape(msg)). \
+            add('msg', msg). \
             add('time', time.time())
 
         with self.server.db_group(group_id) as g:
