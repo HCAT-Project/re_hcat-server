@@ -9,12 +9,16 @@ class SendFriendMsg(BaseEvent):
     auth = True
 
     def _run(self, friend_id, msg):
-        # {"type":"msg_type","msg":"context"}
+        # {"msg_chain":[{"type":type,"msg":msg},{"type":type,"msg":msg}]}
 
         with self.server.open_user(self.user_id) as u:
             user: User = u.value
             if friend_id not in user.friend_dict:
                 return ReturnData(ReturnData.NULL, 'The person is not your friend.')
+
+        if 'msg_chain' not in msg or len(msg['msg_chain']):
+            return ReturnData(ReturnData.ERROR, 'Illegal messages.')
+
 
         ec = EventContainer(self.server.db_event)
         ec. \
