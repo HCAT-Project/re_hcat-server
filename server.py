@@ -25,7 +25,7 @@ class Server:
         # get logger
         self.logger = logging.getLogger(__name__)
         # generate aes token
-        key_path=os.path.join(os.getcwd(),f'{name}.key')
+        key_path = os.path.join(os.getcwd(), f'{name}.key')
         if not os.path.exists(key_path):
             self.key = util.get_random_token(16)
             with open(key_path, 'w', encoding='utf8') as f:
@@ -81,6 +81,7 @@ class Server:
             time.sleep(30)
 
     def start(self):
+        self.logger.info('CWD: ' + os.getcwd())
         self.logger.info('Starting server...')
         self.logger.info('Creating route...')
 
