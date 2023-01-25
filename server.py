@@ -40,9 +40,9 @@ class Server:
         self.activity_dict = {}
         self.activity_dict_lock = threading.Lock()
         # init database
-        self.db_account = RPDB(os.path.join('data', 'account'))
-        self.db_event = RPDB(os.path.join('data', 'event'))
-        self.db_group = RPDB(os.path.join('data', 'group'))
+        self.db_account = RPDB(os.path.join(os.getcwd(), 'data', 'account'))
+        self.db_event = RPDB(os.path.join(os.getcwd(), 'data', 'event'))
+        self.db_group = RPDB(os.path.join(os.getcwd(), 'data', 'group'))
 
     def server_thread(self):
 
