@@ -5,6 +5,7 @@ import threading
 import time
 
 from flask import Flask, request
+from flask_cors import CORS
 from gevent import pywsgi
 from RPDB.database import RPDB
 
@@ -18,6 +19,7 @@ class Server:
     def __init__(self, address: tuple[str, int] = None, debug: bool = False, name=__name__):
         # init Flask object
         self.app = Flask(__name__)
+        CORS(self.app)
         # get the host and port from the address
         self.host, self.port = address if address is not None else ('0.0.0.0', 8080)
         # set debug mode
@@ -85,7 +87,7 @@ class Server:
         self.logger.info('Starting server...')
         self.logger.info('Creating route...')
 
-        @self.app.route('/api/<path:path>')
+        @self.app.route('/api/<path:path>',methods=['GET','POST'])
         def recv(path):
             return self.e_mgr.create_event(RecvEvent, request, path)
 
