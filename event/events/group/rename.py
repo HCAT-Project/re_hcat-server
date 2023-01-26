@@ -11,7 +11,7 @@ class GroupRename(BaseEvent):
             if group is None:
                 return ReturnData(ReturnData.NULL, 'Group does not exist.')
 
-            if self.user_id not in list(group.admin_list) + [group_id.owner]:
+            if self.user_id not in list(group.admin_list) + [group.owner]:
                 return ReturnData(ReturnData.ERROR, 'You are not the admin.')
 
             group.name = name
