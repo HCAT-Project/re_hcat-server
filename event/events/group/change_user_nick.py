@@ -1,6 +1,6 @@
 from containers import ReturnData, Group
 from event.base_event import BaseEvent
-
+from html import escape
 
 class ChangeUserNick(BaseEvent):
     auth = True
@@ -14,5 +14,5 @@ class ChangeUserNick(BaseEvent):
             if self.user_id not in group.member_dict:
                 return ReturnData(ReturnData.ERROR, 'You are not in group.')
 
-            group.member_dict['nick'] = nick
-            #todo:反注入
+            group.member_dict['nick'] = escape(nick)
+
