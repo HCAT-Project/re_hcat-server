@@ -1,6 +1,7 @@
+from html import escape
+
 from containers import ReturnData, Group
 from event.base_event import BaseEvent
-from html import escape
 
 
 class ChangeUserNick(BaseEvent):

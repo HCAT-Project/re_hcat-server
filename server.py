@@ -4,10 +4,10 @@ import sys
 import threading
 import time
 
+from RPDB.database import RPDB
 from flask import Flask, request
 from flask_cors import CORS
 from gevent import pywsgi
-from RPDB.database import RPDB
 
 import util
 from containers import User
@@ -87,7 +87,7 @@ class Server:
         self.logger.info('Starting server...')
         self.logger.info('Creating route...')
 
-        @self.app.route('/api/<path:path>',methods=['GET','POST'])
+        @self.app.route('/api/<path:path>', methods=['GET', 'POST'])
         def recv(path):
             return self.e_mgr.create_event(RecvEvent, request, path)
 

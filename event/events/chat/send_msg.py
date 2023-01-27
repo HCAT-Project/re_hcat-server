@@ -1,6 +1,6 @@
 from event.base_event import BaseEvent
-from send_group_msg import SendGroupMsg
 from send_friend_msg import SendFriendMsg
+from send_group_msg import SendGroupMsg
 
 
 class SendMsg(BaseEvent):

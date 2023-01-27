@@ -1,10 +1,10 @@
 import copy
 import json
 import time
+from html import escape
 
 from containers import User, ReturnData, EventContainer
 from event.base_event import BaseEvent
-from html import escape
 
 
 class SendFriendMsg(BaseEvent):

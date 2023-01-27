@@ -1,6 +1,8 @@
+from html import escape
+
 from containers import ReturnData, User
 from event.base_event import BaseEvent
-from html import escape
+
 
 class SetFriendNick(BaseEvent):
     auth = True

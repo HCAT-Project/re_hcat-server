@@ -1,5 +1,3 @@
-import json
-
 from containers import Group, ReturnData
 from event.base_event import BaseEvent
 

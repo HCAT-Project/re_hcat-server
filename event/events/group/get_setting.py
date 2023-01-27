@@ -14,4 +14,3 @@ class GetSetting(BaseEvent):
         with self.server.db_group.enter(group_id) as g:
             group: Group = g.value
             return ReturnData(ReturnData.OK).add('data', group.group_settings)
-

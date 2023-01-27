@@ -1,6 +1,8 @@
+from html import escape
+
 from containers import User, ReturnData
 from event.base_event import BaseEvent
-from html import escape
+
 
 class Rename(BaseEvent):
     auth = True

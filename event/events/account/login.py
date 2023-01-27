@@ -1,9 +1,10 @@
 import json
 
+from flask import make_response
+
 import util
 from containers import ReturnData, User
 from event.base_event import BaseEvent
-from flask import make_response
 
 
 class Login(BaseEvent):

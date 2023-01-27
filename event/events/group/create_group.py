@@ -1,9 +1,9 @@
 import time
+from html import escape
 
 import util
 from containers import Group, User, ReturnData
 from event.base_event import BaseEvent
-from html import escape
 
 
 class CreateGroup(BaseEvent):
