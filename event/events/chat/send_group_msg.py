@@ -29,12 +29,6 @@ class SendGroupMsg(BaseEvent):
         except:
             return ReturnData(ReturnData.ERROR, 'Illegal messages.')
 
-        if 'msg_chain' not in msg_ or len(msg_['msg_chain']):
-            return ReturnData(ReturnData.ERROR, 'Illegal messages.')
-        for i in range(len(msg_['msg_chain'])):
-            if msg_['msg_chain'][i]['type'] == 'text':
-                msg_['msg_chain'][i]['msg'] = escape(msg_['msg_chain'][i]['msg'])
-
         ec = EventContainer(self.server.db_event)
         ec. \
             add('type', 'group_msg'). \
