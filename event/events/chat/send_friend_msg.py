@@ -31,19 +31,20 @@ class SendFriendMsg(BaseEvent):
             return ReturnData(ReturnData.ERROR, 'Illegal messages.')
         with self.server.open_user(self.user_id) as u:
             user: User = u.value
-            nick = user.friend_dict[friend_id]['nick']
             name = user.user_name
-        ec = EventContainer(self.server.db_event)
-        ec. \
-            add('type', 'friend_msg'). \
-            add('rid', ec.rid). \
-            add('user_id', self.user_id). \
-            add('friend_nick', nick). \
-            add('friend_name', name). \
-            add('msg', msg_). \
-            add('time', time.time())
-        ec.write_in()
+
         with self.server.open_user(friend_id) as u:
             user: User = u.value
+            nick = user.friend_dict[self.user_id]['nick']
+            ec = EventContainer(self.server.db_event)
+            ec. \
+                add('type', 'friend_msg'). \
+                add('rid', ec.rid). \
+                add('user_id', self.user_id). \
+                add('friend_nick', nick). \
+                add('friend_name', name). \
+                add('msg', msg_). \
+                add('time', time.time())
+            ec.write_in()
             user.add_user_event(ec)
             return ReturnData(ReturnData.OK)
