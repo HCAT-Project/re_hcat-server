@@ -37,7 +37,7 @@ class SendGroupMsg(BaseEvent):
             add('msg', msg_). \
             add('time', time.time())
 
-        with self.server.db_group(group_id) as g:
+        with self.server.db_group.enter(group_id) as g:
             group: Group = g.value
             if self.user_id in group.ban_dict:
                 if group.ban_dict[self.user_id]['time'] < time.time():
