@@ -14,6 +14,6 @@ class ChangeUserNick(BaseEvent):
                 return ReturnData(ReturnData.NULL, 'Group does not exist.')
 
             if self.user_id not in group.member_dict:
-                return ReturnData(ReturnData.ERROR, 'You are not in group.')
+                return ReturnData(ReturnData.ERROR, 'You are not in the group.')
 
             group.member_dict['nick'] = escape(nick)
