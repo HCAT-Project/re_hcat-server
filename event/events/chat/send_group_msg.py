@@ -44,5 +44,5 @@ class SendGroupMsg(BaseEvent):
                     del group.ban_dict[self.user_id]
                 else:
                     return ReturnData(ReturnData.ERROR, 'You have been banned by admin.')
-            group.broadcast(self.server, self.user_id, escape(msg_))
+            group.broadcast(self.server, self.user_id, msg_)
             ec.write_in()
