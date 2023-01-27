@@ -47,3 +47,4 @@ class SendGroupMsg(BaseEvent):
                     return ReturnData(ReturnData.ERROR, 'You have been banned by admin.')
             group.broadcast(self.server, self.user_id, ec)
             ec.write_in()
+        return ReturnData(ReturnData.OK)
