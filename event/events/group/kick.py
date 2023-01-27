@@ -10,6 +10,8 @@ class Kick(BaseEvent):
     def _run(self, group_id, member_id):
         with self.server.db_group.enter(group_id) as g:
             group: Group = g.value
+            if self.user_id == member_id:
+                return ReturnData(ReturnData.ERROR, 'Can\'t kick yourself out.')
             if group is None:
                 return ReturnData(ReturnData.NULL, 'Group does not exist.')
 
