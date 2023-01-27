@@ -23,7 +23,6 @@ class CreateGroup(BaseEvent):
 
         # set group
         group.name = group_name_
-        # todo:change group remark
         # todo:create group limit
         group.member_dict[self.user_id] = {'nick': user_name,
                                            'time': time.time()}
