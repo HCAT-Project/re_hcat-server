@@ -1,3 +1,5 @@
+import json
+
 from containers import Group, ReturnData
 from event.base_event import BaseEvent
 
@@ -13,11 +15,15 @@ class ChangeGroupSetting(BaseEvent):
 
             if self.user_id not in list(group.admin_list) + [group.owner]:
                 return ReturnData(ReturnData.ERROR, 'You don\'t have permission.')
+            try:
+                setting_ = setting if type(setting) == dict else json.loads(setting)
+            except:
+                return ReturnData(ReturnData.ERROR, 'Illegal setting.')
 
-            error_list = list(filter(lambda x: x not in group.group_settings, setting))
+            error_list = list(filter(lambda x: x not in group.group_settings, setting_))
 
             if len(error_list) >= 1:
                 return ReturnData(ReturnData.NULL, f'key:"{str(error_list)}" does not exist')
-            group.group_settings = {k: (setting[k] if k in setting else group.group_settings[k]) for k in
+            group.group_settings = {k: (setting_[k] if k in setting_ else group.group_settings[k]) for k in
                                     group.group_settings}
             return ReturnData(ReturnData.OK)
