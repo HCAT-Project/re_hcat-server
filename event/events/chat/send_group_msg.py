@@ -34,6 +34,7 @@ class SendGroupMsg(BaseEvent):
             add('type', 'group_msg'). \
             add('rid', ec.rid). \
             add('user_id', self.user_id). \
+            add('group_id', group_id). \
             add('msg', msg_). \
             add('time', time.time())
 
