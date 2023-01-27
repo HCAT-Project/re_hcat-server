@@ -2,9 +2,11 @@ from containers import ReturnData, Group
 from event.base_event import BaseEvent
 from html import escape
 
+
 class ChangeUserNick(BaseEvent):
     auth = True
 
+    # todo:admin change member nick
     def _run(self, group_id, nick):
         with self.server.db_group.enter(group_id) as g:
             group: Group = g.value
@@ -15,4 +17,3 @@ class ChangeUserNick(BaseEvent):
                 return ReturnData(ReturnData.ERROR, 'You are not in group.')
 
             group.member_dict['nick'] = escape(nick)
-
