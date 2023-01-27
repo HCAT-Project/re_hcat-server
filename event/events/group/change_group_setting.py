@@ -14,7 +14,7 @@ class ChangeGroupSetting(BaseEvent):
                 return ReturnData(ReturnData.NULL, 'Group does not exist.')
 
             if self.user_id not in list(group.admin_list) + [group_id.owner]:
-                return ReturnData(ReturnData.ERROR, 'You are not the admin.')
+                return ReturnData(ReturnData.ERROR, 'You don\'t have permission.')
 
             error_list = list(filter(lambda x: x not in group.group_settings, setting))
 

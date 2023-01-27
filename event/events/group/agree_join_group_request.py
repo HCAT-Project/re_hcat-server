@@ -24,7 +24,7 @@ class AgreeJoinGroupRequest(BaseEvent):
             group: Group = g.value
             group_name = group.name
             if self.user_id not in list(group.admin_list) + [group.owner]:
-                return ReturnData(ReturnData.ERROR, 'You are not the admin.')
+                return ReturnData(ReturnData.ERROR, 'You don\'t have permission.')
             group.member_dict[req_user_id] = {'nick': req_user_name}
 
         with self.server.open_user(req_user_id) as u:
