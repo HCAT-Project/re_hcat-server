@@ -8,7 +8,6 @@ class AgreeJoinGroupRequest(BaseEvent):
     auth = True
 
     def _run(self, rid):
-        print(self.server.db_group.getall())
         if not self.server.db_event.exists(rid):
             return ReturnData(ReturnData.NULL, 'Event does not exist.')
 

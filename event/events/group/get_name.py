@@ -17,7 +17,6 @@ class GetName(BaseEvent):
             with self.server.open_user(self.user_id) as u:
                 user: User = u.value
                 if group_id in user.groups_dict:
-                    print(user.groups_dict[group_id]['remark'])
                     remark = user.groups_dict[group_id]['remark']
 
         return ReturnData(ReturnData.OK).add('group_name', group_name).add('remark', remark)

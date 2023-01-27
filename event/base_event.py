@@ -20,6 +20,7 @@ class BaseEvent:
 
     def run(self):
         req_data = util.request_parse(self.req)
+
         requirements = [i for i in inspect.signature(self._run).parameters]
         if util.ins(requirements, req_data):
             if len(requirements) > 0:
