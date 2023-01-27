@@ -29,7 +29,7 @@ class RemoveAdmin(BaseEvent):
             add('rid', ec.rid). \
             add('group_id', group_id). \
             add('time', time.time()). \
-            add('name', admin_id)
+            add('admin_id', admin_id)
         ec.write_in()
 
         for m in group.member_dict:
