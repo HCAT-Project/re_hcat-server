@@ -1,9 +1,9 @@
 import time
 
+from RPDB.database import RPDB
 from flask import jsonify
 
 import util
-from RPDB.database import RPDB
 from jelly import Jelly
 from util import get_random_token
 

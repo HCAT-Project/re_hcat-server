@@ -1,3 +1,5 @@
+from html import escape
+
 from containers import ReturnData, User
 from event.base_event import BaseEvent
 
@@ -10,5 +12,5 @@ class SetFriendNick(BaseEvent):
             user: User = u.value
             if friend_id not in user.friend_dict:
                 return ReturnData(ReturnData.NULL, 'The person is not your friend.')
-            user.friend_dict[friend_id]['nick'] = nick
+            user.friend_dict[friend_id]['nick'] = escape(nick)
             return ReturnData(ReturnData.OK)

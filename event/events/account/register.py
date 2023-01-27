@@ -1,6 +1,5 @@
 import re
-
-from flask import jsonify
+from html import escape
 
 from containers import ReturnData, User
 from event.base_event import BaseEvent
@@ -24,5 +23,5 @@ class Register(BaseEvent):
             return ReturnData(ReturnData.ERROR, 'Password is too short.')
 
         with self.server.open_user(user_id) as u:
-            u.value = User(user_id, password, username)
+            u.value = User(user_id, password, escape(username))
             return ReturnData(ReturnData.OK)

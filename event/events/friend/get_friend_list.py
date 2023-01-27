@@ -1,6 +1,4 @@
-import time
-
-from containers import ReturnData, User, EventContainer
+from containers import ReturnData, User
 from event.base_event import BaseEvent
 
 

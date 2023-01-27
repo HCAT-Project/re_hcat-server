@@ -1,9 +1,9 @@
+import importlib
 import traceback
 
 from flask import make_response
 
 from event.base_event import BaseEvent
-import importlib
 
 
 class RecvEvent(BaseEvent):

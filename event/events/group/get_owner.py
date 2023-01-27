@@ -12,4 +12,3 @@ class GetOwner(BaseEvent):
                 return ReturnData(ReturnData.OK).add('data', group.owner)
             else:
                 return ReturnData(ReturnData.NULL, 'You are not in the group.')
-

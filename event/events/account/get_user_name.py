@@ -21,4 +21,3 @@ class GetUserName(BaseEvent):
                 return rt
         else:
             return ReturnData(ReturnData.NULL, 'User does not exist.').jsonify()
-

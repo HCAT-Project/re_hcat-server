@@ -14,7 +14,7 @@ class Ban(BaseEvent):
                 return ReturnData(ReturnData.NULL, 'Group does not exist.')
 
             if (
-                    self.user_id not in list(group.admin_list)+[group.owner]) or (
+                    self.user_id not in list(group.admin_list) + [group.owner]) or (
                     member_id in group.admin_list and self.user_id != group.owner) or (
                     member_id == group.owner
             ):
