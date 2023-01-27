@@ -3,7 +3,7 @@ from send_group_msg import SendGroupMsg
 from send_friend_msg import SendFriendMsg
 
 
-class SendGroupMsg(BaseEvent):
+class SendMsg(BaseEvent):
     auth = True
 
     def _run(self, target_id: str, msg):
