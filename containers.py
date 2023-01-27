@@ -119,7 +119,7 @@ class Group(Jelly):
 
         for i in filter(lambda j: j != user_id, list(self.member_dict)):
             # add to member's todo_list
-            with server.open_user(user_id) as u:
+            with server.open_user(i) as u:
                 user: User = u.value
                 user.add_user_event(ec)
 
