@@ -20,16 +20,17 @@ class BaseEvent:
 
     def run(self):
         req_data = util.request_parse(self.req)
-
-        requirements = [i for i in inspect.signature(self._run).parameters]
-        if util.ins(requirements, req_data):
+        params = inspect.signature(self._run).parameters
+        requirements = [i for i in params]
+        m_requirements = list(filter(lambda x: str(params[x].default) == '<class \'inspect._empty\'>', requirements))
+        if util.ins(m_requirements, req_data):
             if len(requirements) > 0:
                 return self._run(*[req_data[k] for k in requirements])
             else:
                 return self._run()
         else:
             return ReturnData(ReturnData.ERROR,
-                              f'Parameters do not meet the requirements:[{",".join(requirements)}]').jsonify()
+                              f'Parameters do not meet the requirements:[{",".join(filter(lambda x: x not in req_data, m_requirements))}]').jsonify()
 
     def _run(self, *args):
         ...
