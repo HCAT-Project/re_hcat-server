@@ -3,6 +3,11 @@ from event.base_event import BaseEvent
 
 
 class GetGroupsList(BaseEvent):
+    """
+    Deprecated!
+
+    Please use 'get_groups'
+    """
     auth = True
 
     def _run(self):
