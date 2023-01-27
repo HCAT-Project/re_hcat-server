@@ -1,8 +1,7 @@
 import copy
-import json
 import time
-from html import escape
 
+import util
 from containers import User, ReturnData, EventContainer
 from event.base_event import BaseEvent
 
@@ -19,16 +18,10 @@ class SendFriendMsg(BaseEvent):
                 return ReturnData(ReturnData.NULL, 'The person is not your friend.')
 
         try:
-            if type(msg_) == str:
-                msg_ = json.loads(msg_)
-            if len(msg_['msg_chain']) == 0:
-                raise
-            for i in range(len(msg_['msg_chain'])):
-                if msg_['msg_chain'][i]['type'] == 'text':
-                    msg_['msg_chain'][i]['msg'] = escape(msg_['msg_chain'][i]['msg'])
-
+            msg_ = util.msg_process(msg_)
         except:
             return ReturnData(ReturnData.ERROR, 'Illegal messages.')
+
         with self.server.open_user(self.user_id) as u:
             user: User = u.value
             name = user.user_name
