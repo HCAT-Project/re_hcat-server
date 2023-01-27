@@ -1,0 +1,18 @@
+from containers import ReturnData, Group
+from event.base_event import BaseEvent
+
+
+class ChangeUserNick(BaseEvent):
+    auth = True
+
+    def _run(self, group_id, nick):
+        with self.server.db_group.enter(group_id) as g:
+            group: Group = g.value
+            if group is None:
+                return ReturnData(ReturnData.NULL, 'Group does not exist.')
+
+            if self.user_id not in group.member_dict:
+                return ReturnData(ReturnData.ERROR, 'You are not in group.')
+
+            group.member_dict['nick'] = nick
+            #todo:反注入
