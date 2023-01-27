@@ -2,7 +2,7 @@ from containers import Group, User, ReturnData
 from event.base_event import BaseEvent
 
 
-class GetGroupName(BaseEvent):
+class GetName(BaseEvent):
     auth = False
 
     def _run(self, group_id):

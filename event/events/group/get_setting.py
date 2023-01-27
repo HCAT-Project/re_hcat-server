@@ -2,7 +2,7 @@ from containers import User, ReturnData, Group
 from event.base_event import BaseEvent
 
 
-class GetGroupSetting(BaseEvent):
+class GetSetting(BaseEvent):
     auth = True
 
     def _run(self, group_id):
@@ -14,3 +14,4 @@ class GetGroupSetting(BaseEvent):
         with self.server.db_group.enter(group_id) as g:
             group: Group = g.value
             return ReturnData(ReturnData.OK).add('data', group.group_settings)
+
