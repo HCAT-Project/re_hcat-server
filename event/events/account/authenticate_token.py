@@ -6,4 +6,4 @@ class AuthenticateToken(BaseEvent):
     auth = True
 
     def _run(self):
-        return ReturnData(ReturnData.OK).jsonify()
+        return ReturnData(ReturnData.OK)

@@ -76,6 +76,7 @@ class User(Jelly):
         self.status = 'offline'
         self.friend_dict = {}
         self.groups_dict = {}
+        self.e_mail_auth = False  # todo:邮箱认证
 
     def change_password(self, password):
         self.salt = util.get_random_token(16)

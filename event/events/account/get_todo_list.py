@@ -6,10 +6,12 @@ class GetTodoList(BaseEvent):
     auth = True
 
     def _run(self):
+        # add activity
         self.server.activity_dict_lock.acquire()
         self.server.activity_dict[self.user_id] = 30
         self.server.activity_dict_lock.release()
 
+        # set status and return the user's todolist
         with self.server.open_user(self.user_id) as u:
             user: User = u.value
             user.status = 'online'
