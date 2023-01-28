@@ -20,7 +20,7 @@ class AddAdmin(BaseEvent):
                 return ReturnData(ReturnData.ERROR, 'You are not the owner.')
 
             if member_id in group.admin_list or member_id == group.owner:
-                return ReturnData(ReturnData.ERROR, 'the member is already an admin')
+                return ReturnData(ReturnData.ERROR, 'the member is already an admin.')
 
             group.admin_list.add(member_id)
         ec = EventContainer(self.server.db_event)

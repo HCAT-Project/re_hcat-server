@@ -17,6 +17,9 @@ class TransferOwnership(BaseEvent):
             if member_id not in group.member_dict:
                 return ReturnData(ReturnData.NULL, f'No member with id:"{member_id}"')
 
+            if member_id == self.user_id:
+                return ReturnData(ReturnData.ERROR, 'the member is already an owner.')
+
             group.owner = member_id
             group.admin_list.add(self.user_id)
             return ReturnData(ReturnData.OK)
