@@ -7,7 +7,7 @@ from event.base_event import BaseEvent
 class AddFriend(BaseEvent):
     auth = True
 
-    def _run(self, user_id, add_info):
+    def _run(self, user_id, add_info=''):
         if not self.server.is_user_exist(user_id):
             return ReturnData(ReturnData.NULL, 'User does not exist.').jsonify()
         with self.server.open_user(self.user_id) as u:
