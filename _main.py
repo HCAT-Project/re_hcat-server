@@ -1,3 +1,4 @@
+import json
 import sys
 import logging
 
@@ -24,10 +25,16 @@ def get_start_arg(init_list):
     return arg
 
 
+def load_config(path):
+    with open(path, 'r', encoding='utf8') as f:
+        return json.load(path)
+
+
 def main():
     from server import Server
-    arg = get_start_arg({"debug": False})
-    handler = logging.FileHandler('log.txt', encoding='utf8')
-    logging.getLogger().addHandler(handler)
+    arg = get_start_arg({'debug': False, 'config': 'config.json'})
+
+    config_path = arg['config']
+    config = load_config(config_path)
     s = Server(debug=arg['debug'])
     s.start()

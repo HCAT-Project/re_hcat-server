@@ -1,3 +1,4 @@
+import copy
 import logging
 import os.path
 import platform
@@ -19,16 +20,26 @@ from event.recv_event import RecvEvent
 class Server:
     ver = '2.0.0'
 
-    def __init__(self, address: tuple[str, int] = None, debug: bool = False, name=__name__):
+    def __init__(self, address: tuple[str, int] = None, debug: bool = False, name=__name__, config=None):
         # init Flask object
         self.app = Flask(__name__)
         CORS(self.app)
+
         # get the host and port from the address
         self.host, self.port = address if address is not None else ('0.0.0.0', 8080)
+
         # set debug mode
         self.debug = debug
+
+        # init config
+        if config is None:
+            self.config = {}
+        else:
+            self.config = copy.deepcopy(config)
+
         # get logger
         self.logger = logging.getLogger(__name__)
+
         # generate aes token
         key_path = os.path.join(os.getcwd(), f'{name}.key')
         if not os.path.exists(key_path):
@@ -104,10 +115,10 @@ class Server:
         self.logger.info('Server is already started.')
         self.logger.info(f'Server is listening to {self.host}:{self.port}.')
         self.logger.info('----Server is loaded----')
-        self.logger.info('Version: '+self.ver)
-        self.logger.info('Py ver: '+sys.version)
-        self.logger.info('SYS ver: '+platform.platform())
-        self.logger.info('Debug: '+str(self.debug))
+        self.logger.info('Version: ' + self.ver)
+        self.logger.info('Py ver: ' + sys.version)
+        self.logger.info('SYS ver: ' + platform.platform())
+        self.logger.info('Debug: ' + str(self.debug))
         self.logger.info('CWD: ' + os.getcwd())
         self.logger.info('------------------------')
         while True:
