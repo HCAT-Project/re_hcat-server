@@ -34,7 +34,10 @@ class Login(BaseEvent):
 
                 # set a @Yummy_Cookies_S
                 # XD
-                resp.set_cookie('auth_data', aes.encrypto(auth_data))
+                if self.server.config['sys']['domain'] is not None:
+                    resp.set_cookie('auth_data', aes.encrypto(auth_data), domain=self.server.config['sys']['domain'])
+                else:
+                    resp.set_cookie('auth_data', aes.encrypto(auth_data))
 
                 # return
                 return resp
