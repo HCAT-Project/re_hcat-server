@@ -8,6 +8,7 @@ from jelly import Jelly
 from util import get_random_token
 
 
+
 class EventContainer:
     def __init__(self, data_base: RPDB):
         self.data_base = data_base
