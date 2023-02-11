@@ -1,5 +1,6 @@
 import logging
 import os.path
+import platform
 import sys
 import threading
 import time
@@ -10,7 +11,7 @@ from flask_cors import CORS
 from gevent import pywsgi
 
 import util
-from containers import User
+from containers import User, EventContainer
 from event.event_manager import EventManager
 from event.recv_event import RecvEvent
 
@@ -85,7 +86,7 @@ class Server:
             time.sleep(30)
 
     def start(self):
-        self.logger.info('CWD: ' + os.getcwd())
+
         self.logger.info('Starting server...')
         self.logger.info('Creating route...')
 
@@ -101,6 +102,14 @@ class Server:
         t_cleaner.start()
         t_activity.start()
         self.logger.info('Server is already started.')
+        self.logger.info(f'Server is listening to {self.host}:{self.port}.')
+        self.logger.info('----Server is loaded----')
+        self.logger.info('Version: '+self.ver)
+        self.logger.info('Py ver: '+sys.version)
+        self.logger.info('SYS ver: '+platform.platform())
+        self.logger.info('Debug: '+str(self.debug))
+        self.logger.info('CWD: ' + os.getcwd())
+        self.logger.info('------------------------')
         while True:
             try:
                 t_server.join(0.1)

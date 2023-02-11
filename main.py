@@ -1,10 +1,11 @@
 import logging
+import sys
 
 '''if not os.path.exists(os.path.join(os.getcwd(), 'RPDB')):
     subprocess.check_call(['git', 'clone', 'https://github.com/hsn8086/RPDB.git'])'''
 from server import Server
 
-debug = True
+debug = '--debug' in sys.argv
 logging.basicConfig(level=logging.DEBUG,
                     format='[%(asctime)s][%(filename)s(%(lineno)d)][%(levelname)s] %(message)s',
                     datefmt='%b/%d/%Y-%H:%M:%S')
