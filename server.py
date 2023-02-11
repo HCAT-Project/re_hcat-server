@@ -18,7 +18,7 @@ from event.recv_event import RecvEvent
 
 
 class Server:
-    ver = '2.0.0'
+    ver = '2.0.1'
 
     def __init__(self, address: tuple[str, int] = None, debug: bool = False, name=__name__, config=None):
         # init Flask object
