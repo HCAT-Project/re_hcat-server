@@ -6,13 +6,13 @@ from flask import jsonify
 import util
 from util.jelly import Jelly
 
-from server import Server
-from util import get_random_token
 
+from util import get_random_token
 
 import time
 from typing import Any
 from flask import jsonify
+
 
 class EventContainer:
     def __init__(self, data_base: RPDB):
@@ -68,7 +68,6 @@ class ReturnData:
         return self.json_data
 
 
-
 class User(Jelly):
     def __init__(self, user_id: str, password: str, user_name: str):
         super().__init__()
@@ -102,7 +101,7 @@ class User(Jelly):
         """
         return util.salted_hash(password, self.salt, self.user_id) == self.hash_password
 
-    def is_in_group(self, server: Server, group_id: str) -> bool:
+    def is_in_group(self, server, group_id: str) -> bool:
         """
         Checks if the user is a member of a group.
         :param server: The server object.
@@ -200,4 +199,3 @@ class Group(Jelly):
         else:
             # Invalid permission level
             return False
-
