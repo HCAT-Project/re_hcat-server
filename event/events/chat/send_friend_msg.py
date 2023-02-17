@@ -41,11 +41,11 @@ class SendFriendMsg(BaseEvent):
                 add('type', 'friend_msg'). \
                 add('rid', ec.rid). \
                 add('user_id', self.user_id). \
-                add('friend_id',self.user_id).\
+                add('friend_id', self.user_id). \
                 add('friend_nick', nick). \
                 add('friend_name', name). \
                 add('msg', msg_). \
-                add('_WARNING','user_id is deprecated!!!').\
+                add('_WARNING', 'user_id is deprecated!!!'). \
                 add('time', time.time())
             ec.write_in()
             user.add_user_event(ec)

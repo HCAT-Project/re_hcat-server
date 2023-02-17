@@ -12,7 +12,7 @@ from flask_cors import CORS
 from gevent import pywsgi
 
 import util
-from containers import User, EventContainer
+from containers import User
 from event.event_manager import EventManager
 from event.recv_event import RecvEvent
 
@@ -67,6 +67,7 @@ class Server:
         # Start the WSGI server
         server = pywsgi.WSGIServer((self.host, self.port), self.app)
         server.serve_forever()
+
     def activity_list_thread(self):
         # Monitor the activity of users and mark them as offline if they are inactive
         while True:

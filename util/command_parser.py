@@ -1,4 +1,3 @@
-from ctypes import Union
 from types import FunctionType
 
 
@@ -9,7 +8,7 @@ class Command:
                  control_characters: str = '"＂“”',
                  escape_func: tuple[FunctionType, FunctionType] = None,
                  max_len: int = 256,
-                 cmd_header: str= '/'):
+                 cmd_header: str = '/'):
         """
 
         :param sep: Separator between parameters.

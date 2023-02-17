@@ -4,12 +4,10 @@ import hashlib
 import json
 import random
 from html import escape
-import pyaes
 from typing import Iterable, Any
+
+import pyaes
 from werkzeug.datastructures import ImmutableMultiDict
-from html import escape
-import copy
-import json
 
 
 class AesCrypto:

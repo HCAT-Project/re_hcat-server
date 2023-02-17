@@ -1,6 +1,5 @@
 import json
 import sys
-import logging
 
 
 def get_start_arg(init_list):

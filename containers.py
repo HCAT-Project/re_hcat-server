@@ -1,17 +1,12 @@
 import time
+from typing import Any
 
 from RPDB.database import RPDB
 from flask import jsonify
 
 import util
-from util.jelly import Jelly
-
-
 from util import get_random_token
-
-import time
-from typing import Any
-from flask import jsonify
+from util.jelly import Jelly
 
 
 class EventContainer:
