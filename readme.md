@@ -25,3 +25,10 @@ python main.py
 | Win11 x86_64          | y      |
 | Ubuntu 22.04.1 x86_64 | y      |
 | centos x86_64         | y      |
+
+# 项目结构
+点此查看:[项目结构](doc/project_structure_zh-hans.md)
+
+**不保证实时更新**
+# 开发指南
+点此查看:[开发指南](doc/dev_guide_zh-hans.md)

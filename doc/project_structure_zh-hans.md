@@ -1,0 +1,27 @@
+# 项目结构
+
+- config.json: 用于配置服务器的参数.
+- containers.py: 包含了一些数据容器,例如EventContainer,GroupContainer,UserContainer等.
+- data/: 存储服务器的数据.
+    - data/account: 存储所有的用户账号信息.
+    - data/account/slices: 存储用户账号信息的碎片.
+    - data/event: 存储所有的事件信息.
+    - data/event/slices: 存储事件信息的碎片.
+    - data/group: 存储所有的群组信息.
+- doc/dev_guide_zh-hans.md: 开发者指南文档,提供了服务器的使用方法和开发指南.
+- event/: 包含了服务器的所有事件.
+    - event/base_event.py: 所有事件的基类.
+    - event/event_manager.py: 用于管理所有事件的事件管理器.
+    - event/events/: 包含了所有的普通事件,例如账号管理事件,聊天事件,好友管理事件,群组管理事件等.
+    - event/pri_events/: 包含了所有的私有事件,例如服务端的事件.
+- jelly.py: 定义了一些基本的类,例如Jelly类.
+- log.txt: 存储服务器日志的文本文件.
+- main.py: 服务器的启动与依赖处理文件.
+- _main.py: 服务器的入口文件.
+- readme.md: 项目的README文档.
+- requirements.txt: 存储项目依赖的Python库列表.
+- server.key: 服务器的私钥.
+- server.py: 服务器的核心代码.
+- util/: 包含了一些辅助函数和工具.
+    - util/command_parser.py: 用于解析命令的命令行解析器.
+    - util/__init__.py: 初始化文件.
