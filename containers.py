@@ -10,28 +10,36 @@ from server import Server
 from util import get_random_token
 
 
+import time
+from typing import Any
+from flask import jsonify
+
 class EventContainer:
     def __init__(self, data_base: RPDB):
+        # initialize a new event container
         self.data_base = data_base
+        # generate a random 8-characters long token as a unique identifier for this event container
         while True:
             rid = get_random_token(8)
             if not self.data_base.exists(rid):
                 break
         self.rid = rid
+        # create an empty dictionary to store the event data
         self.json = {}
-        self.can_write = True
-        self. \
-            add('rid', self.rid). \
-            add('time', time.time())
+        # initialize the container with the rid and current time
+        self.add('rid', self.rid).add('time', time.time())
 
-    def __call__(self, key, value):
+    def __call__(self, key: str, value: Any) -> None:
+        # add a new key-value pair to the event data
         self.json[key] = value
 
-    def write_in(self):
+    def write_in(self) -> None:
+        # write the event data to the database
         with self.data_base.enter(self.rid) as v:
             v.value = self.json
 
-    def add(self, key, value):
+    def add(self, key: str, value: Any) -> 'EventContainer':
+        # add a new key-value pair to the event data and return the container object
         self.json[key] = value
         return self
 
@@ -41,30 +49,28 @@ class ReturnData:
     NULL = 2
     OK = 0
 
-    def __init__(self, status=0, msg=''):
-        if status == 0:
-            status_text = 'ok'
-        elif status == 1:
-            status_text = 'error'
-        elif status == 2:
-            status_text = 'null'
-        else:
-            status_text = 'error'
+    def __init__(self, status: int = OK, msg: str = ''):
+        # initialize a new ReturnData object with a status and message
+        status_text = 'ok' if status == self.OK else 'error' if status == self.ERROR else 'null'
         self.json_data = {'status': status_text, 'message': msg}
 
-    def add(self, key, value):
+    def add(self, key: str, value: Any) -> 'ReturnData':
+        # add a new key-value pair to the response data and return the object
         self.json_data[key] = value
         return self
 
     def jsonify(self):
+        # convert the response data to a JSON object
         return jsonify(self.json_data)
 
-    def __call__(self):
+    def __call__(self) -> dict:
+        # return the response data as a dictionary
         return self.json_data
 
 
+
 class User(Jelly):
-    def __init__(self, user_id, password, user_name):
+    def __init__(self, user_id: str, password: str, user_name: str):
         super().__init__()
         self.hash_password = None
         self.salt = None
@@ -78,98 +84,120 @@ class User(Jelly):
         self.status = 'offline'
         self.friend_dict = {}
         self.groups_dict = {}
-        self.e_mail_auth = False  # todo:邮箱认证
+        self.email_auth = False
 
-    def change_password(self, password):
+    def change_password(self, password: str):
         """
-        :param password:
-        :return:
+        Changes the user's password and generates a new salted hash.
+        :param password: The new password to set.
         """
         self.salt = util.get_random_token(16)
         self.hash_password = util.salted_hash(password, self.salt, self.user_id)
 
     def auth(self, password: str) -> bool:
         """
-        :param password:
-        :return:
+        Checks if the provided password matches the user's salted hash.
+        :param password: The password to check.
+        :return: True if the password is correct, False otherwise.
         """
         return util.salted_hash(password, self.salt, self.user_id) == self.hash_password
 
-    def is_in_group(self, server, group_id: str) -> bool:
+    def is_in_group(self, server: Server, group_id: str) -> bool:
         """
-        :param server: server obj
-        :param group_id:
-        :return: bool
+        Checks if the user is a member of a group.
+        :param server: The server object.
+        :param group_id: The ID of the group to check.
+        :return: True if the user is a member of the group, False otherwise.
         """
-        db = server.db_group
-        if not db.exists(group_id):
+        db_group = server.db_group
+        if not db_group.exists(group_id):
             return False
 
-        if group_id in self.groups_dict and self.user_id in db.get(group_id).member_dict:
+        group = db_group.get(group_id)
+        if group_id in self.groups_dict and self.user_id in group.member_dict:
             return True
 
         return False
 
     def add_user_event(self, ec: EventContainer):
         """
-
-        :param ec: EventContainer
-        :return:
+        Adds an event to the user's to-do list.
+        :param ec: The event to add.
         """
         self.todo_list.append(ec.json)
 
-    def auth_token(self, token) -> bool:
+    def auth_token(self, token: str) -> bool:
         """
-        :param token:
-        :return:
+        Checks if the provided token matches the user's token.
+        :param token: The token to check.
+        :return: True if the token is correct, False otherwise.
         """
         return self.token == token
 
 
 class Group(Jelly):
-    Permission_OWNER = 0
-    Permission_ADMIN = 1
+    # Define permission constants
+    PERMISSION_OWNER = 0
+    PERMISSION_ADMIN = 1
 
     def __init__(self, group_id):
+        # Call the __init__ method of the superclass
         super().__init__()
+        # Initialize the group ID
         self.id = group_id
-
-    def _var_init(self):
+        # Initialize variables for group name, member dictionary, owner ID,
+        # admin list, member settings, and ban dictionary
         self.name = ''
         self.member_dict = {}
         self.owner = ''
         self.admin_list = set()
         self.member_settings = {}
         self.ban_dict = {}
+        # Initialize group settings with default values
         '''
-        verification_method:
-        ac:administrator consent--需要管理同意
-        fr:free--自由进出
-        aw:answer question--需要回答问题
-        na:not allowed--不允许加入
+                verification_method:
+                ac:administrator consent--需要管理同意
+                fr:free--自由进出
+                aw:answer question--需要回答问题
+                na:not allowed--不允许加入
         '''
-        self.group_settings = {'verification_method': 'ac', 'question': '', 'answer': ''}
+        self.group_settings = {
+            'verification_method': 'ac',
+            'question': '',
+            'answer': ''
+        }
 
     def broadcast(self, server, user_id: str, ec: EventContainer):
         """
-        :param server: server obj
-        :param user_id:
-        :param ec:
-        :return:
+        Send an event to all group members except for the specified user.
+
+        :param server: Server object
+        :param user_id: ID of the user who triggered the event
+        :param ec: EventContainer object to broadcast
         """
-        for i in filter(lambda j: j != user_id, list(self.member_dict)):
-            # add to member's todo_list
-            with server.open_user(i) as u:
+        # Iterate over all members except for the specified user
+        for member_id in filter(lambda j: j != user_id, self.member_dict.keys()):
+            # Get the User object for the member
+            with server.open_user(member_id) as u:
                 user: User = u.value
+                # Add the event to the user's todo_list
                 user.add_user_event(ec)
 
-    def permission_match(self, user_id: str, permission=Permission_ADMIN) -> bool:
+    def permission_match(self, user_id: str, permission=PERMISSION_ADMIN) -> bool:
         """
-        :param user_id: str
-        :param permission: Group.Permission_ADMIN or Group.Permission_OWNER
-        :return: bool
+        Check if the specified user has the specified permission for the group.
+
+        :param user_id: ID of the user to check
+        :param permission: Permission level to check (default is PERMISSION_ADMIN)
+        :return: True if the user has the specified permission, False otherwise
         """
-        if permission == self.Permission_ADMIN:
+        if permission == self.PERMISSION_ADMIN:
+            # Check if the user is the group owner or in the admin list
             return user_id == self.owner or user_id in self.admin_list
-        elif permission == self.Permission_OWNER:
+        elif permission == self.PERMISSION_OWNER:
+            # Check if the user is the group owner
             return user_id == self.owner
+        else:
+            # Invalid permission level
+            return False
+
