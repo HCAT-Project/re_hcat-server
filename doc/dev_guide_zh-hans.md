@@ -133,12 +133,12 @@ User类继承自Jelly类.
 
 ## 属性
 
-- todo_list: 待办事项列表,类型为列表
-- token: 用户令牌,类型为字符串
-- status: 用户状态,类型为字符串
-- friend_dict: 用户的好友字典,类型为字典
-- groups_dict: 用户的群组字典,类型为字典
-- e_mail_auth: 是否已完成邮箱认证,类型为布尔值
+- `todo_list`: 待办事项列表,类型为列表
+- `token`: 用户令牌,类型为字符串
+- `status`: 用户状态,类型为字符串
+- `friend_dict`: 用户的好友字典,类型为字典
+- `groups_dict`: 用户的群组字典,类型为字典
+- `e_mail_auth`: 是否已完成邮箱认证,类型为布尔值
 
 ## 方法
 
@@ -148,9 +148,9 @@ User类继承自Jelly类.
 
 #### 参数
 
-- user_id: str类型,用户ID
-- password: str类型,用户密码
-- user_name: str类型,用户名
+- `user_id`: str类型,用户ID
+- `password`: str类型,用户密码
+- `user_name`: str类型,用户名
 
 ### _var_init(self)
 
@@ -162,7 +162,7 @@ User类继承自Jelly类.
 
 #### 参数
 
-- password: str类型,新密码
+- `password`: str类型,新密码
 
 ### auth(self, password)
 
@@ -182,7 +182,7 @@ User类继承自Jelly类.
 
 #### 参数
 
-- ec: EventContainer类型,待添加的事件容器.
+- `ec`: EventContainer类型,待添加的事件容器.
 
 ### auth_token(self, token)
 
@@ -190,7 +190,7 @@ User类继承自Jelly类.
 
 #### 参数
 
-- token: str类型,待验证的用户令牌
+- `token`: str类型,待验证的用户令牌
 
 #### 返回值
 
@@ -255,14 +255,14 @@ Group类继承自Jelly类.
 
 ## 属性
 
-- id: 群组ID,类型为字符串
-- name: 群组名称,类型为字符串
-- member_dict: 群组成员字典,类型为字典,key为用户ID,value为用户对象
-- owner: 群主用户名,类型为字符串
-- admin_list: 管理员用户名集合,类型为集合
-- member_settings: 成员设置字典,类型为字典,key为用户ID,value为成员设置对象
-- ban_dict: 封禁成员字典,类型为字典,key为用户ID,value为封禁对象
-- group_settings: 群组设置字典,类型为字典,包含验证方式,问题,答案等设置
+- `id`: 群组ID,类型为字符串
+- `name`: 群组名称,类型为字符串
+- `member_dict`: 群组成员字典,类型为字典,key为用户ID,value为用户对象
+- `owner`: 群主用户id,类型为字符串
+- `admin_list`: 管理员用户id集合,类型为集合
+- `member_settings`: 成员设置字典,类型为字典,key为用户ID,value为成员设置对象
+- `ban_dict`: 封禁成员字典,类型为字典,key为用户ID,value为封禁对象
+- `group_settings`: 群组设置字典,类型为字典,包含验证方式,问题,答案等设置
 
 ## 方法
 
@@ -272,7 +272,7 @@ Group类继承自Jelly类.
 
 #### 参数
 
-- group_id: str类型,群组ID
+- `group_id`: str类型,群组ID
 
 ### _var_init(self)
 
@@ -284,9 +284,9 @@ Group类继承自Jelly类.
 
 #### 参数
 
-- server: Server类型,服务器对象
-- user_id: str类型,广播事件的用户ID
-- ec: EventContainer类型,待广播的事件容器
+- `server`: Server类型,服务器对象
+- `user_id`: str类型,广播事件的用户ID
+- `ec`: EventContainer类型,待广播的事件容器
 
 ### permission_match(self, username, permission=Permission_ADMIN)
 
@@ -294,8 +294,8 @@ Group类继承自Jelly类.
 
 #### 参数
 
-- username: str类型,待验证的用户名
-- permission: int类型,期望的权限等级
+- `username`: str类型,待验证的用户名
+- `permission`: int类型,期望的权限等级
 
 #### 返回值
 
@@ -353,10 +353,10 @@ EventContainer类是一个事件容器类,用于存储**聊天应用中的各种
 
 ## 属性
 
-- data_base: RP-DataBase数据库对象,用于存储事件信息.
-- rid: str类型,表示事件的唯一标识符.
-- json: dict类型,存储事件的json数据.
-- can_write: bool类型,表示是否允许写入数据.
+- `data_base`: RP-DataBase数据库对象,用于存储事件信息.
+- `rid`: str类型,表示事件的唯一标识符.
+- `json`: dict类型,存储事件的json数据.
+- `can_write`: bool类型,表示是否允许写入数据.
 
 ## 方法
 
@@ -366,7 +366,7 @@ EventContainer类是一个事件容器类,用于存储**聊天应用中的各种
 
 #### 参数
 
-- data_base: RPDB类型,RP-DataBase数据库对象.
+- `data_base`: RPDB类型,RP-DataBase数据库对象.
 
 ### __call__(self, key, value)
 
@@ -374,8 +374,8 @@ EventContainer类是一个事件容器类,用于存储**聊天应用中的各种
 
 #### 参数
 
-- key: str类型,表示事件的键.
-- value: str类型,表示事件的值.
+- `key`: str类型,表示事件的键.
+- `value`: str类型,表示事件的值.
 
 ### write_in(self)
 
@@ -387,8 +387,8 @@ EventContainer类是一个事件容器类,用于存储**聊天应用中的各种
 
 #### 参数
 
-- key: str类型,表示事件的键.
-- value: str类型,表示事件的值.
+- `key`: str类型,表示事件的键.
+- `value`: str类型,表示事件的值.
 
 #### 返回值
 
