@@ -17,7 +17,7 @@ class EventManager:
         if 'auth_data' in req.cookies:
             auth_data = req.cookies['auth_data']
             try:
-                auth_data_decrypto = AesCrypto(self.server.key).decrypto(auth_data)
+                auth_data_decrypto = AesCrypto(self.server.key).decrypt(auth_data)
                 j = json.loads(auth_data_decrypto)
                 with self.server.open_user(j['user_id']) as v:
                     user: User = v.value
