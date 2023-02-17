@@ -67,7 +67,6 @@ class Server:
         # Start the WSGI server
         server = pywsgi.WSGIServer((self.host, self.port), self.app)
         server.serve_forever()
-
     def activity_list_thread(self):
         # Monitor the activity of users and mark them as offline if they are inactive
         while True:
@@ -128,7 +127,8 @@ class Server:
 
         try:
             # Wait for the server thread to finish
-            server_thread.join(0.1)
+            while True:
+                server_thread.join(0.1)
         except KeyboardInterrupt:
             sys.exit()
 
