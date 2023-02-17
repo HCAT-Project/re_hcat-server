@@ -26,6 +26,7 @@
     * [auth_token(self, token)](#authtoken--self-token-)
       * [参数](#参数-4)
       * [返回值](#返回值-1)
+  * [使用示例](#使用示例)
 * [群组类](#群组类)
   * [描述](#描述-2)
   * [继承](#继承-1)
@@ -39,6 +40,20 @@
     * [permission_match(self, username, permission=Permission_ADMIN)](#permissionmatch--self-username-permissionpermissionadmin-)
       * [参数](#参数-7)
       * [返回值](#返回值-2)
+  * [使用示例](#使用示例-1)
+* [EventContainer类](#eventcontainer类)
+  * [描述](#描述-3)
+  * [属性](#属性-3)
+  * [方法](#方法-3)
+    * [__init__(self, data_base: RPDB)](#init--self-database--rpdb-)
+      * [参数](#参数-8)
+    * [__call__(self, key, value)](#call--self-key-value-)
+      * [参数](#参数-9)
+    * [write_in(self)](#writein--self-)
+    * [add(self, key, value)](#add--self-key-value-)
+      * [参数](#参数-10)
+      * [返回值](#返回值-3)
+  * [使用示例:](#使用示例-)
 <!-- TOC -->
 
 # 前言
@@ -110,7 +125,7 @@ class MyEvent(BaseEvent):
 
 ## 描述
 
-User类代表一个聊天应用中的用户,包含了用户的一些基本信息、权限验证和事件管理.
+User类代表一个聊天应用中的用户,包含了用户的一些基本信息,权限验证和事件管理.
 
 ## 继承
 
@@ -159,7 +174,7 @@ User类继承自Jelly类.
 
 #### 返回值
 
-- 如果密码验证通过,返回True；否则返回False.
+- 如果密码验证通过,返回True;否则返回False.
 
 ### add_user_event(self, ec: EventContainer)
 
@@ -179,13 +194,60 @@ User类继承自Jelly类.
 
 #### 返回值
 
-- 如果令牌验证通过,返回True；否则返回False.
+- 如果令牌验证通过,返回True;否则返回False.
+
+## 使用示例
+
+假设我们在一个聊天应用中需要创建一个新用户,我们可以使用User类来创建一个新用户对象,然后对用户进行各种操作,比如修改密码,添加待办事项,添加好友,加入群组等。
+
+首先,我们需要实例化User类并传入用户ID,密码和用户名:
+
+```
+user = User('jane123', 'password123', 'Jane')
+```
+
+接着,我们可以使用add_user_event()方法向用户待办事项列表中添加事件容器:
+
+```
+ec = EventContainer(db_event)
+ec.add('type', 'message')
+ec.add('friend_id', '789012')
+ec.add('msg', 'Hello, how are you?')
+ec.add('time', time.time())
+user.add_user_event(ec)
+```
+
+然后,我们可以使用change_password()方法修改用户密码:
+
+```
+user.change_password('newpassword123')
+```
+
+接着,我们可以使用auth()方法验证用户密码是否正确:
+
+```
+if user.auth('newpassword123'):
+    print('Password is correct')
+else:
+    print('Password is incorrect')
+```
+
+然后,我们可以使用auth_token()方法验证用户令牌是否正确:
+
+```
+if user.auth_token('mytoken'):
+    print('Token is correct')
+else:
+    print('Token is incorrect')
+```
+
+这样,我们就成功地创建了一个新用户,并对其进行了各种操作,比如添加待办事项,修改密码,验证密码和令牌,添加好友等。
 
 # 群组类
 
 ## 描述
 
-Group类代表一个聊天应用中的群组,包含了群组的一些基本信息、成员管理和事件广播.
+Group类代表一个聊天应用中的群组,包含了群组的一些基本信息,成员管理和事件广播.
 
 ## 继承
 
@@ -200,7 +262,7 @@ Group类继承自Jelly类.
 - admin_list: 管理员用户名集合,类型为集合
 - member_settings: 成员设置字典,类型为字典,key为用户ID,value为成员设置对象
 - ban_dict: 封禁成员字典,类型为字典,key为用户ID,value为封禁对象
-- group_settings: 群组设置字典,类型为字典,包含验证方式、问题、答案等设置
+- group_settings: 群组设置字典,类型为字典,包含验证方式,问题,答案等设置
 
 ## 方法
 
@@ -237,7 +299,51 @@ Group类继承自Jelly类.
 
 #### 返回值
 
-- 如果用户权限符合要求,返回True；否则返回False.
+- 如果用户权限符合要求,返回True;否则返回False.
+
+## 使用示例
+
+假设我们在一个聊天应用中想要创建一个新的群组,并向其中添加成员,我们可以使用Group类来实现。
+
+首先,我们需要实例化Group类并传入群组ID:
+
+```
+group = Group('group_123')
+```
+
+接着,我们可以向群组中添加成员,如下所示:
+
+```
+group.add_member(user1)
+group.add_member(user2)
+group.add_member(user3)
+
+```
+
+然后,我们可以将群主设置为其中的某个成员,如下所示:
+
+```
+group.owner=user1.user_id
+```
+
+接着,我们可以将某个成员设置为管理员,如下所示:
+
+```
+group.admin_list.add(user2.user_id)
+```
+
+最后,我们可以向群组中广播一条消息,如下所示:
+
+```
+ec = EventContainer(db_event)
+ec.add('type', 'message')
+ec.add('sender', 'user_1')
+ec.add('msg', 'Hello, group!')
+ec.add('time', time.time())
+group.broadcast(server, user1.username, ec)
+```
+
+这样,我们就成功地创建了一个新的群组,并向其中添加了成员,设置了群主和管理员,并且向群组中广播了一条消息。
 
 # EventContainer类
 
@@ -288,17 +394,17 @@ EventContainer类是一个事件容器类,用于存储**聊天应用中的各种
 
 - 返回添加完键值对后的EventContainer实例.
 
-## 使用示例：
+## 使用示例:
 
-假设我们在一个聊天应用中想要记录用户发送的消息，我们可以使用EventContainer类来记录用户消息事件，然后将事件添加到用户的待办事项列表中。
+假设我们在一个聊天应用中想要记录用户发送的消息,我们可以使用EventContainer类来记录用户消息事件,然后将事件添加到用户的待办事项列表中。
 
-首先，我们需要实例化EventContainer类并传入RPDB类型的数据库：
+首先,我们需要实例化EventContainer类并传入RPDB类型的数据库:
 
 ```
 ec = EventContainer(db_event)
 ```
 
-接着，我们可以使用add()方法向事件容器添加各种属性：
+接着,我们可以使用add()方法向事件容器添加各种属性:
 
 ```
 ec.add('type', 'message')
@@ -307,18 +413,18 @@ ec.add('msg', 'Hello, how are you?')
 ec.add('time', time.time())
 ```
 
-其中，'f789012'是一个例子，表示以字母"f"开头的用户ID。
+其中,'f789012'是一个例子,表示以字母"f"开头的用户ID。
 
-然后，我们可以使用write_in()方法将事件容器中的属性写入数据库中：
+然后,我们可以使用write_in()方法将事件容器中的属性写入数据库中:
 
 ```
 ec.write_in()
 ```
 
-最后，我们可以将事件添加到用户的待办事项列表中：
+最后,我们可以将事件添加到用户的待办事项列表中:
 
 ```
 user.add_user_event(ec)
 ```
 
-这样，我们就成功地记录了用户发送的消息，并将其添加到了用户的待办事项列表中。
+这样,我们就成功地记录了用户发送的消息,并将其添加到了用户的待办事项列表中。
