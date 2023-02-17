@@ -23,6 +23,9 @@ class Server:
     def __init__(self, address: tuple[str, int] = None, debug: bool = False, name=__name__, config=None):
         # Initialize Flask object
         self.app = Flask(__name__)
+        if debug:
+            self.app.config['SESSION_COOKIE_SAMESITE'] = 'None'
+            self.app.config['SESSION_COOKIE_SECURE'] = False
         # Enable Cross-Origin Resource Sharing (CORS)
         CORS(self.app)
 
@@ -89,7 +92,7 @@ class Server:
     def event_cleaner_thread(self):
         # Remove expired events from the event database
         while True:
-            for i in self.db_event.keys:
+            for i in copy.deepcopy(self.db_event.keys):
                 with self.db_event.enter(i) as v:
                     if v.value and time.time() - v.value['time'] > self.event_timeout:
                         v.value = None
