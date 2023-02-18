@@ -120,6 +120,37 @@ class User(Jelly):
         """
         self.todo_list.append(ec.json)
 
+    def add_fri_msg2todos(self, server, user_id, name, nick, msg_):
+        """
+        This function adds a friend message to the event container and writes it in.
+
+        :param user_id: the user id
+        :param server: server object
+        :param name: name of the friend
+        :param nick: nickname of the friend
+        :param msg_: the message to be added
+        :return: None
+        """
+        # create a new event container with the server's database event
+        ec = EventContainer(server.db_event)
+
+        # add event attributes to the event container
+        ec.add('type', 'friend_msg')
+        ec.add('rid', ec.rid)
+        ec.add('user_id', user_id)  # deprecated
+        ec.add('friend_id', user_id)
+        ec.add('friend_nick', nick)
+        ec.add('friend_name', name)
+        ec.add('msg', msg_)
+        ec.add('_WARNING', 'user_id is deprecated!!!')
+        ec.add('time', time.time())
+
+        # write the event container to the database
+        ec.write_in()
+
+        # add the event container to the user's event list
+        self.add_user_event(ec)
+
     def auth_token(self, token: str) -> bool:
         """
         Checks if the provided token matches the user's token.
@@ -127,6 +158,12 @@ class User(Jelly):
         :return: True if the token is correct, False otherwise.
         """
         return self.token == token
+
+    def add_user_to_friend_list(self, user_id, nick):
+        if user_id not in self.friend_dict:
+            self.friend_dict[user_id] = {'nick': nick, 'time': time.time()}
+            return True
+        return False
 
 
 class Group(Jelly):
