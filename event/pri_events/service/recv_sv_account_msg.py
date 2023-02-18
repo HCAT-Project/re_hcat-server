@@ -10,7 +10,7 @@ class RecvSvAccountMsg(BaseEvent):
     auth = True
 
     def _run(self, friend_id: str, msg: str):
-        service_id = friend_id[2:]
+        service_id = friend_id[2:].rstrip(' ')
 
         try:
             class_name = ''
