@@ -3,6 +3,9 @@ import copy
 import hashlib
 import json
 import random
+import smtplib
+from email.header import Header
+from email.mime.text import MIMEText
 from html import escape
 from typing import Iterable, Any
 
@@ -136,3 +139,18 @@ def msg_process(msg: Any) -> dict:
         if msg_['msg_chain'][i]['type'] == 'text':
             msg_['msg_chain'][i]['msg'] = escape(msg_['msg_chain'][i]['msg'])
     return msg_
+
+
+def send_email(mail_host, mail_user, mail_password, receiver_address, subject='', content='', receiver='', sender=''):
+    receivers = [receiver_address]
+
+    message = MIMEText(content, 'plain', 'utf-8') if isinstance(content, str) else content
+    message['From'] = Header(sender, 'utf-8')
+    message['To'] = Header(receiver, 'utf-8')
+
+    message['Subject'] = Header(subject, 'utf-8')
+
+    smtp_obj = smtplib.SMTP()
+    smtp_obj.connect(mail_host, 25)
+    smtp_obj.login(mail_user, mail_password)
+    smtp_obj.sendmail(mail_user, receivers, message.as_string())
