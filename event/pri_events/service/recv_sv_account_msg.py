@@ -16,8 +16,9 @@ class RecvSvAccountMsg(BaseEvent):
             class_name = ''
             for i in self.path.split("/")[-1].split("_"):
                 class_name += i[0].upper() + (i[1:] if len(i) > 0 else '')
-
+            print(f'event.pri_events.service.{service_id}.recv_msg')
             event_module = importlib.import_module(f'event.pri_events.service.{service_id}.recv_msg')
+
             event_class = getattr(event_module, 'RecvMsg')
 
         except:
