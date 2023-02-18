@@ -12,6 +12,7 @@ class RecvMsg(BaseEvent):
             try:
                 print(0)
                 cmd = Command(msg)
+                print([i for i in cmd])
                 if cmd[0] == 'help':
                     user.add_fri_msg2todos(self.server, '0sAccount', 'Account_BOT', 'Account_BOT',
                                            """
