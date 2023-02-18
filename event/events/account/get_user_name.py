@@ -10,7 +10,7 @@ class GetUserName(BaseEvent):
     def _run(self, user_id: str):
         if user_id[0] in [str(i) for i in range(10)] and user_id[1] == 's':
             service_id = user_id[2:].rstrip(' ')
-            name = importlib.import_module(f'event.pri_events.service.{service_id}').name
+            name = importlib.import_module( f'event.pri_events.service.{service_id}.__init__').name
             rt = ReturnData(ReturnData.OK).add('data', name).add('nick', name)
             return rt
 
