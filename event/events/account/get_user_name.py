@@ -12,7 +12,6 @@ class GetUserName(BaseEvent):
             service_id = user_id[2:].rstrip(' ')
             name = importlib.import_module(f'event.pri_events.service.{service_id}').name
             rt = ReturnData(ReturnData.OK).add('data', name).add('nick', name)
-            return rt
 
         # get nick if logged in
         nick = None
