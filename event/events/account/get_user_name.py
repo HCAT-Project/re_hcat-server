@@ -1,3 +1,5 @@
+import importlib
+
 from containers import User, ReturnData
 from event.base_event import BaseEvent
 
@@ -6,6 +8,11 @@ class GetUserName(BaseEvent):
     auth = False
 
     def _run(self, user_id):
+        if user_id[0] in [str(i) for i in range(10)] and user_id[1] == 's':
+            service_id = user_id[2:]
+            name = importlib.import_module(f'event.pri_events.service.{service_id}').name
+            rt = ReturnData(ReturnData.OK).add('data', name).add('nick', name)
+
         # get nick if logged in
         nick = None
         if self.user_id is not None:
