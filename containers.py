@@ -141,7 +141,7 @@ class User(Jelly):
         ec.add('friend_id', user_id)
         ec.add('friend_nick', nick)
         ec.add('friend_name', name)
-        ec.add('msg', msg_)
+        ec.add('msg', {"msg_chain": [{"type": "text", "msg": msg_}]} if not isinstance(msg_, dict) else msg_)
         ec.add('_WARNING', 'user_id is deprecated!!!')
         ec.add('time', time.time())
 

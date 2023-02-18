@@ -39,7 +39,7 @@ class Login(BaseEvent):
                 else:
                     resp.set_cookie('auth_data', aes.encrypt(auth_data))
                 # check if @0sAccount in friend_list
-                user.add_user_to_friend_list('0sAccount ', 'Account_BOT')
+                user.add_user_to_friend_list('0sAccount', 'Account_BOT')
                 # return
                 return resp
             else:
