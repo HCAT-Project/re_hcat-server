@@ -20,7 +20,7 @@ except Exception as err:
 try:
     main()
 except ModuleNotFoundError as err:
-    subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'requirements.txt'])
+    subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-r', 'requirements.txt'])
     main()
 except BaseException as err:
     logging.exception(err)
