@@ -4,7 +4,6 @@ import time
 import util
 from containers import User, ReturnData, EventContainer
 from event.base_event import BaseEvent
-from event.pri_events.service.recv_sv_account_msg import RecvSvAccountMsg
 
 
 class SendFriendMsg(BaseEvent):
@@ -16,9 +15,6 @@ class SendFriendMsg(BaseEvent):
         if len(friend_id) <= 1:
             return ReturnData(ReturnData.NULL, 'The person is not your friend.')
 
-        # check if the msg is service Account
-        if friend_id[0] in [str(i) for i in range(10)] and friend_id[1] == 's':
-            return self.e_mgr.create_event(RecvSvAccountMsg, self.req, self.path)
         with self.server.open_user(self.user_id) as u:
             user: User = u.value
             if friend_id not in user.friend_dict:
