@@ -1,4 +1,5 @@
 import copy
+import importlib
 import logging
 import os.path
 import platform
@@ -10,6 +11,7 @@ from RPDB.database import RPDB
 from flask import Flask, request
 from flask_cors import CORS
 from gevent import pywsgi
+from permitronix import Permitronix
 
 import util
 from containers import User
@@ -65,6 +67,9 @@ class Server:
         self.db_account = RPDB(os.path.join(os.getcwd(), 'data', 'account'))
         self.db_event = RPDB(os.path.join(os.getcwd(), 'data', 'event'))
         self.db_group = RPDB(os.path.join(os.getcwd(), 'data', 'group'))
+        self.db_permitronix = RPDB(os.path.join(os.getcwd(), 'data', 'permitronix'))
+
+        self.permitronix = Permitronix(self.db_permitronix)
 
     def server_thread(self):
         # Start the WSGI server
@@ -98,9 +103,26 @@ class Server:
                         v.value = None
             time.sleep(30)
 
+    def load_auxiliary_events(self):
+        for name_ in os.listdir(os.path.join('event', 'auxiliary_events')):
+            name = "".join(name_.split(".")[:-1])
+            if len(name) == 0:
+                continue
+            class_name = ''
+            for i in name.split("_"):
+                class_name += i[0].upper() + ('' if len(i) < 2 else i[1:])
+
+            event_module = importlib.import_module(f'event.auxiliary_events.{name}')
+            event_class = getattr(event_module, class_name)
+            self.e_mgr.add_auxiliary_event(event_class.main_event, event_class)
+
     def start(self):
         # Log server start
         self.logger.info('Starting server...')
+
+        # Load auxiliary events
+        self.logger.info('Loading auxiliary events...')
+        self.load_auxiliary_events()
 
         # Create route for handling incoming requests
         self.logger.info('Creating route...')
