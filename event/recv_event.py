@@ -36,14 +36,20 @@ class RecvEvent(BaseEvent):
 
     def _run(self):
         try:
+            # change the str the "UpperCamelCase"
             class_name = ''
             for i in self.path.split("/")[-1].split("_"):
                 class_name += i[0].upper() + (i[1:] if len(i) > 0 else '')
 
+            # get the module
+            # > "I think it will be very slow. But, i don't want to improve it, because THIS IS PYTHON! " -- hsn
             event_module = importlib.import_module(f'event.events.{self.path.replace("/", ".")}')
+
+            # get the class of the event
             event_class = getattr(event_module, class_name)
 
         except:
+            # print the exc if under debug mode
             if self.server.debug:
                 traceback.print_exc()
             return make_response('No Found', 404)
