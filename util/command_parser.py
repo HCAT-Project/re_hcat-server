@@ -9,7 +9,7 @@
 
 @Version    : 1.0.0
 """
-#  Copyright 2023. HCAT-Project-Team
+#  Copyright 2023. hsn
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
