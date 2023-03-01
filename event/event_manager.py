@@ -17,49 +17,79 @@ class EventManager:
         self.auxiliary_events[main_event].append(event)
 
     def create_event(self, event, req, path):
-        auth_success = False
-        j = {'user_id': None}
-
         # run auxiliary events
         ae_rt = None
         cancel = False
-        if event in self.auxiliary_events:
-            for e in self.auxiliary_events[event]:
-                ae_rt_temp = self.create_event(e, req, path)
-                if ae_rt_temp is not None:
-                    if not isinstance(ae_rt_temp,tuple) or len(ae_rt_temp) == 1:
-                        if isinstance(ae_rt_temp, bool):
-                            ae_rt_temp = (ae_rt_temp, ReturnData(ReturnData.NULL, '').jsonify())
-                        else:
-                            ae_rt_temp = (False, ae_rt_temp)
 
-                    if ae_rt_temp[1] != ReturnData(ReturnData.NULL, '').jsonify():
-                        ae_rt = ae_rt_temp[1]
-                    cancel = ae_rt_temp[0] or cancel
+        # get aux event
+        for e in self.auxiliary_events.get(event, []):
 
+            # get the return value
+            ae_rt_temp = self.create_event(e, req, path)
+
+            # check if the return value is None
+            # if not None set `ae_rt` and `cancel` according to the return value
+            if ae_rt_temp is not None:
+
+                # check if the return value is single value
+                if not isinstance(ae_rt_temp, tuple) or len(ae_rt_temp) == 1:
+
+                    # set return value to NULL if the value instance is bool
+                    # else set the bool to False
+                    if isinstance(ae_rt_temp, bool):
+                        ae_rt_temp = (ae_rt_temp, ReturnData(ReturnData.NULL, '').jsonify())
+                    else:
+                        ae_rt_temp = (False, ae_rt_temp)
+
+                # set the `ae_rt` according to the return value if the return value is not NULL.
+                if ae_rt_temp[1] != ReturnData(ReturnData.NULL, '').jsonify():
+                    ae_rt = ae_rt_temp[1]
+
+                # set the cancel
+                cancel = ae_rt_temp[0] or cancel
+        # set the default value of variables
+        auth_success = False
+        auth_data_json = {'user_id': None}
+
+        # check if the 'auth_data' is in `req.cookies`
         if 'auth_data' in req.cookies:
+
+            # get auth data
             auth_data = req.cookies['auth_data']
+
             try:
+                # decrypt the auth data
                 auth_data_decrypto = AesCrypto(self.server.key).decrypt(auth_data)
-                j = json.loads(auth_data_decrypto)
-                with self.server.open_user(j['user_id']) as v:
+
+                # parse the auth data
+                auth_data_json = json.loads(auth_data_decrypto)
+
+                # auth the token
+                with self.server.open_user(auth_data_json['user_id']) as v:
                     user: User = v.value
-                    auth_success = user.auth_token(j['token'])
+                    auth_success = user.auth_token(auth_data_json['token'])
             except:
                 if event.auth:
                     return ReturnData(ReturnData.ERROR, 'Invalid token.').jsonify()
 
-        if not event.auth:
-            auth_success = True
-        if auth_success:
+        # check if the auth is successful
+        if auth_success or not event.auth:
+
+            # set the default value of `rt`
+            rt = None
+
+            # check if the event is canceled
             if not cancel:
-                e = event(self.server, req, path, self, j['user_id'])
+                # run the code of event
+                e = event(self.server, req, path, self, auth_data_json['user_id'])
                 rt = e.run()
-                if type(rt) == ReturnData:
-                    rt = rt.jsonify()
-                return rt if rt is not None else (
-                    ae_rt if ae_rt is not None else ReturnData(ReturnData.NULL, '').jsonify())
-            else:
-                return ae_rt if ae_rt is not None else ReturnData(ReturnData.NULL, '').jsonify()
+
+            # set `ae_rt` to NULL if the `ae_rt` is not existed
+            ae_rt = ae_rt if ae_rt is not None else ReturnData(ReturnData.NULL, '')
+
+            # set `rt` to `ae_rt` if the `rt` is not existed
+            rt = rt if rt is not None else ae_rt
+
+            return rt
         else:
             return ReturnData(ReturnData.ERROR, 'Invalid token.').jsonify()

@@ -14,7 +14,7 @@ from gevent import pywsgi
 from permitronix import Permitronix
 
 import util
-from containers import User
+from containers import User, ReturnData
 from event.event_manager import EventManager
 from event.recv_event import RecvEvent
 
@@ -129,7 +129,12 @@ class Server:
 
         @self.app.route('/api/<path:path>', methods=['GET', 'POST'])
         def recv(path):
-            return self.e_mgr.create_event(RecvEvent, request, path)
+            rt = self.e_mgr.create_event(RecvEvent, request, path)
+            # format return data
+            if isinstance(rt, ReturnData):
+                rt = rt.jsonify()
+
+            return rt
 
         # Start server threads
         self.logger.info('Starting server threads...')
