@@ -2,10 +2,10 @@
 # -*- coding: UTF-8 -*-
 '''
 @Project ：${PROJECT_NAME} 
-@File    ：${NAME}.py
+@File    ：${NAME}.py 
 @Date    ：${DATE} ${TIME} 
 '''
-# Copyright $originalComment.match("Copyright (\d+)", 1, "-", "$today.year")$today.year. hsn
+# Copyright $originalComment.match("Copyright (\d+)", 1, "-", "$today.year")$today.year. HCAT-Project-Team
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
