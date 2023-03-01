@@ -5,7 +5,7 @@
 
 @Author     : hsn
 
-@Date       ：2023/3/1 下午8:356:30
+@Date       ：2023/3/1 下午8:35
 
 @Version    : 1.0.0
 """
@@ -186,7 +186,11 @@ class Server:
             while True:
                 server_thread.join(0.1)
         except KeyboardInterrupt:
-            sys.exit()
+            self.logger.info('Server closed.')
+            try:
+                sys.exit()
+            except SystemExit:
+                ...
 
     def open_user(self, user_id):
         return self.db_account.enter(user_id)
