@@ -3,12 +3,12 @@
     "domain": null
   },
   "email": {
-    "email-verifier": false,
+    "enable-email-verification": false,
     "email-account": {
       "email-host": null,
       "email-user": null,
       "email-password": null,
-      "sender_name": "HCat"
+      "sender-name": "HCat"
     }
   }
 }
