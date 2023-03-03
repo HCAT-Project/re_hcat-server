@@ -29,9 +29,7 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
     bot_id = '0sAccount'
     bot_name = 'Account_BOT'
 
-    def __init__(self):
-        super().__init__()
-
+    def _reg_cmds(self):
         @self.cmd('test')
         def test(cmd):
             print(cmd)

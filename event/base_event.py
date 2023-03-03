@@ -87,6 +87,8 @@ class BaseEventOfSVACRecvMsg(BaseEvent):
             /help
             """ + '\n/'.join(self.cmds.keys()))
 
+        self._reg_cmds()
+
     def send_msg(self, msg: str):
         with self.server.open_user(self.user_id) as u:
             user: User = u.value
@@ -106,3 +108,6 @@ class BaseEventOfSVACRecvMsg(BaseEvent):
         except:
             self.send_msg('Hello, please use `/help` for help.')
         return ReturnData(ReturnData.OK)
+
+    def _reg_cmds(self):
+        ...
