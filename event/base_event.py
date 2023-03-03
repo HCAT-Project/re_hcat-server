@@ -84,7 +84,7 @@ class BaseEventOfSVACRecvMsg(BaseEvent):
 
         @cmd(head='help')
         def help_(cmd_):
-            self.send_msg(escape('Commands:\n/help' + '\n/'.join(self.cmds.keys())))
+            self.send_msg(escape('Commands:\\n/help' + '\\n/'.join(self.cmds.keys())))
 
         self._reg_cmds()
 
