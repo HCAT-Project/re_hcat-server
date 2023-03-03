@@ -24,7 +24,6 @@
 import inspect
 import json
 import logging
-from html import escape
 
 import util
 from containers import ReturnData, User
@@ -84,7 +83,7 @@ class BaseEventOfSVACRecvMsg(BaseEvent):
 
         @cmd(head='help')
         def help_(cmd_):
-            self.send_msg(escape('Commands:\\n/help' + '\\n/'.join(self.cmds.keys())))
+            self.send_msg('Commands:<br>/help' + '<br>/'.join(self.cmds.keys()))
 
         self._reg_cmds()
 
