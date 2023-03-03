@@ -177,3 +177,13 @@ def send_email(mail_host, mail_user, mail_password, receiver_address, subject=''
     smtp_obj.connect(mail_host, 25)
     smtp_obj.login(mail_user, mail_password)
     smtp_obj.sendmail(mail_user, receivers, message.as_string())
+
+
+def decorators_with_parameters(func):
+    def wrapper(*args, **kwargs):
+        def wrapper2(func_):
+            return func(func_, *args, **kwargs)
+
+        return wrapper2
+
+    return wrapper
