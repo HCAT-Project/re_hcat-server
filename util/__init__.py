@@ -25,6 +25,7 @@ import base64
 import copy
 import hashlib
 import json
+import logging
 import random
 import smtplib
 from email.header import Header
@@ -158,6 +159,7 @@ def msg_process(msg: Any) -> dict:
         msg_ = json.loads(msg_)
     if len(msg_['msg_chain']) == 0:
         raise ValueError("Message chain is empty.")
+    logging.debug(str(msg_))
     for i in range(len(msg_['msg_chain'])):
         if msg_['msg_chain'][i]['type'] == 'text':
             if len(msg_['msg_chain'][i]['msg']) == 0:
