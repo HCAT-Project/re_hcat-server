@@ -23,6 +23,7 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import inspect
 import json
+import logging
 
 import util
 from containers import ReturnData, User
@@ -105,7 +106,8 @@ class BaseEventOfSVACRecvMsg(BaseEvent):
                 return self.cmds[cmd[0]](cmd[1:])
             else:
                 self.send_msg("Sorry,i can't understand.")
-        except:
+        except BaseException as err:
+            logging.exception(err)
             self.send_msg('Hello, please use `/help` for help.')
         return ReturnData(ReturnData.OK)
 
