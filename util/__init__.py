@@ -160,6 +160,8 @@ def msg_process(msg: Any) -> dict:
         raise ValueError("Message chain is empty.")
     for i in range(len(msg_['msg_chain'])):
         if msg_['msg_chain'][i]['type'] == 'text':
+            if len(msg_['msg_chain'][i]['msg']) == 0:
+                raise ValueError("Element in message chain is empty.")
             msg_['msg_chain'][i]['msg'] = escape(msg_['msg_chain'][i]['msg'])
     return msg_
 
