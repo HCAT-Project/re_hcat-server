@@ -109,7 +109,7 @@ class EventManager:
 
             # set `ae_rt` to NULL if the `ae_rt` is not existed
             ae_rt = ae_rt if ae_rt is not None else ReturnData(ReturnData.NULL, '')
-
+            print(ae_rt, rt)
             # set `rt` to `ae_rt` if the `rt` is not existed
             rt = rt if rt is not None else ae_rt
 
