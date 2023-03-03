@@ -101,7 +101,7 @@ class BaseEventOfSVACRecvMsg(BaseEvent):
 
             if cmd[0] in self.cmds:
                 if len(cmd) >= 1:
-                    print(cmd)
+                    print(cmd, cmd[1:])
                     self.cmds[cmd[0]](cmd[1:])
                 else:
                     self.cmds[cmd[0]](cmd)
