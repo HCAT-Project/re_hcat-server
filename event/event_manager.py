@@ -66,7 +66,6 @@ class EventManager:
 
                 # set the `ae_rt` according to the return value if the return value is not NULL.
                 if ae_rt_temp[1] is not None:
-                    print('ae_rt_temp[1]:', ae_rt_temp[1], 'e:', e.__name__)
                     ae_rt = ae_rt_temp[1]
 
                 # set the cancel
@@ -107,7 +106,7 @@ class EventManager:
                 # run the code of event
                 e = event(self.server, req, path, self, auth_data_json['user_id'])
                 rt = e.run()
-            print('ae_rt:', ae_rt)
+
             # set `ae_rt` to NULL if the `ae_rt` is not existed
             ae_rt = ae_rt
 

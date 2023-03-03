@@ -167,7 +167,6 @@ class Server:
                 rt = rt.jsonify()
             elif rt is None:
                 rt = ReturnData(ReturnData.NULL, '').jsonify()
-            print('fin rt:', rt)
             return rt
 
         # Start server threads
