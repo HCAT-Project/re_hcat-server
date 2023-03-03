@@ -164,7 +164,7 @@ class Server:
             # format return data
             if isinstance(rt, ReturnData):
                 rt = rt.jsonify()
-
+            print('fin rt:', rt)
             return rt
 
         # Start server threads
