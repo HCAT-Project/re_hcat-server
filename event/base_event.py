@@ -36,7 +36,7 @@ class BaseEvent:
 
     def __init__(self, server, req, path: str, e_mgr: EventManager, user_id=None):
         self.req = req
-        self.server = server
+        self.server: 'Server' = server
         self.path = path
         self.e_mgr = e_mgr
         self.user_id = user_id

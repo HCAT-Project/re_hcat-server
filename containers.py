@@ -101,7 +101,7 @@ class User(Jelly):
         self.status = 'offline'
         self.friend_dict = {}
         self.groups_dict = {}
-        self.email_auth = False
+        self.email = ''
 
     def change_password(self, password: str):
         """

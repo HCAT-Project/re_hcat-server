@@ -93,8 +93,7 @@ class Server:
         self.db_group = RPDB(os.path.join(os.getcwd(), 'data', 'group'))
         self.db_permitronix = RPDB(os.path.join(os.getcwd(), 'data', 'permitronix'))
 
-        self.permitronix = Permitronix(self.db_permitronix)
-
+        self.permitronix: Permitronix = Permitronix(self.db_permitronix)
     def server_thread(self):
         # Start the WSGI server
         server = pywsgi.WSGIServer((self.host, self.port), self.app)
