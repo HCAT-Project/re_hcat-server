@@ -81,11 +81,8 @@ class BaseEventOfSVACRecvMsg(BaseEvent):
         self.cmd = cmd
 
         @cmd(head='help')
-        def help_(cmd):
-            self.send_msg("""
-            Commands:
-            /help
-            """ + '\n/'.join(self.cmds.keys()))
+        def help_(cmd_):
+            self.send_msg('Commands:<br>/help' + '<br>/'.join(self.cmds.keys()))
 
         self._reg_cmds()
 
@@ -102,7 +99,7 @@ class BaseEventOfSVACRecvMsg(BaseEvent):
             cmd = Command(json.loads(msg)['msg_chain'][0]['msg'])
 
             if cmd[0] in self.cmds:
-                return self.cmds[cmd[0]](cmd[1:])
+                self.cmds[cmd[0]](cmd[1:])
             else:
                 self.send_msg("Sorry,i can't understand.")
         except:
