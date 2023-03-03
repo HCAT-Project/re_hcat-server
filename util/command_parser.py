@@ -7,7 +7,7 @@
 
 @Date       ：2023/3/1 下午6:29
 
-@Version    : 1.0.0
+@Version    : 1.0.1
 """
 
 # Copyright 2023. hsn
@@ -113,7 +113,12 @@ class Command:
             return ''
 
     def __getitem__(self, item):
-        return self.cmd_list.__getitem__(item) if item <= len(self.cmd_list) else None
+        if isinstance(item, int):
+            if item <= len(self.cmd_list):
+                return self.cmd_list[item]
+            else:
+                return ''
+        return self.cmd_list.__getitem__(item)
 
     def __setitem__(self, key, value):
         return self.cmd_list.__setitem__(key, value)
