@@ -69,8 +69,8 @@ class BaseEventOfSVACRecvMsg(BaseEvent):
     bot_id = None
     bot_name = None
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args):
+        super().__init__(*args)
         self.cmds = {}
 
         @util.decorators_with_parameters
