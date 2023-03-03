@@ -131,9 +131,9 @@ class Command:
                 return self.cmd_list[item]
             else:
                 return ''
-        cmd = copy.deepcopy(self)
-        cmd.cmd_list = cmd.cmd_list[item]
-        return cmd
+        rt_cmd = copy.deepcopy(self)
+        rt_cmd.cmd_list = rt_cmd.cmd_list[item]
+        return rt_cmd
 
     def __setitem__(self, key, value):
         return self.cmd_list.__setitem__(key, value)
