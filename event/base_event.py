@@ -24,6 +24,7 @@
 import inspect
 import json
 import logging
+from html import escape
 
 import util
 from containers import ReturnData, User
@@ -82,8 +83,8 @@ class BaseEventOfSVACRecvMsg(BaseEvent):
         self.cmd = cmd
 
         @cmd(head='help')
-        def help_(cmd):
-            self.send_msg('Commands:\n/help' + '\n/'.join(self.cmds.keys()))
+        def help_(cmd_):
+            self.send_msg(escape('Commands:\n/help' + '\n/'.join(self.cmds.keys())))
 
         self._reg_cmds()
 
@@ -100,7 +101,7 @@ class BaseEventOfSVACRecvMsg(BaseEvent):
             cmd = Command(json.loads(msg)['msg_chain'][0]['msg'])
 
             if cmd[0] in self.cmds:
-                return self.cmds[cmd[0]](cmd[1:])
+                self.cmds[cmd[0]](cmd[1:])
             else:
                 self.send_msg("Sorry,i can't understand.")
         except BaseException as err:
