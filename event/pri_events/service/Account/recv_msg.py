@@ -61,6 +61,7 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
                     subject = 'HCAT Email Binding'
                     util.send_email(mail_host, mail_user, mail_pass, cmd[1], subject, content, '@' + self.user_id,
                                     sender)
+                    self.send_msg(f'Verification code has been sent to email: {cmd[1]}, please check it.')
 
             if cmd[0] == 'code':
                 if self.server.db_event.exists(cmd[1]):
