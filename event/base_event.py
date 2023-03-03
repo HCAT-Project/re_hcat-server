@@ -22,10 +22,12 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import inspect
+import json
 
 import util
-from containers import ReturnData
+from containers import ReturnData, User
 from event.event_manager import EventManager
+from util.command_parser import Command
 
 
 class BaseEvent:
@@ -61,3 +63,46 @@ class BaseEvent:
 
     def _run(self, *args):
         ...
+
+
+class BaseEventOfSVACRecvMsg(BaseEvent):
+    bot_id = None
+    bot_name = None
+
+    def __init__(self):
+        super().__init__()
+        self.cmds = {}
+
+        @util.decorators_with_parameters
+        def cmd(func, head):
+            self.cmds[head] = func
+            return func
+
+        self.cmd = cmd
+
+        @cmd(head='help')
+        def help_():
+            self.send_msg("""
+            Commands:
+            /help
+            """ + '\n/'.join(self.cmds.keys()))
+
+    def send_msg(self, msg: str):
+        with self.server.open_user(self.user_id) as u:
+            user: User = u.value
+            user.add_fri_msg2todos(self.server, self.bot_id, self.bot_name, self.bot_name,
+                                   msg)
+
+    def _run(self, msg: str):
+
+        try:
+
+            cmd = Command(json.loads(msg)['msg_chain'][0]['msg'])
+
+            if cmd[0] in self.cmds:
+                return self.cmds[cmd[0]](cmd[1:])
+            else:
+                self.send_msg("Sorry,i can't understand.")
+        except:
+            self.send_msg('Hello, please use `/help` for help.')
+        return ReturnData(ReturnData.OK)

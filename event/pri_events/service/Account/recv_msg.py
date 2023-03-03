@@ -21,34 +21,17 @@
 #  GNU Affero General Public License for more details.
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
-import json
 
-from containers import User, ReturnData
-from event.base_event import BaseEvent
-from util.command_parser import Command
+from event.base_event import BaseEventOfSVACRecvMsg
 
 
-class RecvMsg(BaseEvent):
-    auth = True
+class RecvMsg(BaseEventOfSVACRecvMsg):
+    bot_id = '0sAccount'
+    bot_name = 'Account_BOT'
 
-    def _run(self, msg: str):
-        with self.server.open_user(self.user_id) as u:
-            user: User = u.value
-            try:
+    def __init__(self):
+        super().__init__()
 
-                cmd = Command(json.loads(msg)['msg_chain'][0]['msg'])
-
-                if cmd[0] == 'help':
-                    user.add_fri_msg2todos(self.server, '0sAccount', 'Account_BOT', 'Account_BOT',
-                                           """
-                                           Commands:
-                                           /help: this msg.
-                                           """)
-                else:
-                    user.add_fri_msg2todos(self.server, '0sAccount', 'Account_BOT', 'Account_BOT',
-                                           "Sorry,i can't understand.")
-            except:
-
-                user.add_fri_msg2todos(self.server, '0sAccount', 'Account_BOT', 'Account_BOT',
-                                       'Hello, please use `/help` for help.')
-            return ReturnData(ReturnData.OK)
+        @self.cmd('test')
+        def test(cmd):
+            print(cmd)
