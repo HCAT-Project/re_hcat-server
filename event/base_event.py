@@ -69,8 +69,8 @@ class BaseEventOfSVACRecvMsg(BaseEvent):
     bot_id = None
     bot_name = None
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args):
+        super().__init__(*args)
         self.cmds = {}
 
         @util.decorators_with_parameters
@@ -86,6 +86,8 @@ class BaseEventOfSVACRecvMsg(BaseEvent):
             Commands:
             /help
             """ + '\n/'.join(self.cmds.keys()))
+
+        self._reg_cmds()
 
     def send_msg(self, msg: str):
         with self.server.open_user(self.user_id) as u:
@@ -106,3 +108,6 @@ class BaseEventOfSVACRecvMsg(BaseEvent):
         except:
             self.send_msg('Hello, please use `/help` for help.')
         return ReturnData(ReturnData.OK)
+
+    def _reg_cmds(self):
+        ...
