@@ -36,7 +36,7 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
         def email(cmd):
             if len(cmd) == 0:
                 self.send_msg('Command:<br>/email bind [email]<br>/email code [code]')
-            self.send_msg(str(cmd.cmd_list))
+
             if cmd[0] == 'bind':
                 if self.server.config['email']['enable-email-verification']:
                     table: PermissionTable = self.server.permitronix.get_permission_table(f'user_{self.user_id}')
