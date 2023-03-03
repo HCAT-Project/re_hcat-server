@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 """
-@File       ：get_permission.py
+@File       ：sv_msg.py
 
 @Author     : hsn
 
-@Date       ：2023/3/1 下午6:28
+@Date       ：2023/3/1 下午6:25
 
 @Version    : 1.0.0
 """
@@ -21,26 +21,19 @@
 #  GNU Affero General Public License for more details.
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
-from containers import Group, ReturnData
+import copy
+
 from event.base_event import BaseEvent
+from event.events.chat.send_friend_msg import SendFriendMsg
+from event.pri_events.service.recv_sv_account_msg import RecvSvAccountMsg
 
 
-class GetPermission(BaseEvent):
+class SvMsg(BaseEvent):
     auth = True
+    main_event = SendFriendMsg
 
-    def _run(self, group_id):
-        with self.server.db_group.enter(group_id) as g:
-            group: Group = g.value
-            if group is None:
-                return ReturnData(ReturnData.NULL, 'Group does not exist.')
-
-            if self.user_id in group.member_dict:
-                if self.user_id == group.owner:
-                    rt = 'owner'
-                elif self.user_id in group.admin_list:
-                    rt = 'admin'
-                else:
-                    rt = 'member'
-                return ReturnData(ReturnData.OK).add('data', rt)
-            else:
-                return ReturnData(ReturnData.ERROR, 'You are not in the group.')
+    def _run(self, friend_id, msg):
+        msg_ = copy.copy(msg)
+        # check if the msg is service Account
+        if friend_id[0] in [str(i) for i in range(10)] and friend_id[1] == 's':
+            return True, self.e_mgr.create_event(RecvSvAccountMsg, self.req, self.path)

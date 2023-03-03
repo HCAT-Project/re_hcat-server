@@ -1,6 +1,6 @@
 # 介绍
 
-re_hcat-server是[HCat](https://hcat.online)的重置版服务器,基于Python开发.本项目使用Apache-2.0 license许可证.
+re_hcat-server是[HCat](https://hcat.online)的重置版服务器,基于Python开发.本项目使用AGPLv3许可证.
 
 我们欢迎更多开发者加入我们的项目,一起构建更加完善的HCat服务器!
 

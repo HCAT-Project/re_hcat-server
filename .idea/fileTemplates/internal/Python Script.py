@@ -1,16 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
-"""
-@File       ：recv_msg.py
 
-@Author     : hsn
-
-@Date       ：2023/3/1 下午6:29
-
-@Version    : 1.0.0
-"""
-
-#  Copyright (C) 2023. HCAT-Project-Team
+#  Copyright (C) $originalComment.match("Copyright (\d+)", 1, "-", "$today.year")$today.year. HCAT-Project-Team
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU Affero General Public License as
 #  published by the Free Software Foundation, either version 3 of the
@@ -22,16 +13,8 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from event.base_event import BaseEventOfSVACRecvMsg
-
-
-class RecvMsg(BaseEventOfSVACRecvMsg):
-    bot_id = '0sAccount'
-    bot_name = 'Account_BOT'
-
-    def __init__(self):
-        super().__init__()
-
-        @self.cmd('test')
-        def test(cmd):
-            print(cmd)
+'''
+@Project ：${PROJECT_NAME} 
+@File    ：${NAME}.py 
+@Date    ：${DATE} ${TIME} 
+'''

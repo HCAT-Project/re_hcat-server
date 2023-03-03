@@ -1,5 +1,14 @@
 {
   "sys": {
     "domain": null
+  },
+  "email": {
+    "email-verifier": false,
+    "email-account": {
+      "email-host": null,
+      "email-user": null,
+      "email-password": null,
+      "sender_name": "HCat"
+    }
   }
 }

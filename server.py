@@ -1,4 +1,28 @@
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+"""
+@File       ：server.py
+
+@Author     : hsn
+
+@Date       ：2023/3/1 下午8:35
+
+@Version    : 1.0.0
+"""
+
+#  Copyright (C) 2023. HCAT-Project-Team
+#  This program is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU Affero General Public License as
+#  published by the Free Software Foundation, either version 3 of the
+#  License, or (at your option) any later version.
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU Affero General Public License for more details.
+#  You should have received a copy of the GNU Affero General Public License
+#  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import copy
+import importlib
 import logging
 import os.path
 import platform
@@ -10,15 +34,16 @@ from RPDB.database import RPDB
 from flask import Flask, request
 from flask_cors import CORS
 from gevent import pywsgi
+from permitronix import Permitronix
 
 import util
-from containers import User
+from containers import User, ReturnData
 from event.event_manager import EventManager
 from event.recv_event import RecvEvent
 
 
 class Server:
-    ver = '2.1.0'
+    ver = '2.1.1'
 
     def __init__(self, address: tuple[str, int] = None, debug: bool = False, name=__name__, config=None):
         # Initialize Flask object
@@ -26,6 +51,7 @@ class Server:
         if debug:
             self.app.config['SESSION_COOKIE_SAMESITE'] = 'None'
             self.app.config['SESSION_COOKIE_SECURE'] = False
+
         # Enable Cross-Origin Resource Sharing (CORS)
         CORS(self.app)
 
@@ -65,6 +91,9 @@ class Server:
         self.db_account = RPDB(os.path.join(os.getcwd(), 'data', 'account'))
         self.db_event = RPDB(os.path.join(os.getcwd(), 'data', 'event'))
         self.db_group = RPDB(os.path.join(os.getcwd(), 'data', 'group'))
+        self.db_permitronix = RPDB(os.path.join(os.getcwd(), 'data', 'permitronix'))
+
+        self.permitronix = Permitronix(self.db_permitronix)
 
     def server_thread(self):
         # Start the WSGI server
@@ -98,16 +127,46 @@ class Server:
                         v.value = None
             time.sleep(30)
 
+    def load_auxiliary_events(self):
+        # get all auxiliary events
+        for name_ in os.listdir(os.path.join('event', 'auxiliary_events')):
+            # get file name
+            name = "".join(name_.split(".")[:-1])
+            if len(name) == 0:
+                continue
+
+            # get class name
+            class_name = ''
+            for i in name.split("_"):
+                class_name += i[0].upper() + ('' if len(i) < 2 else i[1:])
+
+            # logout
+            self.logger.debug(f'Auxiliary event "{name}" loaded.')
+
+            # import module and add event
+            event_module = importlib.import_module(f'event.auxiliary_events.{name}')
+            event_class = getattr(event_module, class_name)
+            self.e_mgr.add_auxiliary_event(event_class.main_event, event_class)
+
     def start(self):
         # Log server start
         self.logger.info('Starting server...')
+
+        # Load auxiliary events
+        self.logger.info('Loading auxiliary events...')
+        self.load_auxiliary_events()
 
         # Create route for handling incoming requests
         self.logger.info('Creating route...')
 
         @self.app.route('/api/<path:path>', methods=['GET', 'POST'])
         def recv(path):
-            return self.e_mgr.create_event(RecvEvent, request, path)
+            rt = self.e_mgr.create_event(RecvEvent, request, path)
+            # format return data
+            if isinstance(rt, ReturnData):
+                rt = rt.jsonify()
+
+            return rt
 
         # Start server threads
         self.logger.info('Starting server threads...')
@@ -134,7 +193,11 @@ class Server:
             while True:
                 server_thread.join(0.1)
         except KeyboardInterrupt:
-            sys.exit()
+
+            try:
+                sys.exit()
+            except SystemExit:
+                self.logger.info('Server closed.')
 
     def open_user(self, user_id):
         return self.db_account.enter(user_id)
