@@ -55,14 +55,15 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
 
                     mail_host = self.server.config['email']['email-account']['email-host']
                     mail_user = self.server.config['email']['email-account']['email-user']
-                    mail_pass = self.server.config['email']['email-account']['email-pass']
+                    mail_pass = self.server.config['email']['email-account']['email-password']
                     sender = self.server.config['email']['email-account']['email-user']
                     content = f'Your verification code is: {ec.rid} \nValid in 3 minutes, please do not send to anyone.'
                     subject = 'HCAT Email Binding'
                     util.send_email(mail_host, mail_user, mail_pass, cmd[1], subject, content, '@' + self.user_id,
                                     sender)
                     self.send_msg(f'Verification code has been sent to email: {cmd[1]}, please check it.')
-
+                else:
+                    self.send_msg('Email binding is not enabled.')
             if cmd[0] == 'code':
                 if self.server.db_event.exists(cmd[1]):
                     e = self.server.db_event.get(cmd[1])
