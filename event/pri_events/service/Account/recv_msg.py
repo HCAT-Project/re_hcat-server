@@ -35,7 +35,7 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
         @self.cmd('email')
         def email(cmd):
             if len(cmd) == 0:
-                self.send_msg('Command:<br>/email bind [email]')
+                self.send_msg('Command:<br>/email bind [email]<br>/email code [code]')
             self.send_msg(str(cmd.cmd_list))
             if cmd[0] == 'bind':
                 if self.server.config['email']['enable-email-verification']:
