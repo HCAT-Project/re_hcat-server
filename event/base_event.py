@@ -39,18 +39,25 @@ class BaseEvent:
         self.user_id = user_id
 
     def run(self):
+
+        # get req_data
         req_data = util.request_parse(self.req)
+
+        # get the parameters of the function
         params = inspect.signature(self._run).parameters
         requirements = [i for i in params]
         m_requirements = list(filter(lambda x: str(params[x].default) == '<class \'inspect._empty\'>', requirements))
+
+        # check if the parameters meet the requirements
         if util.ins(m_requirements, req_data):
             if len(requirements) > 0:
                 return self._run(*[req_data[k] for k in requirements])
             else:
                 return self._run()
         else:
+            req_str = ",".join(filter(lambda x: x not in req_data, m_requirements))
             return ReturnData(ReturnData.ERROR,
-                              f'Parameters do not meet the requirements:[{",".join(filter(lambda x: x not in req_data, m_requirements))}]').jsonify()
+                              f'Parameters do not meet the requirements:[{req_str}]')
 
     def _run(self, *args):
         ...
