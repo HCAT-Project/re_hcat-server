@@ -85,7 +85,9 @@ class ReturnData:
         # return the response data as a dictionary
         return self.json_data
 
-
+    def __str__(self):
+        # return the response data as a JSON string
+        return str(self.json_data)
 class User(Jelly):
     def __init__(self, user_id: str, password: str, user_name: str):
         super().__init__()
@@ -101,7 +103,7 @@ class User(Jelly):
         self.status = 'offline'
         self.friend_dict = {}
         self.groups_dict = {}
-        self.email_auth = False
+        self.email = ''
 
     def change_password(self, password: str):
         """

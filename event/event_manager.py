@@ -60,12 +60,12 @@ class EventManager:
                     # set return value to NULL if the value instance is bool
                     # else set the bool to False
                     if isinstance(ae_rt_temp, bool):
-                        ae_rt_temp = (ae_rt_temp, ReturnData(ReturnData.NULL, '').jsonify())
+                        ae_rt_temp = (ae_rt_temp, None)
                     else:
                         ae_rt_temp = (False, ae_rt_temp)
 
                 # set the `ae_rt` according to the return value if the return value is not NULL.
-                if ae_rt_temp[1] != ReturnData(ReturnData.NULL, '').jsonify():
+                if ae_rt_temp[1] is not None:
                     ae_rt = ae_rt_temp[1]
 
                 # set the cancel
@@ -108,7 +108,7 @@ class EventManager:
                 rt = e.run()
 
             # set `ae_rt` to NULL if the `ae_rt` is not existed
-            ae_rt = ae_rt if ae_rt is not None else ReturnData(ReturnData.NULL, '')
+            ae_rt = ae_rt
 
             # set `rt` to `ae_rt` if the `rt` is not existed
             rt = rt if rt is not None else ae_rt

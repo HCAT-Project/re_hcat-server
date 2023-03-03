@@ -93,7 +93,7 @@ class Server:
         self.db_group = RPDB(os.path.join(os.getcwd(), 'data', 'group'))
         self.db_permitronix = RPDB(os.path.join(os.getcwd(), 'data', 'permitronix'))
 
-        self.permitronix = Permitronix(self.db_permitronix)
+        self.permitronix: Permitronix = Permitronix(self.db_permitronix)
 
     def server_thread(self):
         # Start the WSGI server
@@ -165,7 +165,8 @@ class Server:
             # format return data
             if isinstance(rt, ReturnData):
                 rt = rt.jsonify()
-
+            elif rt is None:
+                rt = ReturnData(ReturnData.NULL, '').jsonify()
             return rt
 
         # Start server threads

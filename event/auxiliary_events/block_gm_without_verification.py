@@ -1,14 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
-"""
-@File       ：sv_msg.py
-
-@Author     : hsn
-
-@Date       ：2023/3/1 下午6:25
-
-@Version    : 1.0.0
-"""
 
 #  Copyright (C) 2023. HCAT-Project-Team
 #  This program is free software: you can redistribute it and/or modify
@@ -22,16 +13,23 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+'''
+@Project ：re_hcat-server 
+@File    ：block_pm_without_verification.py
+@Date    ：2023/3/3 下午6:27 
+'''
+from permitronix import PermissionTable
+
+from containers import ReturnData
 from event.base_event import BaseEvent
-from event.events.chat.send_friend_msg import SendFriendMsg
-from event.pri_events.service.recv_sv_account_msg import RecvSvAccountMsg
+from event.events.chat.send_group_msg import SendGroupMsg
 
 
-class SvMsg(BaseEvent):
+class BlockGmWithoutVerification(BaseEvent):
     auth = True
-    main_event = SendFriendMsg
+    main_event = SendGroupMsg
 
     def _run(self, friend_id, msg):
-        # check if the msg is service Account
-        if friend_id[0] in [str(i) for i in range(10)] and friend_id[1] == 's':
-            return True, self.e_mgr.create_event(RecvSvAccountMsg, self.req, self.path)
+        table: PermissionTable = self.server.permitronix.get_permission_table(f'user_{self.user_id}')
+        if not table.get_permission('email'):
+            return True, ReturnData(ReturnData.ERROR, 'Please verify your email first.')
