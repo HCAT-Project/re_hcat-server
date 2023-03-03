@@ -53,7 +53,7 @@ class EventManager:
             # check if the return value is None
             # if not None set `ae_rt` and `cancel` according to the return value
             if ae_rt_temp is not None:
-
+                print(ae_rt_temp[1].json_data)
                 # check if the return value is single value
                 if not isinstance(ae_rt_temp, tuple) or len(ae_rt_temp) == 1:
 
@@ -109,7 +109,7 @@ class EventManager:
 
             # set `ae_rt` to NULL if the `ae_rt` is not existed
             ae_rt = ae_rt if ae_rt is not None else ReturnData(ReturnData.NULL, '')
-            print(ae_rt.json_data)
+
             # set `rt` to `ae_rt` if the `rt` is not existed
             rt = rt if rt is not None else ae_rt
 
