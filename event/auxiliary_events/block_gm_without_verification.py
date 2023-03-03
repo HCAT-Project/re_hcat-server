@@ -25,7 +25,7 @@ from event.base_event import BaseEvent
 from event.events.chat.send_group_msg import SendGroupMsg
 
 
-class SvMsg(BaseEvent):
+class BlockGmWithoutVerification(BaseEvent):
     auth = True
     main_event = SendGroupMsg
 
