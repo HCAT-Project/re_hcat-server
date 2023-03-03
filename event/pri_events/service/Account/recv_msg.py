@@ -20,35 +20,11 @@
 #  GNU Affero General Public License for more details.
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
-from Permitronix import PermissionTable, PermissionNode
+from permitronix import PermissionTable, PermissionNode
 
-#  Copyright (C) 2023. HCAT-Project-Team
-#  This program is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU Affero General Public License as
-#  published by the Free Software Foundation, either version 3 of the
-#  License, or (at your option) any later version.
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU Affero General Public License for more details.
-#  You should have received a copy of the GNU Affero General Public License
-#  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import util
 from containers import EventContainer, User
 from event.base_event import BaseEventOfSVACRecvMsg
-
-
-#  Copyright (C) 2023. HCAT-Project-Team
-#  This program is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU Affero General Public License as
-#  published by the Free Software Foundation, either version 3 of the
-#  License, or (at your option) any later version.
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU Affero General Public License for more details.
-#  You should have received a copy of the GNU Affero General Public License
-#  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
 class RecvMsg(BaseEventOfSVACRecvMsg):
@@ -64,7 +40,7 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
             if cmd[0] == 'bind':
                 if self.server.config['email']['enable-email-verification']:
                     table: PermissionTable = self.server.permitronix.get_permission_table(f'user_{self.user_id}')
-                    if table.get('email'):
+                    if table.get_permission('email'):
                         self.send_msg('You have already bound an email.')
                     with self.server.open_user(self.user_id) as u:
                         user: User = u.value
