@@ -94,6 +94,7 @@ class Server:
         self.db_permitronix = RPDB(os.path.join(os.getcwd(), 'data', 'permitronix'))
 
         self.permitronix: Permitronix = Permitronix(self.db_permitronix)
+
     def server_thread(self):
         # Start the WSGI server
         server = pywsgi.WSGIServer((self.host, self.port), self.app)
@@ -164,6 +165,8 @@ class Server:
             # format return data
             if isinstance(rt, ReturnData):
                 rt = rt.jsonify()
+            elif rt is None:
+                rt = ReturnData(ReturnData.NULL, '').jsonify()
             print('fin rt:', rt)
             return rt
 
