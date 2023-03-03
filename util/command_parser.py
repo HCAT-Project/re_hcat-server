@@ -113,6 +113,7 @@ class Command:
             return ''
 
     def __getitem__(self, item):
+        print(item, len(self.cmd_list), item < len(self.cmd_list), self.cmd_list)
         if isinstance(item, int):
             if item < len(self.cmd_list):
                 return self.cmd_list[item]
