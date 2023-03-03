@@ -20,7 +20,7 @@
 #  GNU Affero General Public License for more details.
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
-from Permitronix import Permitronix, PermissionTable, PermissionNode
+from Permitronix import PermissionTable, PermissionNode
 
 #  Copyright (C) 2023. HCAT-Project-Team
 #  This program is free software: you can redistribute it and/or modify
@@ -63,8 +63,6 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
 
             if cmd[0] == 'bind':
                 if self.server.config['email']['enable-email-verification']:
-                    self.server.permitronix: Permitronix
-
                     table: PermissionTable = self.server.permitronix.get_permission_table(f'user_{self.user_id}')
                     if table.get('email'):
                         self.send_msg('You have already bound an email.')
