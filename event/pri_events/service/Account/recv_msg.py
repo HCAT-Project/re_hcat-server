@@ -9,6 +9,8 @@
 
 @Version    : 1.0.1
 """
+import re
+
 #  Copyright (C) 2023. HCAT-Project-Team
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU Affero General Public License as
@@ -23,6 +25,7 @@
 from permitronix import PermissionTable, PermissionNode
 
 import util
+from util.regex import regex_email
 from containers import EventContainer, User
 from event.base_event import BaseEventOfSVACRecvMsg
 
@@ -42,6 +45,9 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
                     table: PermissionTable = self.server.permitronix.get_permission_table(f'user_{self.user_id}')
                     if table.get_permission('email'):
                         self.send_msg('You have already bound an email.')
+
+                    if re.fullmatch(regex_email, cmd[1]) is None:
+                        self.send_msg('Invalid email address.')
 
                     if self.server.db_email.exists(cmd[1]):
                         self.send_msg('This email has been bound by another user.')

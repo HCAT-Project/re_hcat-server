@@ -13,8 +13,12 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-'''
-@Project ：${PROJECT_NAME} 
-@File    ：${NAME}.py 
-@Date    ：${DATE} ${TIME} 
-'''
+"""
+@File       ：${NAME}.py
+
+@Author     : ${USER}
+
+@Date       ：${DATE} ${TIME}
+
+@Version    : 1.0.0
+"""
