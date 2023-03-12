@@ -7,7 +7,7 @@
 
 @Date       ：2023/3/1 下午6:29
 
-@Version    : 1.0.0
+@Version    : 1.0.1
 """
 #  Copyright (C) 2023. HCAT-Project-Team
 #  This program is free software: you can redistribute it and/or modify
@@ -42,6 +42,10 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
                     table: PermissionTable = self.server.permitronix.get_permission_table(f'user_{self.user_id}')
                     if table.get_permission('email'):
                         self.send_msg('You have already bound an email.')
+
+                    if self.server.db_email.exists(cmd[1]):
+                        self.send_msg('This email has been bound by another user.')
+
                     with self.server.open_user(self.user_id) as u:
                         user: User = u.value
 
@@ -74,7 +78,9 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
                     with self.server.permitronix.enter('user_' + self.user_id) as p:
                         pt: PermissionTable = p.value
                         pt.set_permission(PermissionNode('email'))
-
+                    with self.server.db_email.enter(e['email']) as v:
+                        e_mail: dict = v.value
+                        e_mail['user_id'] = self.user_id
                     self.send_msg('Email binding successful.')
                 else:
                     self.send_msg('Invalid code.')
