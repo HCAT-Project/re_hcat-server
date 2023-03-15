@@ -196,7 +196,13 @@ class Server:
             while True:
                 server_thread.join(0.1)
         except KeyboardInterrupt:
-
+            # save data and exit
+            self.logger.log('Saving data...')
+            self.db_event.close()
+            self.db_email.close()
+            self.db_group.close()
+            self.db_account.close()
+            self.db_permitronix.close()
             try:
                 sys.exit()
             except SystemExit:
