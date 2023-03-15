@@ -38,6 +38,10 @@ class GetTodoList(BaseEvent):
         with self.server.open_user(self.user_id) as u:
             user: User = u.value
             user.status = 'online'
-            rt = ReturnData(ReturnData.OK).add('data', user.todo_list)
+            rt_todo_list = []
+            for i in user.todo_list:
+                if self.server.db_event.exists(i):
+                    rt_todo_list.append(self.server.db_event.get(i))
+            rt = ReturnData(ReturnData.OK).add('data', rt_todo_list)
             user.todo_list = []
             return rt
