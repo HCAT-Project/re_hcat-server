@@ -142,7 +142,8 @@ class Server:
                 if can_del:
                     self.event_short_id_table.pop(k)
                     del_sid_count += 1
-            self.logger.info(f'Event cleaner: {del_e_count} events deleted, {del_sid_count} short IDs deleted.')
+            if del_sid_count>0 or del_e_count>0:
+                self.logger.info(f'Event cleaner: {del_e_count} events deleted, {del_sid_count} short IDs deleted.')
             time.sleep(30)
 
     def load_auxiliary_events(self):
