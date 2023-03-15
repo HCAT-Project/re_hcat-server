@@ -41,3 +41,4 @@ regex_email = r'^[\w.%+-]+@(gmail\.com|yahoo\.com|msn\.com|hotmail\.com|aol\.com
               r'|excite\.com|africaonline\.co\.zw|samara\.co\.zw|zol\.co\.zw|mweb\.co\.zw|aviso\.ci|africaonline\.co' \
               r'\.ci|afnet\.net|mti\.gov\.na|namibnet\.com|iway\.na|be-local\.com|infoclub\.com\.np)$'
 
+name_regex = r'^[a-zA-Z][a-zA-Z0-9_]{4,15}$'
