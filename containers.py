@@ -28,7 +28,6 @@ from RPDB.database import RPDB
 from flask import jsonify
 
 import util
-from util import get_random_token
 from util.jelly import Jelly
 from uuid import uuid1
 
@@ -57,6 +56,15 @@ class EventContainer:
         # add a new key-value pair to the event data and return the container object
         self.json[key] = value
         return self
+
+    def get_sid(self, table: dict) -> str:
+        # get a 4 digit random string
+        while True:
+            sid = util.get_random_token(4).lower()
+            if sid not in table:
+                break
+        table[sid] = self.rid
+        return sid
 
 
 class ReturnData:
