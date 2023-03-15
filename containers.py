@@ -38,7 +38,7 @@ class EventContainer:
         # initialize a new event container
         self.data_base = data_base
         # generate an uuid for this event container
-        self.rid = uuid1()
+        self.rid = str(uuid1())
         # create an empty dictionary to store the event data
         self.json = {}
         # initialize the container with the rid and current time
