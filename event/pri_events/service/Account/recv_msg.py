@@ -60,7 +60,7 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
                         ec.add('email', cmd[1])
                         ec.add('event_type', 'email')
                         ec.write_in()
-                        sid = ec.get_sid()
+                        sid = ec.get_sid(self.server.event_short_id_table)
                         user.add_user_event(ec)
 
                     mail_host = self.server.config['email']['email-account']['email-host']
