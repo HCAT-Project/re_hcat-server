@@ -7,7 +7,7 @@
 
 @Date       ：2023/3/1 下午8:35
 
-@Version    : 1.0.0
+@Version    : 2.1.1
 """
 
 #  Copyright (C) 2023. HCAT-Project-Team
@@ -91,6 +91,7 @@ class Server:
         self.db_account = RPDB(os.path.join(os.getcwd(), 'data', 'account'))
         self.db_event = RPDB(os.path.join(os.getcwd(), 'data', 'event'))
         self.db_group = RPDB(os.path.join(os.getcwd(), 'data', 'group'))
+        self.db_email = RPDB(os.path.join(os.getcwd(), 'data', 'email'))
         self.db_permitronix = RPDB(os.path.join(os.getcwd(), 'data', 'permitronix'))
 
         self.permitronix: Permitronix = Permitronix(self.db_permitronix)
@@ -123,7 +124,8 @@ class Server:
         while True:
             for i in copy.deepcopy(self.db_event.keys):
                 with self.db_event.enter(i) as v:
-                    if v.value and time.time() - v.value['time'] > self.event_timeout:
+                    e: dict = v.value
+                    if e and time.time() - e['time'] > self.event_timeout:
                         v.value = None
             time.sleep(30)
 
@@ -194,7 +196,13 @@ class Server:
             while True:
                 server_thread.join(0.1)
         except KeyboardInterrupt:
-
+            # save data and exit
+            self.logger.log('Saving data...')
+            self.db_event.close()
+            self.db_email.close()
+            self.db_group.close()
+            self.db_account.close()
+            self.db_permitronix.close()
             try:
                 sys.exit()
             except SystemExit:

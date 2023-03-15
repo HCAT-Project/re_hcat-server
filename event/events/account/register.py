@@ -26,6 +26,7 @@ from html import escape
 
 from containers import ReturnData, User
 from event.base_event import BaseEvent
+from util.regex import name_regex
 
 
 class Register(BaseEvent):
@@ -36,10 +37,10 @@ class Register(BaseEvent):
             return ReturnData(ReturnData.ERROR, 'ID has been registered.').jsonify()
 
         # check if user_id is legal
-        reg = r'^[a-zA-Z][a-zA-Z0-9_]{4,15}$'
-        if not re.match(reg, user_id):
+
+        if not re.match(name_regex, user_id):
             return ReturnData(ReturnData.ERROR,
-                              f'User ID does not match {reg} .').jsonify()
+                              f'User ID does not match {name_regex} .').jsonify()
 
         # check if the password is longer than 6 digits
         if len(password) < 6:

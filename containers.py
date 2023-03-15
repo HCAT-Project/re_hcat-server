@@ -88,6 +88,8 @@ class ReturnData:
     def __str__(self):
         # return the response data as a JSON string
         return str(self.json_data)
+
+
 class User(Jelly):
     def __init__(self, user_id: str, password: str, user_name: str):
         super().__init__()
@@ -143,7 +145,7 @@ class User(Jelly):
         Adds an event to the user's to-do list.
         :param ec: The event to add.
         """
-        self.todo_list.append(ec.json)
+        self.todo_list.append(ec.rid)
 
     def add_fri_msg2todos(self, server, user_id, name, nick, msg_):
         """
