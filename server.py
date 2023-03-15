@@ -136,7 +136,7 @@ class Server:
 
             for k, v in copy.deepcopy(self.event_short_id_table).items():
                 try:
-                    can_del = v not in self.db_event.keys or self.get_user_event(v)['time'] > self.short_id_timeout
+                    can_del = v not in self.db_event.keys or time.time() - self.get_user_event(v)['time'] > self.short_id_timeout
                 except:
                     can_del = True
                 if can_del:
