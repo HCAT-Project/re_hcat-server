@@ -30,18 +30,15 @@ from flask import jsonify
 import util
 from util import get_random_token
 from util.jelly import Jelly
+from uuid import uuid1
 
 
 class EventContainer:
     def __init__(self, data_base: RPDB):
         # initialize a new event container
         self.data_base = data_base
-        # generate a random 8-characters long token as a unique identifier for this event container
-        while True:
-            rid = get_random_token(8)
-            if not self.data_base.exists(rid):
-                break
-        self.rid = rid
+        # generate an uuid for this event container
+        self.rid = uuid1()
         # create an empty dictionary to store the event data
         self.json = {}
         # initialize the container with the rid and current time
