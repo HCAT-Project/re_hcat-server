@@ -1,15 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
-"""
-@File       ：recv_msg.py
-
-@Author     : hsn
-
-@Date       ：2023/3/1 下午6:29
-
-@Version    : 1.0.1
-"""
-import re
 
 #  Copyright (C) 2023. HCAT-Project-Team
 #  This program is free software: you can redistribute it and/or modify
@@ -22,6 +12,19 @@ import re
 #  GNU Affero General Public License for more details.
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+"""
+@File       ：recv_msg.py
+
+@Author     : hsn
+
+@Date       ：2023/3/1 下午6:29
+
+@Version    : 1.0.1
+"""
+import logging
+import re
+
 from permitronix import PermissionTable, PermissionNode
 
 import util
@@ -38,7 +41,7 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
         @self.cmd('email')
         def email(cmd):
             if len(cmd) == 0:
-                self.send_msg('Command:<br>/email bind [email]<br>/email code [code]')
+                self.send_msg('Command:<br>/email bind [email]<br>/email code [code]<br>/email unbind')
 
             if cmd[0] == 'bind':
                 if self.server.config['email']['enable-email-verification']:
@@ -66,6 +69,9 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
                         sid = ec.get_sid(self.server.event_sid_table)
                         user.add_user_event(ec)
 
+                    if self.server.debug:
+                        logging.getLogger('debug').debug(str(sid))
+
                     mail_host = self.server.config['email']['email-account']['email-host']
                     mail_user = self.server.config['email']['email-account']['email-user']
                     mail_pass = self.server.config['email']['email-account']['email-password']
@@ -80,7 +86,29 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
                 else:
                     self.send_msg('Email binding is not enabled.')
                 return
+            elif cmd[0] == 'unbind':
+                if self.server.config['email']['enable-email-verification']:
+                    table: PermissionTable = self.server.permitronix.get_permission_table(f'user_{self.user_id}')
+                    if not table.get_permission('email'):
+                        self.send_msg('You have not bound an email.')
+                        return
 
+                    with self.server.open_user(self.user_id) as u:
+                        user: User = u.value
+                        unbinding_email = user.email
+                        user.email = None
+
+                    with self.server.db_email.enter(unbinding_email) as v:
+                        v.value = None
+
+                    with self.server.permitronix.enter('user_' + self.user_id) as p:
+                        pt: PermissionTable = p.value
+                        pt.set_permission(PermissionNode('email', 'Default:-1'))
+
+                    self.send_msg('Email unbinding successful.')
+                else:
+                    self.send_msg('Email binding is not enabled.')
+                return
             elif cmd[0] == 'code':
                 if self.server.is_user_event_exist(cmd[1]):
                     e = self.server.get_user_event(str(cmd[1]).lower())
@@ -91,9 +119,14 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
                     with self.server.permitronix.enter('user_' + self.user_id) as p:
                         pt: PermissionTable = p.value
                         pt.set_permission(PermissionNode('email'))
+
                     with self.server.db_email.enter(e['email']) as v:
                         e_mail: dict = v.value
+                        if not isinstance(e_mail, dict):
+                            e_mail = {}
                         e_mail['user_id'] = self.user_id
+                        v.value = e_mail
+
                     self.send_msg('Email binding successful.')
                 else:
                     self.send_msg('Invalid code.')
