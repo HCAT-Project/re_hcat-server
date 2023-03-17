@@ -95,7 +95,7 @@ class Server:
         self.db_email = RPDB(os.path.join(os.getcwd(), 'data', 'email'))
         self.db_permitronix = RPDB(os.path.join(os.getcwd(), 'data', 'permitronix'))
 
-        self.event_short_id_table = {}
+        self.event_sid_table = {}
 
         self.permitronix: Permitronix = Permitronix(self.db_permitronix)
 
@@ -134,16 +134,20 @@ class Server:
                         v.value = None
                         del_e_count += 1
 
-            for k, v in copy.deepcopy(self.event_short_id_table).items():
+            for k, v in copy.deepcopy(self.event_sid_table).items():
                 try:
-                    can_del = v not in self.db_event.keys or time.time() - self.get_user_event(v)['time'] > self.short_id_timeout
+                    allow_del = v not in self.db_event.keys or time.time() - self.get_user_event(v)[
+                        'time'] > self.short_id_timeout
                 except:
-                    can_del = True
-                if can_del:
-                    self.event_short_id_table.pop(k)
+                    allow_del = True
+
+                if allow_del:
+                    self.event_sid_table.pop(k)
                     del_sid_count += 1
-            if del_sid_count>0 or del_e_count>0:
+
+            if del_sid_count > 0 or del_e_count > 0:
                 self.logger.info(f'Event cleaner: {del_e_count} events deleted, {del_sid_count} short IDs deleted.')
+
             time.sleep(30)
 
     def load_auxiliary_events(self):
@@ -234,7 +238,12 @@ class Server:
 
     def get_user_event(self, event_id: str) -> dict:
         eid = copy.copy(event_id)
-        if eid in self.event_short_id_table:
-            eid = self.event_short_id_table[eid]
+
+        if eid in self.event_sid_table:
+            eid = self.event_sid_table[eid]
+
         with self.db_event.enter(eid) as e:
             return e.value
+
+    def is_user_event_exist(self, event_id: str) -> bool:
+        return self.get_user_event(event_id) is not None
