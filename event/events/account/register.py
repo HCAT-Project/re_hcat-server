@@ -47,5 +47,15 @@ class Register(BaseEvent):
             return ReturnData(ReturnData.ERROR, 'Password is too short.')
 
         with self.server.open_user(user_id) as u:
-            u.value = User(user_id, password, escape(username))
+            user=User(user_id, password, escape(username))
+
+            u.value = user
+            user.add_fri_msg2todos(self.server, '0sAccount', 'Account_BOT', 'Account_BOT',
+                                   'Welcome to HCAT!<br>'
+                                   'The first thing you need to do is use `/email bind [email]` to '
+                                   'bind your email.<br>'
+                                   'Then you can use `/email code [code]` to verify your email.<br>'
+                                   'After that, you can use `/email unbind` to unbind your email if you want.<br>'
+                                   'Have fun!')
+
             return ReturnData(ReturnData.OK)
