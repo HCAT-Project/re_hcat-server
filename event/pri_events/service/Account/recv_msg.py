@@ -45,12 +45,15 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
                     table: PermissionTable = self.server.permitronix.get_permission_table(f'user_{self.user_id}')
                     if table.get_permission('email'):
                         self.send_msg('You have already bound an email.')
+                        return
 
                     if re.fullmatch(regex_email, cmd[1]) is None:
                         self.send_msg('Invalid email address.')
+                        return
 
                     if self.server.db_email.exists(cmd[1]):
                         self.send_msg('This email has been bound by another user.')
+                        return
 
                     with self.server.open_user(self.user_id) as u:
                         user: User = u.value
@@ -62,7 +65,7 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
                         ec.write_in()
                         sid = ec.get_sid(self.server.event_sid_table)
                         user.add_user_event(ec)
-                    self.send_msg(str(sid))
+
                     mail_host = self.server.config['email']['email-account']['email-host']
                     mail_user = self.server.config['email']['email-account']['email-user']
                     mail_pass = self.server.config['email']['email-account']['email-password']
@@ -73,9 +76,12 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
                     util.send_email(mail_host, mail_user, mail_pass, cmd[1], subject, content, '@' + self.user_id,
                                     sender)
                     self.send_msg(f'Verification code has been sent to email: {cmd[1]}, please check it.')
+
                 else:
                     self.send_msg('Email binding is not enabled.')
-            if cmd[0] == 'code':
+                return
+
+            elif cmd[0] == 'code':
                 if self.server.is_user_event_exist(cmd[1]):
                     e = self.server.get_user_event(str(cmd[1]).lower())
                     with self.server.open_user(e['user_id']) as u:
