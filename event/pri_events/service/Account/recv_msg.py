@@ -51,7 +51,8 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
                     if re.fullmatch(regex_email, cmd[1]) is None:
                         self.send_msg('Invalid email address.')
                         return
-
+                    print(self.server.db_email.keys)
+                    print(cmd[0])
                     if self.server.db_email.exists(cmd[1]):
                         self.send_msg('This email has been bound by another user.')
                         return
@@ -117,6 +118,7 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
                         if not isinstance(e_mail, dict):
                             e_mail = {}
                         e_mail['user_id'] = self.user_id
+                        print(e['email'])
 
                     self.send_msg('Email binding successful.')
                 else:
