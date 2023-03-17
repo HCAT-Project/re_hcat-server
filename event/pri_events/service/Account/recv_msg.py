@@ -52,7 +52,7 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
                         self.send_msg('Invalid email address.')
                         return
                     print(self.server.db_email.keys)
-                    print(cmd[0])
+                    print(cmd[1])
                     if self.server.db_email.exists(cmd[1]):
                         self.send_msg('This email has been bound by another user.')
                         return
@@ -118,6 +118,7 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
                         if not isinstance(e_mail, dict):
                             e_mail = {}
                         e_mail['user_id'] = self.user_id
+                        v.value = e_mail
                         print(e['email'])
 
                     self.send_msg('Email binding successful.')
