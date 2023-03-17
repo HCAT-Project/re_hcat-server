@@ -45,7 +45,7 @@ class BaseEvent:
         self.lang = None
 
     def run(self):
-        _ = self.gettext_func
+
         # get req_data
         req_data = util.request_parse(self.req)
 
@@ -66,7 +66,7 @@ class BaseEvent:
         l10n = gettext.translation("all", localedir="locale", languages=[self.lang])
         l10n.install()
         self.gettext_func = l10n.gettext
-
+        _ = self.gettext_func
         # get the parameters of the function
         params = inspect.signature(self._run).parameters
         requirements = [i for i in params]
