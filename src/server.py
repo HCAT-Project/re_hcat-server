@@ -90,11 +90,11 @@ class Server:
         self.activity_dict_lock = threading.Lock()
 
         # Initialize databases
-        self.db_account = RPDB(os.path.join(os.getcwd(), '../data', 'account'))
-        self.db_event = RPDB(os.path.join(os.getcwd(), '../data', 'src/event'))
-        self.db_group = RPDB(os.path.join(os.getcwd(), '../data', 'group'))
-        self.db_email = RPDB(os.path.join(os.getcwd(), '../data', 'email'))
-        self.db_permitronix = RPDB(os.path.join(os.getcwd(), '../data', 'permitronix'))
+        self.db_account = RPDB(os.path.join(os.getcwd(), './data', 'account'))
+        self.db_event = RPDB(os.path.join(os.getcwd(), './data', 'src/event'))
+        self.db_group = RPDB(os.path.join(os.getcwd(), './data', 'group'))
+        self.db_email = RPDB(os.path.join(os.getcwd(), './data', 'email'))
+        self.db_permitronix = RPDB(os.path.join(os.getcwd(), './data', 'permitronix'))
 
         self.event_sid_table = {}
 
