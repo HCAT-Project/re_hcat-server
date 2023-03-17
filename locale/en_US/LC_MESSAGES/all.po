@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-17 18:11+0800\n"
+"POT-Creation-Date: 2023-03-17 20:02+0800\n"
 "PO-Revision-Date: 2023-03-17 17:39+0800\n"
 "Last-Translator: hsn <hsn1919810@gmail.com>\n"
 "Language-Team: Language locale/en\n"
@@ -84,24 +84,24 @@ msgstr ""
 msgid "Server closed."
 msgstr ""
 
-#: src/event/base_event.py:71
+#: src/event/base_event.py:84
 msgid "Parameters do not meet the requirements:[{}]"
 msgstr ""
 
-#: src/event/base_event.py:95
+#: src/event/base_event.py:108
 msgid "Commands"
 msgstr ""
 
-#: src/event/base_event.py:117
+#: src/event/base_event.py:129
 msgid "Sorry,i can't understand, please use `/help` for help."
 msgstr ""
 
-#: src/event/base_event.py:120
+#: src/event/base_event.py:132
 msgid "Hello, please use `/help` for help."
 msgstr ""
 
 #: src/event/pri_events/service/Account/recv_msg.py:48
-#: src/event/pri_events/service/Account/recv_msg.py:141
+#: src/event/pri_events/service/Account/recv_msg.py:142
 msgid "Command"
 msgstr ""
 
@@ -152,11 +152,15 @@ msgstr ""
 msgid "Invalid code."
 msgstr ""
 
-#: src/event/pri_events/service/Account/recv_msg.py:154
+#: src/event/pri_events/service/Account/recv_msg.py:153
+msgid "Language set successfully."
+msgstr ""
+
+#: src/event/pri_events/service/Account/recv_msg.py:155
 msgid "Invalid language."
 msgstr ""
 
-#: src/event/pri_events/service/Account/recv_msg.py:157
+#: src/event/pri_events/service/Account/recv_msg.py:158
 msgid "Available language"
 msgstr ""
 

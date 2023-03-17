@@ -1,77 +1,76 @@
+# Language locale/meow translations for PACKAGE package.
+# Copyright (C) 2023 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# hsn <hsn1919810@gmail.com>, 2023.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-17 20:02+0800\n"
-"PO-Revision-Date: 2023-03-17 10:32+0000\n"
+"PO-Revision-Date: 2023-03-17 20:59+0800\n"
 "Last-Translator: hsn <hsn1919810@gmail.com>\n"
-"Language-Team: Chinese (China)\n"
-"Language: zh-CN\n"
+"Language-Team: Language locale/meow\n"
+"Language: locale/meow_CN/LC_MESSAGES/all\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"\n"
-"X-Loco-Source-Locale: zh_HK\n"
-"X-Loco-Parser: loco_parse_po\n"
-"X-Generator: Loco https://localise.biz/\n"
 
 #: src/server.py:150
-#, fuzzy
 msgid "Event cleaner: {} events deleted, {} short IDs deleted."
-msgstr "事件清理器: {} 个事件被删除, {} 短 ID  被删除."
+msgstr "保洁喵: 清理了{}个过期鱼干和{}个鱼罐头喵~"
 
 #: src/server.py:171
 msgid "Auxiliary event \"{}\" loaded."
-msgstr "辅助事件 \"{}\" 已加载."
+msgstr "机器猫:\"{}\"启动成功!"
 
 #: src/server.py:180
 msgid "Starting server..."
-msgstr "正在启动服务器..."
+msgstr "喵星准备进入恒纪元..."
 
 #: src/server.py:183
 msgid "Loading auxiliary events..."
-msgstr "正在加载辅助事件..."
+msgstr "正在开启机器猫们..."
 
 #: src/server.py:187
 msgid "Creating route..."
-msgstr "正在创建路由..."
+msgstr "正在给猫猫们立路牌..."
 
 #: src/server.py:200
 msgid "Starting server threads..."
-msgstr "正在启动服务器线程..."
+msgstr "正在启动喵星电网..."
 
 #: src/server.py:209
 msgid "Server started."
-msgstr "服务器已启动."
+msgstr "喵星成功进入恒纪元!"
 
 #: src/server.py:210
 msgid "Server listening on {}:{}."
-msgstr "服务器正在监听 {}:{}."
+msgstr "喵星在{}:{}开放了关口."
 
 #: src/server.py:211
 msgid "----Server information----"
-msgstr "---------服务器信息---------"
+msgstr "----------喵星信息----------"
 
 #: src/server.py:212
 msgid "Version: {}"
-msgstr "版本: {}"
+msgstr "喵星纪元"
 
 #: src/server.py:213
 msgid "Python version: {}"
-msgstr "Python 版本: {}"
+msgstr "喵星球的类型: {}"
 
 #: src/server.py:214
 msgid "System version: {}"
-msgstr "系统版本: {}"
+msgstr "喵星系恒星类型: {}"
 
 #: src/server.py:215
 msgid "Debug mode: {}"
-msgstr "调试模式: {}"
+msgstr "检查毛发: {}"
 
 #: src/server.py:216
 msgid "Current working directory: {}"
-msgstr "工作目录: {}"
+msgstr "喵星所在地: {}"
 
 #: src/server.py:217
 msgid "--------------------------"
@@ -79,117 +78,116 @@ msgstr "--------------------------"
 
 #: src/server.py:225
 msgid "Saving data..."
-msgstr "正在保存数据..."
+msgstr "正在保存猫猫们的猫粮哦,稍微等等吧~"
 
 #: src/server.py:234
 msgid "Server closed."
-msgstr "服务器已关闭."
+msgstr "喵星安全的进入了乱纪元."
 
 #: src/event/base_event.py:84
 msgid "Parameters do not meet the requirements:[{}]"
-msgstr "缺少参数:[{}]"
+msgstr "你的请求信似乎不符合喵星的格式哦,加上[{}]再试试吧喵~"
 
 #: src/event/base_event.py:108
 msgid "Commands"
-msgstr "命令"
+msgstr "Cmiaods"
 
 #: src/event/base_event.py:129
 msgid "Sorry,i can't understand, please use `/help` for help."
-msgstr "抱歉，我不明白你的意思，请使用 `/help` 获取帮助。"
+msgstr "喵?本喵不是很明白你说的,你可以用`/help`查看本喵能听懂的话哦."
 
 #: src/event/base_event.py:132
 msgid "Hello, please use `/help` for help."
-msgstr "你好，请使用 `/help` 获取帮助。"
+msgstr "喵?请用`/help`获取帮助哦~"
 
 #: src/event/pri_events/service/Account/recv_msg.py:48
 #: src/event/pri_events/service/Account/recv_msg.py:142
-#, fuzzy
 msgid "Command"
-msgstr "命令"
+msgstr "Cmiaod"
 
 #: src/event/pri_events/service/Account/recv_msg.py:54
 msgid "You have already bound an email."
-msgstr "你已经绑定了一个邮箱了."
+msgstr "喵星已经有你的信箱记录了哦!"
 
 #: src/event/pri_events/service/Account/recv_msg.py:58
 msgid "Invalid email address."
-msgstr "无效的邮箱地址."
+msgstr "喵星似乎不支持这种类型的邮箱呢."
 
 #: src/event/pri_events/service/Account/recv_msg.py:62
 msgid "This email has been bound by another user."
-msgstr "此邮箱已被他人绑定."
+msgstr "这个信箱是别的猫猫的哦!"
 
 #: src/event/pri_events/service/Account/recv_msg.py:83
 msgid ""
 "Your verification code is: {} \n"
 "Valid in 3 minutes, please do not send to anyone."
 msgstr ""
-"你的验证码是: {}\n"
-"三分钟内有效,不要发给任何人."
+"你的喵罐头名字是: {}\n"
+"保质期是三喵分,不要告诉任何猫猫!"
 
 #: src/event/pri_events/service/Account/recv_msg.py:85
 msgid "HCAT Email Binding"
-msgstr "HCAT 邮箱绑定"
+msgstr "喵星信箱记录"
 
 #: src/event/pri_events/service/Account/recv_msg.py:88
 msgid "Verification code has been sent to email: {}, please check it."
-msgstr "验证码已经发送到邮箱: {},请检查你的邮箱."
+msgstr "鱼罐头发到你的信箱里啦,快去拿吧!"
 
 #: src/event/pri_events/service/Account/recv_msg.py:91
 #: src/event/pri_events/service/Account/recv_msg.py:114
 msgid "Email binding is not enabled."
-msgstr "服务器未放邮箱绑定."
+msgstr "此喵星不支持信箱哦~"
 
 #: src/event/pri_events/service/Account/recv_msg.py:97
 msgid "You have not bound an email."
-msgstr "你还没有绑定邮箱."
+msgstr "你还没有设置信箱喵~"
 
 #: src/event/pri_events/service/Account/recv_msg.py:112
 msgid "Email unbinding successful."
-msgstr "邮箱解绑成功."
+msgstr "信箱记录删除成功喵~"
 
 #: src/event/pri_events/service/Account/recv_msg.py:134
 msgid "Email binding successful."
-msgstr "邮箱绑定成功."
+msgstr "喵星记录下你的信箱啦!"
 
 #: src/event/pri_events/service/Account/recv_msg.py:136
 msgid "Invalid code."
-msgstr "验证码无效."
+msgstr "负责记录邮箱的哆啦A梦说没见过这个鱼罐头哦~"
 
 #: src/event/pri_events/service/Account/recv_msg.py:153
 msgid "Language set successfully."
-msgstr ""
+msgstr "喵语切换成功啦!"
 
 #: src/event/pri_events/service/Account/recv_msg.py:155
 msgid "Invalid language."
-msgstr "无效的语言."
+msgstr "喵星似乎没有这种喵语呢."
 
 #: src/event/pri_events/service/Account/recv_msg.py:158
 msgid "Available language"
-msgstr "可用的语言"
+msgstr "可用的喵语"
 
 #: src/event/events/account/get_user_name.py:59
 #: src/event/events/account/status.py:36 src/event/events/account/login.py:39
 #: src/event/events/friend/add_friend.py:36
 msgid "User does not exist."
-msgstr "用户不存在."
+msgstr "此喵不存在"
 
 #: src/event/events/account/change_password.py:35
 #: src/event/events/account/register.py:48
 msgid "Password is too short."
-msgstr "密码过短."
+msgstr "口令不能那么短啦."
 
 #: src/event/events/account/register.py:38
 msgid "ID has been registered."
-msgstr "此ID已被注册."
+msgstr "此名牌已经被拿走啦,换一个吧."
 
 #: src/event/events/account/register.py:44
 msgid "User ID does not match {} ."
-msgstr "用户ID不符合 {}."
+msgstr "名牌必须符合:{}才会被喵星认可哦~"
 
 #: src/event/events/account/register.py:54 src/event/events/account/login.py:66
 msgid "Account_BOT"
-msgstr "账户管理_BOT"
+msgstr "管理帐号的哆啦A梦"
 
 #: src/event/events/account/register.py:55
 msgid ""
@@ -198,13 +196,14 @@ msgid ""
 "verify your email.<br>After that, you can use `/email unbind` to unbind your "
 "email if you want.<br>Have fun!"
 msgstr ""
-"欢迎来到HCAT!<br>你需要做的第一件事是使用`/email bind [你的邮箱]`命令绑定你的"
-"邮箱.<br>而后你需要用`/email code [验证码]`命令验证你的邮箱.<br>当然,你可以随"
-"时使用`/email unbind`解绑你的邮箱.<br>祝好运!"
+"喵?是新猫猫?<br>欢迎来到喵星!!!<br>每个来喵星的猫猫都必!须!要!记录信箱地址哦~<br>你可以对本喵说`/email bind [信箱地址]"
+"`,本喵会让负责记录的哆啦A梦把鱼罐头送过去的.<br>当你拿到鱼罐头后,可以对本喵说`/email code [喵罐头名字]`,"
+"本喵会帮你转告给负责记录的哆啦A梦的喵~<br>当然啦,你也可以随时对本喵说`/email unbind`,本喵会让负责记录的哆啦A梦帮你划掉记录的."
+"<br>祝你在喵星玩的愉快,喵~"
 
 #: src/event/events/account/login.py:70
 msgid "Incorrect user ID or password."
-msgstr "用户ID或密码错误."
+msgstr "名牌或者口令有问题哦,再试试吧."
 
 #: src/event/events/chat/send_group_msg.py:41
 #: src/event/events/group/change_remark.py:36
@@ -215,120 +214,122 @@ msgstr "用户ID或密码错误."
 #: src/event/events/group/get_admins.py:38
 #: src/event/events/group/get_permission.py:47
 msgid "You are not in the group."
-msgstr "你还不在此群组内."
+msgstr "你还不在喵窝中哦~"
 
 #: src/event/events/chat/send_group_msg.py:47
 #: src/event/events/chat/send_friend_msg.py:50
 msgid "Illegal messages."
-msgstr "非法的消息."
+msgstr "喵星似乎不说这种喵语哦~"
 
 #: src/event/events/chat/send_group_msg.py:55
 msgid "You have been banned by admin."
-msgstr "你已被管理禁言."
+msgstr "大猫猫似乎不太想听你的发言..."
 
 #: src/event/events/chat/send_friend_msg.py:40
 #: src/event/events/chat/send_friend_msg.py:45
 #: src/event/events/friend/set_friend_nick.py:38
 #: src/event/events/friend/delete_friend.py:38
 msgid "The person is not your friend."
-msgstr "此人已经是你的好友了."
+msgstr "此喵早就是你朋友啦."
 
 #: src/event/events/group/transfer_ownership.py:36
 #: src/event/events/group/kick.py:40
 #: src/event/events/group/change_group_setting.py:38
-#: src/event/events/group/get_name.py:34 src/event/events/group/add_admin.py:38
+#: src/event/events/group/get_name.py:34
+#: src/event/events/group/add_admin.py:38
 #: src/event/events/group/change_user_nick.py:43
-#: src/event/events/group/get_members.py:36 src/event/events/group/rename.py:36
-#: src/event/events/group/ban.py:38 src/event/events/group/leave.py:36
+#: src/event/events/group/get_members.py:36
+#: src/event/events/group/rename.py:36 src/event/events/group/ban.py:38
+#: src/event/events/group/leave.py:36
 #: src/event/events/group/remove_admin.py:38
 #: src/event/events/group/get_verification_method.py:34
 #: src/event/events/group/get_permission.py:36
 msgid "Group does not exist."
-msgstr "群组不存在."
+msgstr "这里没有猫窝哦~"
 
 #: src/event/events/group/transfer_ownership.py:39
 #: src/event/events/group/kick.py:43 src/event/events/group/add_admin.py:44
 #: src/event/events/group/remove_admin.py:44
 msgid "You are not the owner."
-msgstr "你并不是所有者."
+msgstr "喵窝主人似乎不是你哦."
 
 #: src/event/events/group/transfer_ownership.py:42
 #: src/event/events/group/kick.py:46 src/event/events/group/add_admin.py:41
 msgid "No member with id:\"{}\""
-msgstr "不存在ID为:\"{}\"的成员"
+msgstr "似乎找不到名牌为\"{}\"的猫猫哦..."
 
 #: src/event/events/group/transfer_ownership.py:45
 msgid "the member is already an owner."
-msgstr "此成员已经是所有者了."
+msgstr "此喵是喵窝主人!"
 
 #: src/event/events/group/join_group.py:55
 msgid "You're already in the group."
-msgstr "你已经在此群组中了."
+msgstr "你已经在喵窝里啦."
 
 #: src/event/events/group/join_group.py:76
 msgid "Wrong answer."
-msgstr "答案错误."
+msgstr "喵窝的口令似乎不是这个呢."
 
 #: src/event/events/group/join_group.py:85
 msgid "This group don't allow anyone join."
-msgstr "此群组不允许任何人加入"
+msgstr "此喵窝不再允许任何猫猫加入了呢."
 
 #: src/event/events/group/join_group.py:93
 msgid "Awaiting administrator review."
-msgstr "等待管理员审核."
+msgstr "等待喵窝主人同意喵~"
 
 #: src/event/events/group/kick.py:38
 msgid "Can't kick yourself out."
-msgstr "不能将自己踢出."
+msgstr "自己是踢不到自己的啦,笨."
 
 #: src/event/events/group/change_group_setting.py:41
 #: src/event/events/group/change_user_nick.py:40
 #: src/event/events/group/rename.py:39 src/event/events/group/ban.py:45
 #: src/event/events/group/agree_join_group_request.py:51
 msgid "You don't have permission."
-msgstr "权限不足."
+msgstr "你似乎还没有能力喵."
 
 #: src/event/events/group/change_group_setting.py:45
 msgid "Illegal setting."
-msgstr "非法的设置."
+msgstr "喵窝似乎不接受这种规定哦~"
 
 #: src/event/events/group/change_group_setting.py:50
 msgid "key:\"{}\" does not exist"
-msgstr "键:\"{}\"不存在"
+msgstr "\"{}\"?没有这种罐头吧?"
 
 #: src/event/events/group/add_admin.py:47
 msgid "the member is already an admin."
-msgstr "此成员已经是管理员了."
+msgstr "喵早就是大猫猫了喵!"
 
 #: src/event/events/group/ban.py:50
 msgid "Wrong data type."
-msgstr "数据类型错误."
+msgstr "形状都错了吧.."
 
 #: src/event/events/group/leave.py:42
 msgid "You are the group owner, you can not leave the group."
-msgstr "你不能离开此群,因为你是群组所有者."
+msgstr "喵窝不能缺少喵窝主人!"
 
 #: src/event/events/group/remove_admin.py:41
 msgid "No admin with id:\"{}\""
-msgstr "不存在ID为:\"{}\"的管理员"
+msgstr "似乎找不到名牌为\"{}\"的大猫猫哦..."
 
 #: src/event/events/group/remove_admin.py:47
 msgid "You can't make the group owner the admin."
-msgstr "群组所有者不能成为管理员."
+msgstr "喵窝主人是不能成为大猫猫的啦."
 
 #: src/event/events/group/agree_join_group_request.py:36
 msgid "Event does not exist."
-msgstr "事件不存在."
+msgstr "鱼干不存在哦~"
 
 #: src/event/events/friend/add_friend.py:40
 #: src/event/events/friend/agree_friend_require.py:52
 msgid "You are already friends with each other."
-msgstr "你们已经是好友了."
+msgstr "笨,你和那只猫猫已经是好友了."
 
 #: src/event/events/friend/agree_friend_require.py:39
 msgid "This event does not exist."
-msgstr "此事件不存在."
+msgstr "根本没有这种鱼干啦."
 
 #: src/event/events/friend/agree_friend_require.py:43
 msgid "The person did not send you a friend request."
-msgstr "此人未向你发送好友申请."
+msgstr "此喵还没有给你发交友申请呢..."
