@@ -38,7 +38,7 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
         @self.cmd('email')
         def email(cmd):
             if len(cmd) == 0:
-                self.send_msg('Command:<br>/email bind [email]<br>/email code [code]')
+                self.send_msg('Command:<br>/email bind [email]<br>/email code [code]<br>/email unbind')
 
             if cmd[0] == 'bind':
                 if self.server.config['email']['enable-email-verification']:
@@ -80,7 +80,25 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
                 else:
                     self.send_msg('Email binding is not enabled.')
                 return
+            elif cmd[0] == 'unbind':
+                if self.server.config['email']['enable-email-verification']:
+                    table: PermissionTable = self.server.permitronix.get_permission_table(f'user_{self.user_id}')
+                    if not table.get_permission('email'):
+                        self.send_msg('You have not bound an email.')
+                        return
 
+                    with self.server.open_user(self.user_id) as u:
+                        user: User = u.value
+                        user.email = None
+
+                    with self.server.permitronix.enter('user_' + self.user_id) as p:
+                        pt: PermissionTable = p.value
+                        pt.set_permission(PermissionNode('email', 'Default:-1'))
+
+                    self.send_msg('Email unbinding successful.')
+                else:
+                    self.send_msg('Email binding is not enabled.')
+                return
             elif cmd[0] == 'code':
                 if self.server.is_user_event_exist(cmd[1]):
                     e = self.server.get_user_event(str(cmd[1]).lower())
