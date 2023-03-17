@@ -44,7 +44,7 @@ from src.util.i18n import gettext_func as _
 
 
 class Server:
-    ver = '2.1.1'
+    ver = '2.2.0'
 
     def __init__(self, address: tuple[str, int] = None, debug: bool = False, name=__name__, config=None):
         # Initialize Flask object
