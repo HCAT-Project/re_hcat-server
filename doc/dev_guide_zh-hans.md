@@ -108,7 +108,7 @@
 代码示例:
 
 ```python
-from event.base_event import BaseEvent
+from src.event.base_event import BaseEvent
 
 
 class MyEvent(BaseEvent):

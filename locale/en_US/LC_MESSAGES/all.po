@@ -1,0 +1,323 @@
+# Language locale/en translations for PACKAGE package.
+# Copyright (C) 2023 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# hsn <hsn1919810@gmail.com>, 2023.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-03-17 18:11+0800\n"
+"PO-Revision-Date: 2023-03-17 17:39+0800\n"
+"Last-Translator: hsn <hsn1919810@gmail.com>\n"
+"Language-Team: Language locale/en\n"
+"Language: locale/en_US/LC_MESSAGES/all\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ASCII\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/server.py:150
+msgid "Event cleaner: {} events deleted, {} short IDs deleted."
+msgstr ""
+
+#: src/server.py:171
+msgid "Auxiliary event \"{}\" loaded."
+msgstr ""
+
+#: src/server.py:180
+msgid "Starting server..."
+msgstr ""
+
+#: src/server.py:183
+msgid "Loading auxiliary events..."
+msgstr ""
+
+#: src/server.py:187
+msgid "Creating route..."
+msgstr ""
+
+#: src/server.py:200
+msgid "Starting server threads..."
+msgstr ""
+
+#: src/server.py:209
+msgid "Server started."
+msgstr ""
+
+#: src/server.py:210
+msgid "Server listening on {}:{}."
+msgstr ""
+
+#: src/server.py:211
+msgid "----Server information----"
+msgstr ""
+
+#: src/server.py:212
+msgid "Version: {}"
+msgstr ""
+
+#: src/server.py:213
+msgid "Python version: {}"
+msgstr ""
+
+#: src/server.py:214
+msgid "System version: {}"
+msgstr ""
+
+#: src/server.py:215
+msgid "Debug mode: {}"
+msgstr ""
+
+#: src/server.py:216
+msgid "Current working directory: {}"
+msgstr ""
+
+#: src/server.py:217
+msgid "--------------------------"
+msgstr ""
+
+#: src/server.py:225
+msgid "Saving data..."
+msgstr ""
+
+#: src/server.py:234
+msgid "Server closed."
+msgstr ""
+
+#: src/event/base_event.py:71
+msgid "Parameters do not meet the requirements:[{}]"
+msgstr ""
+
+#: src/event/base_event.py:95
+msgid "Commands"
+msgstr ""
+
+#: src/event/base_event.py:117
+msgid "Sorry,i can't understand, please use `/help` for help."
+msgstr ""
+
+#: src/event/base_event.py:120
+msgid "Hello, please use `/help` for help."
+msgstr ""
+
+#: src/event/pri_events/service/Account/recv_msg.py:48
+#: src/event/pri_events/service/Account/recv_msg.py:141
+msgid "Command"
+msgstr ""
+
+#: src/event/pri_events/service/Account/recv_msg.py:54
+msgid "You have already bound an email."
+msgstr ""
+
+#: src/event/pri_events/service/Account/recv_msg.py:58
+msgid "Invalid email address."
+msgstr ""
+
+#: src/event/pri_events/service/Account/recv_msg.py:62
+msgid "This email has been bound by another user."
+msgstr ""
+
+#: src/event/pri_events/service/Account/recv_msg.py:83
+msgid ""
+"Your verification code is: {} \n"
+"Valid in 3 minutes, please do not send to anyone."
+msgstr ""
+
+#: src/event/pri_events/service/Account/recv_msg.py:85
+msgid "HCAT Email Binding"
+msgstr ""
+
+#: src/event/pri_events/service/Account/recv_msg.py:88
+msgid "Verification code has been sent to email: {}, please check it."
+msgstr ""
+
+#: src/event/pri_events/service/Account/recv_msg.py:91
+#: src/event/pri_events/service/Account/recv_msg.py:114
+msgid "Email binding is not enabled."
+msgstr ""
+
+#: src/event/pri_events/service/Account/recv_msg.py:97
+msgid "You have not bound an email."
+msgstr ""
+
+#: src/event/pri_events/service/Account/recv_msg.py:112
+msgid "Email unbinding successful."
+msgstr ""
+
+#: src/event/pri_events/service/Account/recv_msg.py:134
+msgid "Email binding successful."
+msgstr ""
+
+#: src/event/pri_events/service/Account/recv_msg.py:136
+msgid "Invalid code."
+msgstr ""
+
+#: src/event/pri_events/service/Account/recv_msg.py:154
+msgid "Invalid language."
+msgstr ""
+
+#: src/event/pri_events/service/Account/recv_msg.py:157
+msgid "Available language"
+msgstr ""
+
+#: src/event/events/account/get_user_name.py:59
+#: src/event/events/account/status.py:36 src/event/events/account/login.py:39
+#: src/event/events/friend/add_friend.py:36
+msgid "User does not exist."
+msgstr ""
+
+#: src/event/events/account/change_password.py:35
+#: src/event/events/account/register.py:48
+msgid "Password is too short."
+msgstr ""
+
+#: src/event/events/account/register.py:38
+msgid "ID has been registered."
+msgstr ""
+
+#: src/event/events/account/register.py:44
+msgid "User ID does not match {} ."
+msgstr ""
+
+#: src/event/events/account/register.py:54 src/event/events/account/login.py:66
+msgid "Account_BOT"
+msgstr ""
+
+#: src/event/events/account/register.py:55
+msgid ""
+"Welcome to HCAT!<br>The first thing you need to do is use `/email bind "
+"[email]` to bind your email.<br>Then you can use `/email code [code]` to "
+"verify your email.<br>After that, you can use `/email unbind` to unbind your "
+"email if you want.<br>Have fun!"
+msgstr ""
+
+#: src/event/events/account/login.py:70
+msgid "Incorrect user ID or password."
+msgstr ""
+
+#: src/event/events/chat/send_group_msg.py:41
+#: src/event/events/group/change_remark.py:36
+#: src/event/events/group/change_user_nick.py:46
+#: src/event/events/group/get_members.py:49
+#: src/event/events/group/get_setting.py:36 src/event/events/group/leave.py:39
+#: src/event/events/group/get_owner.py:38
+#: src/event/events/group/get_admins.py:38
+#: src/event/events/group/get_permission.py:47
+msgid "You are not in the group."
+msgstr ""
+
+#: src/event/events/chat/send_group_msg.py:47
+#: src/event/events/chat/send_friend_msg.py:50
+msgid "Illegal messages."
+msgstr ""
+
+#: src/event/events/chat/send_group_msg.py:55
+msgid "You have been banned by admin."
+msgstr ""
+
+#: src/event/events/chat/send_friend_msg.py:40
+#: src/event/events/chat/send_friend_msg.py:45
+#: src/event/events/friend/set_friend_nick.py:38
+#: src/event/events/friend/delete_friend.py:38
+msgid "The person is not your friend."
+msgstr ""
+
+#: src/event/events/group/transfer_ownership.py:36
+#: src/event/events/group/kick.py:40
+#: src/event/events/group/change_group_setting.py:38
+#: src/event/events/group/get_name.py:34 src/event/events/group/add_admin.py:38
+#: src/event/events/group/change_user_nick.py:43
+#: src/event/events/group/get_members.py:36 src/event/events/group/rename.py:36
+#: src/event/events/group/ban.py:38 src/event/events/group/leave.py:36
+#: src/event/events/group/remove_admin.py:38
+#: src/event/events/group/get_verification_method.py:34
+#: src/event/events/group/get_permission.py:36
+msgid "Group does not exist."
+msgstr ""
+
+#: src/event/events/group/transfer_ownership.py:39
+#: src/event/events/group/kick.py:43 src/event/events/group/add_admin.py:44
+#: src/event/events/group/remove_admin.py:44
+msgid "You are not the owner."
+msgstr ""
+
+#: src/event/events/group/transfer_ownership.py:42
+#: src/event/events/group/kick.py:46 src/event/events/group/add_admin.py:41
+msgid "No member with id:\"{}\""
+msgstr ""
+
+#: src/event/events/group/transfer_ownership.py:45
+msgid "the member is already an owner."
+msgstr ""
+
+#: src/event/events/group/join_group.py:55
+msgid "You're already in the group."
+msgstr ""
+
+#: src/event/events/group/join_group.py:76
+msgid "Wrong answer."
+msgstr ""
+
+#: src/event/events/group/join_group.py:85
+msgid "This group don't allow anyone join."
+msgstr ""
+
+#: src/event/events/group/join_group.py:93
+msgid "Awaiting administrator review."
+msgstr ""
+
+#: src/event/events/group/kick.py:38
+msgid "Can't kick yourself out."
+msgstr ""
+
+#: src/event/events/group/change_group_setting.py:41
+#: src/event/events/group/change_user_nick.py:40
+#: src/event/events/group/rename.py:39 src/event/events/group/ban.py:45
+#: src/event/events/group/agree_join_group_request.py:51
+msgid "You don't have permission."
+msgstr ""
+
+#: src/event/events/group/change_group_setting.py:45
+msgid "Illegal setting."
+msgstr ""
+
+#: src/event/events/group/change_group_setting.py:50
+msgid "key:\"{}\" does not exist"
+msgstr ""
+
+#: src/event/events/group/add_admin.py:47
+msgid "the member is already an admin."
+msgstr ""
+
+#: src/event/events/group/ban.py:50
+msgid "Wrong data type."
+msgstr ""
+
+#: src/event/events/group/leave.py:42
+msgid "You are the group owner, you can not leave the group."
+msgstr ""
+
+#: src/event/events/group/remove_admin.py:41
+msgid "No admin with id:\"{}\""
+msgstr ""
+
+#: src/event/events/group/remove_admin.py:47
+msgid "You can't make the group owner the admin."
+msgstr ""
+
+#: src/event/events/group/agree_join_group_request.py:36
+msgid "Event does not exist."
+msgstr ""
+
+#: src/event/events/friend/add_friend.py:40
+#: src/event/events/friend/agree_friend_require.py:52
+msgid "You are already friends with each other."
+msgstr ""
+
+#: src/event/events/friend/agree_friend_require.py:39
+msgid "This event does not exist."
+msgstr ""
+
+#: src/event/events/friend/agree_friend_require.py:43
+msgid "The person did not send you a friend request."
+msgstr ""

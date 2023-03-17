@@ -26,44 +26,48 @@ import logging
 import os.path
 import subprocess
 import sys
+from src.util.i18n import gettext_func as _
 
-# check debug mode
-debug = '--debug' in sys.argv
+if __name__ == '__main__':
+    # check debug mode
+    debug = '--debug' in sys.argv
 
-# set logger
-logging.basicConfig(level=logging.DEBUG if debug else logging.INFO,
-                    format='[%(asctime)s][%(filename)s(%(lineno)d)][%(levelname)s] %(message)s',
-                    datefmt='%b/%d/%Y-%H:%M:%S')
+    # set logger
+    logging.basicConfig(level=logging.DEBUG if debug else logging.INFO,
+                        format='[%(asctime)s][%(filename)s(%(lineno)d)][%(levelname)s] %(message)s',
+                        datefmt='%b/%d/%Y-%H:%M:%S')
 
-# create logs folder
-if not os.path.exists('logs'):
-    os.mkdir('logs')
+    # create logs folder
+    if not os.path.exists('logs'):
+        os.mkdir('logs')
 
-# format the time
-now = datetime.datetime.now()
-formatted_time = now.strftime("%m-%d-%Y_%H:%M:%S")
+    # format the time
+    now = datetime.datetime.now()
+    formatted_time = now.strftime("%m-%d-%Y_%H:%M:%S")
 
-# add file handler
-handler = logging.FileHandler(
-    os.path.join('logs', f'log_{formatted_time}_{int(now.now().timestamp() % 1 * 10 ** 6)}.txt'), encoding='utf8')
-logging.getLogger().addHandler(handler)
+    # add file handler
+    handler = logging.FileHandler(
+        os.path.join('logs', f'log_{formatted_time}_{int(now.now().timestamp() % 1 * 10 ** 6)}.txt'), encoding='utf8')
+    logging.getLogger().addHandler(handler)
 
-# try to run thr `main` func
-try:
-    from _main import main
-    main()
-except ModuleNotFoundError as err:
+    # try to run thr `main` func
+    try:
+        from src.main import main
 
-    # install the requirements when `main` func throw 'ModuleNotFoundError'
-    subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-r', 'requirements.txt'])
+        main()
+    except ModuleNotFoundError as err:
 
-    # retry
-    from _main import main
-    main()
+        # install the requirements when `main` func throw 'ModuleNotFoundError'
+        subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-r', 'requirements.txt'])
 
-except BaseException as err:
+        # retry
+        from src.main import main
 
-    # log the unknown error
-    logging.critical('The function "main" could not be loaded, please check if the file is complete.')
-    logging.exception(err)
-    sys.exit()
+        main()
+
+    except BaseException as err:
+
+        # log the unknown error
+        logging.critical(_('The function "main" could not be loaded, please check if the file is complete.'))
+        logging.exception(err)
+        sys.exit()
