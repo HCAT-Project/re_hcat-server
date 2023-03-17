@@ -85,9 +85,13 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
                     with self.server.permitronix.enter('user_' + self.user_id) as p:
                         pt: PermissionTable = p.value
                         pt.set_permission(PermissionNode('email'))
+
                     with self.server.db_email.enter(e['email']) as v:
                         e_mail: dict = v.value
+                        if not isinstance(e_mail, dict):
+                            e_mail = {}
                         e_mail['user_id'] = self.user_id
+
                     self.send_msg('Email binding successful.')
                 else:
                     self.send_msg('Invalid code.')
