@@ -62,7 +62,7 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
                         ec.write_in()
                         sid = ec.get_sid(self.server.event_sid_table)
                         user.add_user_event(ec)
-
+                    print(sid)
                     mail_host = self.server.config['email']['email-account']['email-host']
                     mail_user = self.server.config['email']['email-account']['email-user']
                     mail_pass = self.server.config['email']['email-account']['email-password']
@@ -76,6 +76,8 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
                 else:
                     self.send_msg('Email binding is not enabled.')
             if cmd[0] == 'code':
+                print(self.server.event_sid_table)
+                print(cmd[1])
                 if self.server.is_user_exist(cmd[1]):
                     e = self.server.get_user_event(str(cmd[1]).lower())
                     with self.server.open_user(e['user_id']) as u:
