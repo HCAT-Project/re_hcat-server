@@ -9,6 +9,7 @@
 
 @Version    : 1.0.1
 """
+import logging
 import re
 
 #  Copyright (C) 2023. HCAT-Project-Team
@@ -65,7 +66,8 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
                         ec.write_in()
                         sid = ec.get_sid(self.server.event_sid_table)
                         user.add_user_event(ec)
-
+                    if self.server.debug:
+                        logging.getLogger('debug').debug(str(sid))
                     mail_host = self.server.config['email']['email-account']['email-host']
                     mail_user = self.server.config['email']['email-account']['email-user']
                     mail_pass = self.server.config['email']['email-account']['email-password']
