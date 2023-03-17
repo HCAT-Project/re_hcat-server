@@ -53,7 +53,9 @@ class BaseEvent:
         if self.user_id is not None:
             with self.server.open_user(self.user_id) as u:
                 user: User = u.value
-                self.lang = user.language
+                print(self.user_id, user is not None)
+                if user is not None:
+                    self.lang = user.language
 
         if 'lang' in req_data and self.lang is None:
             if req_data['lang'] in os.listdir('locale'):
