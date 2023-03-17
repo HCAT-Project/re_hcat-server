@@ -53,7 +53,6 @@ class BaseEvent:
         if self.user_id is not None:
             with self.server.open_user(self.user_id) as u:
                 user: User = u.value
-                print(self.user_id, user is not None)
                 if user is not None:
                     self.lang = user.language
 
