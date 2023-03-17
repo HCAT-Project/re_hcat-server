@@ -146,10 +146,9 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
                         user: User = u.value
                         user.language = cmd[1]
                     self.lang = cmd[1]
-                    l10n = gettext.translation("all", localedir="locale", languages=[self.lang])
+                    l10n = gettext.translation("all", localedir="locale", languages=[cmd[1]])
                     l10n.install()
-                    gettext_func = l10n.gettext
-                    self.send_msg(gettext_func('Language set successfully.'))
+                    self.send_msg(l10n.gettext('Language set successfully.'))
                 else:
                     self.send_msg(_('Invalid language.'))
                 return
