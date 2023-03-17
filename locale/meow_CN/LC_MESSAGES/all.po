@@ -54,7 +54,7 @@ msgstr "----------喵星信息----------"
 
 #: src/server.py:212
 msgid "Version: {}"
-msgstr "喵星纪元"
+msgstr "喵星纪元: {}"
 
 #: src/server.py:213
 msgid "Python version: {}"
