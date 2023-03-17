@@ -51,8 +51,7 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
                     if re.fullmatch(regex_email, cmd[1]) is None:
                         self.send_msg('Invalid email address.')
                         return
-                    print(self.server.db_email.keys)
-                    print(cmd[1])
+
                     if self.server.db_email.exists(cmd[1]):
                         self.send_msg('This email has been bound by another user.')
                         return
@@ -67,8 +66,10 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
                         ec.write_in()
                         sid = ec.get_sid(self.server.event_sid_table)
                         user.add_user_event(ec)
+
                     if self.server.debug:
                         logging.getLogger('debug').debug(str(sid))
+
                     mail_host = self.server.config['email']['email-account']['email-host']
                     mail_user = self.server.config['email']['email-account']['email-user']
                     mail_pass = self.server.config['email']['email-account']['email-password']
@@ -92,7 +93,11 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
 
                     with self.server.open_user(self.user_id) as u:
                         user: User = u.value
+                        unbinding_email = user.email
                         user.email = None
+
+                    with self.server.db_email.enter(unbinding_email) as v:
+                        v.value = None
 
                     with self.server.permitronix.enter('user_' + self.user_id) as p:
                         pt: PermissionTable = p.value
@@ -119,7 +124,6 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
                             e_mail = {}
                         e_mail['user_id'] = self.user_id
                         v.value = e_mail
-                        print(e['email'])
 
                     self.send_msg('Email binding successful.')
                 else:
