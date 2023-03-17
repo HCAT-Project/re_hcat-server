@@ -82,6 +82,7 @@ class Server:
 
         # Set timeout
         self.event_timeout = 604_800  # 1 week
+        self.short_id_timeout = 300  # 5 minutes
 
         # Keep track of active users
         self.activity_dict = {}
@@ -93,6 +94,8 @@ class Server:
         self.db_group = RPDB(os.path.join(os.getcwd(), 'data', 'group'))
         self.db_email = RPDB(os.path.join(os.getcwd(), 'data', 'email'))
         self.db_permitronix = RPDB(os.path.join(os.getcwd(), 'data', 'permitronix'))
+
+        self.event_sid_table = {}
 
         self.permitronix: Permitronix = Permitronix(self.db_permitronix)
 
@@ -122,11 +125,29 @@ class Server:
     def event_cleaner_thread(self):
         # Remove expired events from the event database
         while True:
+            del_e_count = 0
+            del_sid_count = 0
             for i in copy.deepcopy(self.db_event.keys):
                 with self.db_event.enter(i) as v:
                     e: dict = v.value
                     if e and time.time() - e['time'] > self.event_timeout:
                         v.value = None
+                        del_e_count += 1
+
+            for k, v in copy.deepcopy(self.event_sid_table).items():
+                try:
+                    allow_del = v not in self.db_event.keys or time.time() - self.get_user_event(v)[
+                        'time'] > self.short_id_timeout
+                except:
+                    allow_del = True
+
+                if allow_del:
+                    self.event_sid_table.pop(k)
+                    del_sid_count += 1
+
+            if del_sid_count > 0 or del_e_count > 0:
+                self.logger.info(f'Event cleaner: {del_e_count} events deleted, {del_sid_count} short IDs deleted.')
+
             time.sleep(30)
 
     def load_auxiliary_events(self):
@@ -197,7 +218,7 @@ class Server:
                 server_thread.join(0.1)
         except KeyboardInterrupt:
             # save data and exit
-            self.logger.log('Saving data...')
+            self.logger.info('Saving data...')
             self.db_event.close()
             self.db_email.close()
             self.db_group.close()
@@ -214,3 +235,15 @@ class Server:
     def is_user_exist(self, user_id):
         with self.open_user(user_id) as u:
             return u.value is not None
+
+    def get_user_event(self, event_id: str) -> dict:
+        eid = copy.copy(event_id)
+
+        if eid in self.event_sid_table:
+            eid = self.event_sid_table[eid]
+
+        with self.db_event.enter(eid) as e:
+            return e.value
+
+    def is_user_event_exist(self, event_id: str) -> bool:
+        return self.get_user_event(event_id) is not None
