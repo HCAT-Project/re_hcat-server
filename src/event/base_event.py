@@ -107,8 +107,6 @@ class BaseEventOfSVACRecvMsg(BaseEvent):
             _ = self.gettext_func
             self.send_msg(_('Commands') + ':' + '<br>/'.join(self.cmds.keys()))
 
-        self._reg_cmds()
-
     def send_msg(self, msg: str):
         with self.server.open_user(self.user_id) as u:
             user: User = u.value
@@ -116,6 +114,7 @@ class BaseEventOfSVACRecvMsg(BaseEvent):
                                    msg)
 
     def _run(self, msg: str):
+        self._reg_cmds()
         _ = self.gettext_func
         try:
 

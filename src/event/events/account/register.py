@@ -49,7 +49,7 @@ class Register(BaseEvent):
 
         with self.server.open_user(user_id) as u:
             user = User(user_id, password, escape(username))
-
+            user.language = self.lang
             u.value = user
             user.add_fri_msg2todos(self.server, '0sAccount', _('Account_BOT'), _('Account_BOT'),
                                    _('Welcome to HCAT!<br>'
