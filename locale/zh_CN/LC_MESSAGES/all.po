@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: hcat-0.2.2\n"
+"Project-Id-Version: hcat:0.2.2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-17 20:02+0800\n"
 "PO-Revision-Date: 2023-03-17 10:32+0000\n"
