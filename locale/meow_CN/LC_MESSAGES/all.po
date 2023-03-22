@@ -1,17 +1,16 @@
-# Language locale/meow translations for PACKAGE package.
-# Copyright (C) 2023 THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# hsn <hsn1919810@gmail.com>, 2023.
+# Language locale/meow translations for hcat package.
+# Copyright (C) 2023 Hcat Project <https://github.com/HCAT-Project>.
+# This file is distributed under the same license as the hcat package.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: hcat\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-17 20:02+0800\n"
 "PO-Revision-Date: 2023-03-17 20:59+0800\n"
 "Last-Translator: hsn <hsn1919810@gmail.com>\n"
 "Language-Team: Language locale/meow\n"
-"Language: locale/meow_CN/LC_MESSAGES/all\n"
+"Language: meow_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
