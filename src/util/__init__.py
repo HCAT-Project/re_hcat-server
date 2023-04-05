@@ -25,6 +25,7 @@ import base64
 import copy
 import hashlib
 import json
+import logging
 import random
 import smtplib
 from email.header import Header
@@ -191,3 +192,7 @@ def decorators_with_parameters(func):
 
     return wrapper
 
+
+def multi_line_log(logger: logging.Logger = logging.getLogger(), level: int = logging.INFO, msg: str = ""):
+    for line in msg.splitlines():
+        logger.log(level, line)

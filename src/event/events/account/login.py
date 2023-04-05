@@ -50,6 +50,7 @@ class Login(BaseEvent):
                 # init a response
                 resp = make_response(ReturnData(ReturnData.OK).jsonify(), 200)
 
+
                 # generate auth_data
                 auth_data = json.dumps({'user_id': user_id, 'token': user.token, 'salt': util.get_random_token()})
 

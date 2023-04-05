@@ -22,7 +22,12 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import json
+import logging
+import os.path
+import subprocess
 import sys
+from src.util.i18n import gettext_func as _
+from src.util import multi_line_log
 
 
 def get_start_arg(default_list):
@@ -59,14 +64,40 @@ def load_config(path):
         return json.load(f)
 
 
+def clone_client(branch='master'):
+    if not os.path.exists('static'):
+        multi_line_log(logger=logging.getLogger('git'), msg=subprocess.check_output(
+            ['git', 'clone', 'https://github.com/HCAT-Project/hcat-client.git', 'static'],
+            stderr=subprocess.DEVNULL).decode('utf8'))
+    try:
+        multi_line_log(logger=logging.getLogger('git'),
+                       msg=subprocess.check_output(['git', 'checkout', '-b', branch, 'origin/dev'],
+                                                   cwd='static', stderr=subprocess.DEVNULL).decode('utf8'))
+    except subprocess.CalledProcessError:
+        multi_line_log(logger=logging.getLogger('git'),
+                       msg=subprocess.check_output(['git', 'checkout', branch], cwd='static',
+                                                   stderr=subprocess.DEVNULL).decode('utf8'))
+    multi_line_log(logger=logging.getLogger('git'),
+                   msg=subprocess.check_output(['git', 'pull'], cwd='static', stderr=subprocess.DEVNULL).decode('utf8'))
+
+
 def main():
     from src.server import Server
     arg = get_start_arg({'debug': False, 'config': 'config.json', 'host': '0.0.0.0', 'port': 8080, 'name': 'server'})
 
     # get config
+    logging.getLogger().info(_('Loading config from {}').format(arg['config']))
     config_path = arg['config']
     config = load_config(config_path)
 
+    # try to clone client
+    logging.getLogger().info(_('Cloning client from github...'))
+    try:
+        if config['client'].get('client-branch', None) is not None:
+            clone_client(config['client']['client-branch'])
+    except KeyError:
+        pass
+
     # init and start server
-    s = Server(debug=arg['debug'], address=(arg['host'], arg['port']), config=config, name=arg['name'])
+    s = Server(debug=arg['debug'], http_address=(arg['host'], arg['port']), config=config, name=arg['name'])
     s.start()
