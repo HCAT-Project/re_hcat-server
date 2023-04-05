@@ -6,12 +6,29 @@ re_hcat-server是[HCat](https://hcat.online)的重置版服务器,基于Python�
 
 # 安装
 
+## 服务端
+
 目前,服务端暂未提供发行版,请使用Git获取服务端:
 
 ```shell
 git clone https://github.com/HCAT-Project/re_hcat-server.git
 pip install -r requirements.txt
 ```
+
+## 客户端
+
+如果您下载并正确配置了git,那当服务端启动时,会自动从github仓库克隆客户端.
+并在[http://127.0.0.1:8080/](http://127.0.0.1:8080/)开放.
+
+当然您可以修改配置文件中的`/client/client-branch`以关闭或更改客户端版本.
+
+下表是客户端的版本号和对应的分支:
+
+| 分支       | 值      | 注释       |
+|----------|--------|----------|
+| 主分支(稳定版) | "main" | 稳定?大概... |
+| 开发版      | "dev"  |          |
+| 不启用客户端   | "null" |          |
 
 # 运行
 
