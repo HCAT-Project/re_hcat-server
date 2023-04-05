@@ -256,6 +256,10 @@ class Server:
         self.logger.info(_('System version: {}').format(platform.platform()))
         self.logger.info(_('Debug mode: {}').format(self.debug))
         self.logger.info(_('Current working directory: {}').format(os.getcwd()))
+        if 'client' in self.config \
+                and 'client-build' in self.config['client'] \
+                and self.config['client']['client-build'] is not None:
+            self.logger.info(_('Client build: {}').format(self.config['client']['client-build']))
         self.logger.info(_('--------------------------'))
 
         try:
