@@ -14,11 +14,11 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
-@File       ：recv_msg.py
+@File       : recv_msg.py
 
 @Author     : hsn
 
-@Date       ：2023/3/1 下午6:29
+@Date       : 2023/3/1 下午6:29
 
 @Version    : 1.0.1
 """

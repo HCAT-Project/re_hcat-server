@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 """
-@File       ：logout.py
+@File       : logout.py
 
 @Author     : hsn
 
-@Date       ：2023/3/1 下午6:26
+@Date       : 2023/3/1 下午6:26
 
 @Version    : 1.0.0
 """

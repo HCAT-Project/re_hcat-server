@@ -33,7 +33,7 @@ pip install -r requirements.txt
 # 运行
 
 ```shell
-python main.py
+python start.py
 ```
 
 # 已实现的功能

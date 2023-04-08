@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 """
-@File       ：main.py
+@File       : main.py
 
 @Author     : hsn
 
-@Date       ：2023/3/1 下午8:35
+@Date       : 2023/3/1 下午8:35
 
 @Version    : 1.0.0
 """

@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 """
-@File       ：join_group.py
+@File       : join_group.py
 
 @Author     : hsn
 
-@Date       ：2023/3/1 下午6:28
+@Date       : 2023/3/1 下午6:28
 
 @Version    : 1.0.0
 """
