@@ -57,7 +57,7 @@ class Server:
             self.app.config['SESSION_COOKIE_SECURE'] = False
 
         # Enable Cross-Origin Resource Sharing (CORS)
-        CORS(self.app)
+        CORS(self.app, supports_credentials=True)
 
         # Set host and port for the server
         self.http_host, self.http_port = http_address if http_address is not None else ('0.0.0.0', 8080)
