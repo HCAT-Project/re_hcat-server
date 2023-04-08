@@ -38,7 +38,7 @@ class Leave(BaseEvent):
             if self.user_id not in group.member_dict:
                 return ReturnData(ReturnData.NULL, _('You are not in the group.'))
 
-            if self.user_id == group_id.owner:
+            if self.user_id == group.owner:
                 return ReturnData(ReturnData.ERROR, _('You are the group owner, you can not leave the group.'))
 
             if self.user_id in list(group.admin_list):
