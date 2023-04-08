@@ -14,11 +14,11 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
-@File       ：__init__.py.py
+@File       : __init__.py.py
 
 @Author     : hsn
 
-@Date       ：3/17/23 5:03 PM
+@Date       : 3/17/23 5:03 PM
 
 @Version    : 1.0.0
 """

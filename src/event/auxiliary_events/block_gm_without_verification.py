@@ -14,9 +14,9 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 '''
-@Project ：re_hcat-server 
-@File    ：block_pm_without_verification.py
-@Date    ：2023/3/3 下午6:27 
+@Project : re_hcat-server 
+@File    : block_pm_without_verification.py
+@Date    : 2023/3/3 下午6:27 
 '''
 from permitronix import PermissionTable
 

@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 """
-@File       ：server.py
+@File       : server.py
 
 @Author     : hsn
 
-@Date       ：2023/3/1 下午8:35
+@Date       : 2023/3/1 下午8:35
 
 @Version    : 2.1.1
 """
@@ -31,7 +31,7 @@ import sys
 import threading
 import time
 
-from RPDB.database import RPDB
+from RPDB.database import FRPDB,RPDB
 from flask import Flask, request, url_for, send_from_directory
 from flask_cors import CORS
 from gevent import pywsgi
@@ -94,10 +94,10 @@ class Server:
         self.activity_dict_lock = threading.Lock()
 
         # Initialize databases
-        self.db_account = RPDB(os.path.join(os.getcwd(), 'data', 'account'))
-        self.db_event = RPDB(os.path.join(os.getcwd(), 'data', 'event'))
-        self.db_group = RPDB(os.path.join(os.getcwd(), 'data', 'group'))
-        self.db_email = RPDB(os.path.join(os.getcwd(), 'data', 'email'))
+        self.db_account = FRPDB(os.path.join(os.getcwd(), 'data', 'account'))
+        self.db_event = FRPDB(os.path.join(os.getcwd(), 'data', 'event'))
+        self.db_group = FRPDB(os.path.join(os.getcwd(), 'data', 'group'))
+        self.db_email = FRPDB(os.path.join(os.getcwd(), 'data', 'email'))
         self.db_permitronix = RPDB(os.path.join(os.getcwd(), 'data', 'permitronix'))
 
         self.event_sid_table = {}

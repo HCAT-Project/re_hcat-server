@@ -14,11 +14,11 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
-@File       ：regex.py
+@File       : regex.py
 
 @Author     : hsn
 
-@Date       ：3/12/23 10:01 AM
+@Date       : 3/12/23 10:01 AM
 
 @Version    : 1.0.0
 """

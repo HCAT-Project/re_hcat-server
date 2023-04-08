@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 """
-@File       ：agree_friend_require.py
+@File       : agree_friend_require.py
 
 @Author     : hsn
 
-@Date       ：2023/3/1 下午6:27
+@Date       : 2023/3/1 下午6:27
 
 @Version    : 1.0.0
 """

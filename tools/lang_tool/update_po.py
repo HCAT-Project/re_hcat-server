@@ -14,11 +14,11 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
-@File       ：update_po.py
+@File       : update_po.py
 
 @Author     : hsn
 
-@Date       ：3/17/23 5:24 PM
+@Date       : 3/17/23 5:24 PM
 
 @Version    : 1.0.0
 """

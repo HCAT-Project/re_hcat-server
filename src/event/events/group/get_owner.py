@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 """
-@File       ：get_owner.py
+@File       : get_owner.py
 
 @Author     : hsn
 
-@Date       ：2023/3/1 下午6:28
+@Date       : 2023/3/1 下午6:28
 
 @Version    : 1.0.0
 """
