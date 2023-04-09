@@ -46,7 +46,7 @@ class RemoveAdmin(BaseEvent):
             if admin_id == group.owner:
                 return ReturnData(ReturnData.ERROR, _('You can\'t make the group owner the admin.'))
 
-            group.admin_list.add(admin_id)
+            group.admin_list.remove(admin_id)
         ec = EventContainer(self.server.db_event)
         ec. \
             add('type', 'admin_removed'). \
