@@ -42,7 +42,6 @@ class ConfigParser:
         return self.get_from_pointer(item) is not None
 
     def get_from_pointer(self, pointer: Union[str, int], default=None):
-        print(pointer)
         json_path = str(pointer).split('/')
         json_path = list(filter(lambda x: bool(x), json_path))
         config = copy.deepcopy(self.config)
