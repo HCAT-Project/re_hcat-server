@@ -27,6 +27,7 @@ import os
 
 from src.containers import ReturnData
 from src.event.base_event import BaseEvent
+from src.util.hash_utils import file_hash
 
 
 class Upload(BaseEvent):
@@ -34,18 +35,22 @@ class Upload(BaseEvent):
 
     def _run(self):
         _ = self.gettext_func
-        print(1)
-        print(self.req.files)
+
+        # check if the file is in the request
         if 'file' not in self.req.files:
             return ReturnData(ReturnData.NULL, _('No file uploaded.'))
+
+        # get the file
         file = self.req.files['file']
 
-        file_4096_hash = hashlib.sha1(file.stream.read(4096)).hexdigest()
+        # get the file's hash
+        file_hash_ = file_hash(file.stream)
         upl_folder = self.server.config.get_from_pointer('/sys/upload_folder', default='static/files')
 
+        # check if the file exists
         if not os.path.exists(upl_folder):
             os.makedirs(upl_folder)
 
+        # save the file
         file.stream.seek(0)
-        file.save(os.path.join(upl_folder, file_4096_hash))
-        #todo:add comments
+        file.save(os.path.join(upl_folder, file_hash_))
