@@ -51,7 +51,7 @@ class Kick(BaseEvent):
             group.member_dict.pop(member_id)
             ec = EventContainer(self.server.db_event)
             ec. \
-                add('type', 'admin_removed'). \
+                add('type', 'member_removed'). \
                 add('rid', ec.rid). \
                 add('group_id', group_id). \
                 add('time', time.time()). \
@@ -59,7 +59,7 @@ class Kick(BaseEvent):
             ec.write_in()
             group.broadcast(self.server, '', ec)
 
-        with self.server.open_user(self.user_id) as u:
+        with self.server.open_user(member_id) as u:
             user: User = u.value
             user.groups_dict.pop(group_id)
 
