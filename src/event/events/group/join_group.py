@@ -78,7 +78,7 @@ class JoinGroup(BaseEvent):
             if join_success:
                 with self.server.open_user(self.user_id) as u:
                     user: User = u.value
-                    user.groups_dict = {'remark': group_name, 'time': time.time()}
+                    user.groups_dict[group_id] = {'remark': group_name, 'time': time.time()}
                     user.add_user_event(agreed_ec)
 
         if verif_method == 'na':
