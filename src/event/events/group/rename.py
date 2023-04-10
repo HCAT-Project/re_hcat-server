@@ -25,10 +25,10 @@ from src.containers import Group, ReturnData
 from src.event.base_event import BaseEvent
 
 
-class GroupRename(BaseEvent):
+class Rename(BaseEvent):
     auth = True
 
-    def _run(self, group_id, name):
+    def _run(self, group_id, group_name):
         _ = self.gettext_func
         with self.server.db_group.enter(group_id) as g:
             group: Group = g.value
@@ -38,5 +38,5 @@ class GroupRename(BaseEvent):
             if self.user_id not in list(group.admin_list) + [group.owner]:
                 return ReturnData(ReturnData.ERROR, _('You don\'t have permission.'))
 
-            group.name = name
+            group.name = group_name
             return ReturnData(ReturnData.OK)
