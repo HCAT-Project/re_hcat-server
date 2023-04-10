@@ -71,6 +71,7 @@ class JoinGroup(BaseEvent):
                     if add_info == answer:
                         agreed_ec.write_in()
                         join_success = True
+                        group.member_dict[self.user_id] = {'nick': user_name}
                         return ReturnData(ReturnData.OK)
                     else:
                         return ReturnData(ReturnData.ERROR, _('Wrong answer.'))
