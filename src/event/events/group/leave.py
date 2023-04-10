@@ -21,7 +21,7 @@
 #  GNU Affero General Public License for more details.
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
-from src.containers import Group, ReturnData
+from src.containers import Group, ReturnData,User
 from src.event.base_event import BaseEvent
 
 
@@ -45,4 +45,7 @@ class Leave(BaseEvent):
                 group.admin_list.remove(self.user_id)
 
             group.member_dict.pop(self.user_id)
+            with self.server.open_user(self.user_id) as u:
+                user: User = u.value
+                user.groups_dict.pop(group_id)
             return ReturnData(ReturnData.OK)
