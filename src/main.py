@@ -71,7 +71,7 @@ def clone_client(branch='master'):
             stderr=subprocess.DEVNULL).decode('utf8'))
     try:
         multi_line_log(logger=logging.getLogger('git'),
-                       msg=subprocess.check_output(['git', 'checkout', '-b', branch, 'origin/dev'],
+                       msg=subprocess.check_output(['git', 'checkout', '-b', branch, f'origin/{branch}'],
                                                    cwd='static', stderr=subprocess.DEVNULL).decode('utf8'))
     except subprocess.CalledProcessError:
         multi_line_log(logger=logging.getLogger('git'),
