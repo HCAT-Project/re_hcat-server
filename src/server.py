@@ -46,7 +46,7 @@ from src.util.i18n import gettext_func as _
 
 
 class Server:
-    ver = '2.2.0'
+    ver = '2.3.0'
 
     def __init__(self, http_address: tuple[str, int] = None, tcp_address: tuple[str, int] = None, debug: bool = False,
                  name=__name__, config=None):
@@ -301,6 +301,6 @@ class Server:
     def is_user_event_exist(self, event_id: str) -> bool:
         return self.get_user_event(event_id) is not None
 
-    @staticmethod
     def check_file_exists(self, file_hash):
-        return os.path.exists(os.path.join('static', 'files', file_hash))
+        upl_folder = self.config.get_from_pointer('/sys/upload_folder', default='static/files')
+        return os.path.exists(os.path.join(upl_folder, file_hash))
