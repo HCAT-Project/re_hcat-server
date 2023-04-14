@@ -199,3 +199,7 @@ def decorators_with_parameters(func):
 def multi_line_log(logger: logging.Logger = logging.getLogger(), level: int = logging.INFO, msg: str = ""):
     for line in msg.splitlines():
         logger.log(level, line)
+
+
+def under_score_to_pascal_case(name):
+    return ''.join([x.capitalize() for x in name.split('_')])
