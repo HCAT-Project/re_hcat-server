@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 """
-@File       : agree_friend_require.py
+@File       : agree_friend_request.py
 
 @Author     : hsn
 
@@ -27,7 +27,7 @@ from src.containers import ReturnData, User, EventContainer
 from src.event.base_event import BaseEvent
 
 
-class AgreeFriendRequire(BaseEvent):
+class AgreeFriendRequest(BaseEvent):
     auth = True
 
     def _run(self, rid):
