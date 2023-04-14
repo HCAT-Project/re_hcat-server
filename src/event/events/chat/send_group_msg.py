@@ -42,7 +42,7 @@ class SendGroupMsg(BaseEvent):
             name = user.user_name
 
         try:
-            msg_ = util.msg_process(msg_)
+            msg_ = util.msg_process(msg_,self.server)
         except:
             return ReturnData(ReturnData.ERROR, _('Illegal messages.'))
 

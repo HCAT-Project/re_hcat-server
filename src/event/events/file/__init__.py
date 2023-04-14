@@ -13,23 +13,12 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-'''
-@Project : re_hcat-server 
-@File    : block_pm_without_verification.py
-@Date    : 2023/3/3 下午6:27 
-'''
-from permitronix import PermissionTable
+"""
+@File       ：__init__.py.py
 
-from src.containers import ReturnData
-from src.event.base_event import BaseEvent
-from src.event.events.chat.send_group_msg import SendGroupMsg
+@Author     : hsn
 
+@Date       ：4/9/23 8:19 AM
 
-class BlockGmWithoutVerification(BaseEvent):
-    auth = True
-    main_event = SendGroupMsg
-
-    def _run(self, friend_id, msg):
-        table: PermissionTable = self.server.permitronix.get_permission_table(f'user_{self.user_id}')
-        if not table.get_permission('email') and self.server.config.get_from_pointer('/email/enable-email-verification'):
-            return True, ReturnData(ReturnData.ERROR, 'Please verify your email first.')
+@Version    : 1.0.0
+"""

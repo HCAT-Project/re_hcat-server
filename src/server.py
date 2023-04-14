@@ -31,7 +31,7 @@ import sys
 import threading
 import time
 
-from RPDB.database import FRPDB,RPDB
+from RPDB.database import FRPDB, RPDB
 from flask import Flask, request, url_for, send_from_directory
 from flask_cors import CORS
 from gevent import pywsgi
@@ -41,11 +41,12 @@ from src import util
 from src.containers import User, ReturnData
 from src.event.event_manager import EventManager
 from src.event.recv_event import RecvEvent
+from src.util.config_parser import ConfigParser
 from src.util.i18n import gettext_func as _
 
 
 class Server:
-    ver = '2.2.0'
+    ver = '2.3.0'
 
     def __init__(self, http_address: tuple[str, int] = None, tcp_address: tuple[str, int] = None, debug: bool = False,
                  name=__name__, config=None):
@@ -55,6 +56,8 @@ class Server:
         if debug:
             self.app.config['SESSION_COOKIE_SAMESITE'] = 'None'
             self.app.config['SESSION_COOKIE_SECURE'] = False
+        self.app.config['UPLOAD_FOLDER'] = config.get('sys', {}).get('upload_folder', 'static/files')
+        self.app.config['MAX_CONTENT_LENGTH'] = config.get('sys', {}).get('max_content_length', 16 * 1024 * 1024)
 
         # Enable Cross-Origin Resource Sharing (CORS)
         CORS(self.app, supports_credentials=True)
@@ -67,7 +70,7 @@ class Server:
         self.debug = debug
 
         # Initialize config
-        self.config = {} if config is None else copy.deepcopy(config)
+        self.config = ConfigParser({}) if config is None else ConfigParser(copy.deepcopy(config))
 
         # Get logger
         self.logger = logging.getLogger(__name__)
@@ -201,7 +204,7 @@ class Server:
 
         @self.app.route('/<path:path>', methods=['GET', 'POST'])
         def send_static(path):
-            return send_from_directory(os.path.join(os.getcwd(),'static'), path)
+            return send_from_directory(os.path.join(os.getcwd(), 'static'), path)
 
         @self.app.route('/api/<path:path>', methods=['GET', 'POST'])
         def recv(path):
@@ -257,9 +260,9 @@ class Server:
         self.logger.info(_('Debug mode: {}').format(self.debug))
         self.logger.info(_('Current working directory: {}').format(os.getcwd()))
         if 'client' in self.config \
-                and 'client-build' in self.config['client'] \
-                and self.config['client']['client-build'] is not None:
-            self.logger.info(_('Client build: {}').format(self.config['client']['client-build']))
+                and 'client-branch' in self.config['client'] \
+                and self.config['client']['client-branch'] is not None:
+            self.logger.info(_('Client branch: {}').format(self.config['client']['client-branch']))
         self.logger.info(_('--------------------------'))
 
         try:
@@ -297,3 +300,7 @@ class Server:
 
     def is_user_event_exist(self, event_id: str) -> bool:
         return self.get_user_event(event_id) is not None
+
+    def check_file_exists(self, file_hash):
+        upl_folder = self.config.get_from_pointer('/sys/upload_folder', default='static/files')
+        return os.path.exists(os.path.join(upl_folder, file_hash))

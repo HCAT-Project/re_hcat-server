@@ -264,3 +264,4 @@ class Group(Jelly):
         else:
             # Invalid permission level
             return False
+

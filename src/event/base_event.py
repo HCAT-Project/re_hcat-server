@@ -26,6 +26,8 @@ import json
 import logging
 import os
 
+from flask import Request
+
 from src import util
 from src.containers import ReturnData, User
 from src.event.event_manager import EventManager
@@ -37,7 +39,7 @@ class BaseEvent:
 
     def __init__(self, server, req, path: str, e_mgr: EventManager, user_id=None):
         self.gettext_func = None
-        self.req = req
+        self.req: Request = req
         self.server: 'Server' = server
         self.path = path
         self.e_mgr = e_mgr
