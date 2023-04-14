@@ -39,6 +39,7 @@ from permitronix import Permitronix
 
 from src import util
 from src.containers import User, ReturnData
+from src.dynamic_class_loader import DynamicClassLoader
 from src.event.event_manager import EventManager
 from src.event.recv_event import RecvEvent
 from src.util.config_parser import ConfigParser
@@ -49,8 +50,14 @@ class Server:
     ver = '2.3.0'
 
     def __init__(self, http_address: tuple[str, int] = None, tcp_address: tuple[str, int] = None, debug: bool = False,
-                 name=__name__, config=None):
+                 name=__name__, config=None, dcl: DynamicClassLoader = None):
+        self.wsgi_server = None
+        if dcl is None:
+            self.dcl = DynamicClassLoader()
+        else:
+            self.dcl = dcl
         # Initialize Flask object
+
         self.tcp_server_handle = None
         self.app = Flask(__name__)
         if debug:
@@ -110,16 +117,8 @@ class Server:
     def http_server_thread(self):
         # Start the WSGI server
         server = pywsgi.WSGIServer((self.http_host, self.http_port), self.app)
+        self.wsgi_server = server
         server.serve_forever()
-
-    def tcp_server_thread(self):
-        # Start the tcp server
-        server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        server.bind((self.tcp_host, self.tcp_port))
-        server.listen(255)
-        while True:
-            conn, addr = server.accept()
-            threading.Thread(target=self.tcp_server_handle, args=(conn, addr)).start()
 
     def activity_list_thread(self):
         # Monitor the activity of users and mark them as offline if they are inactive
@@ -169,27 +168,11 @@ class Server:
             time.sleep(30)
 
     def load_auxiliary_events(self):
-        # get all auxiliary events
-        for name_ in os.listdir(os.path.join('src', 'event', 'auxiliary_events')):
-            # get file name
-            name = "".join(name_.split(".")[:-1])
-            if len(name) == 0:
-                continue
-
-            # get class name
-            class_name = ''
-            for i in name.split("_"):
-                if len(i) == 0:
-                    continue
-                class_name += i[0].upper() + ('' if len(i) < 2 else i[1:])
-
+        for class_ in self.dcl.load_classes_from_group('auxiliary_events'):
             # logout
-            self.logger.debug(_('Auxiliary event "{}" loaded.').format(name))
+            self.logger.debug(_('Auxiliary event "{}" loaded.').format(class_.__name__))
 
-            # import module and add event
-            event_module = importlib.import_module(f'src.event.auxiliary_events.{name}')
-            event_class = getattr(event_module, class_name)
-            self.e_mgr.add_auxiliary_event(event_class.main_event, event_class)
+            self.e_mgr.add_auxiliary_event(class_.main_event, class_)
 
     def start(self):
         # Log server start
@@ -219,37 +202,15 @@ class Server:
         # Create handler for handling incoming tcp requests
         self.logger.info(_('Creating tcp handler...'))
 
-        def tcp_handler(conn, addr):
-            while True:
-                try:
-                    data = conn.recv(1024)
-                    if not data:
-                        break
-                    tcp_recv(conn, addr, data)
-                except:
-                    break
-            conn.close()
-
-        def tcp_recv(conn, addr, data):
-            rt = self.e_mgr.create_event(RecvEvent, conn, addr, data)
-            # format return data
-            if isinstance(rt, ReturnData):
-                rt = rt.jsonify()
-            elif rt is None:
-                rt = ReturnData(ReturnData.NULL, '').jsonify()
-            conn.send(rt.encode('utf-8'))
-
-        self.tcp_server_handle = tcp_handler
-
         # Start server threads
         self.logger.info(_('Starting server threads...'))
         server_thread = threading.Thread(target=self.http_server_thread, daemon=True, name='server_thread')
         cleaner_thread = threading.Thread(target=self.event_cleaner_thread, daemon=True, name='event_cleaner_thread')
         activity_thread = threading.Thread(target=self.activity_list_thread, daemon=True, name='activity_thread')
+
         threads = [server_thread, cleaner_thread, activity_thread]
         for t in threads:
             t.start()
-
         # Log server status and information
         self.logger.info(_('Server started.'))
         self.logger.info(_('Server listening on {}:{}.').format(self.http_host, self.http_port))
@@ -270,17 +231,19 @@ class Server:
             while True:
                 server_thread.join(0.1)
         except KeyboardInterrupt:
-            # save data and exit
-            self.logger.info(_('Saving data...'))
-            self.db_event.close()
-            self.db_email.close()
-            self.db_group.close()
-            self.db_account.close()
-            self.db_permitronix.close()
-            try:
-                sys.exit()
-            except SystemExit:
-                self.logger.info(_('Server closed.'))
+            self.close()
+
+    def close(self):
+        # save data and exit
+        self.logger.info(_('Saving data...'))
+        self.db_event.close()
+        self.db_email.close()
+        self.db_group.close()
+        self.db_account.close()
+        self.db_permitronix.close()
+
+
+        self.logger.info(_('Server closed.'))
 
     def open_user(self, user_id):
         return self.db_account.enter(user_id)

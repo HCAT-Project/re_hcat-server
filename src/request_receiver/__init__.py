@@ -1,14 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
-"""
-@File       : recv_event.py
-
-@Author     : hsn
-
-@Date       : 2023/3/1 下午6:30
-
-@Version    : 1.0.0
-"""
 
 #  Copyright (C) 2023. HCAT-Project-Team
 #  This program is free software: you can redistribute it and/or modify
@@ -21,28 +12,13 @@
 #  GNU Affero General Public License for more details.
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
-import importlib
-import logging
-import traceback
 
-from flask import make_response
+"""
+@File       : __init__.py.py
 
-from src.event.base_event import BaseEvent
+@Author     : hsn
 
+@Date       : 4/14/23 7:39 PM
 
-class RecvEvent(BaseEvent):
-    auth = False
-
-    def _run(self):
-
-        event_class = self.server.dcl.load_class_from_group(path=self.path, group='req_events')
-
-        if event_class is None:
-            return make_response('No Found', 404)
-
-        try:
-            return self.e_mgr.create_event(event_class, self.req, self.path)
-
-        except Exception as err:
-            logging.exception(err)
-            return make_response('Internal Server Error', 500)
+@Version    : 1.0.0
+"""
