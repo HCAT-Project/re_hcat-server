@@ -147,7 +147,7 @@ def request_parse(req_data: ImmutableMultiDict) -> dict:
     return data
 
 
-def msg_process(msg: Any) -> dict:
+def msg_process(msg: Any, server: "Server") -> dict:
     """
     Processes a message, escaping text messages and raising an error if the message chain is empty.
 
@@ -165,6 +165,9 @@ def msg_process(msg: Any) -> dict:
             if len(msg_['msg_chain'][i]['msg']) == 0:
                 raise ValueError("Element in message chain is empty.")
             msg_['msg_chain'][i]['msg'] = escape(msg_['msg_chain'][i]['msg'])
+
+    # todo:add comments
+    # todo:file process
     return msg_
 
 

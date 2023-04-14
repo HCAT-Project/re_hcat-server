@@ -23,6 +23,7 @@
 @Version    : 1.0.0
 """
 import hashlib
+import logging
 import os
 
 from src.containers import ReturnData
@@ -35,7 +36,6 @@ class Upload(BaseEvent):
 
     def _run(self):
         _ = self.gettext_func
-
         # check if the file is in the request
         if 'file' not in self.req.files:
             return ReturnData(ReturnData.NULL, _('No file uploaded.'))
@@ -54,3 +54,5 @@ class Upload(BaseEvent):
         # save the file
         file.stream.seek(0)
         file.save(os.path.join(upl_folder, file_hash_))
+        return ReturnData(ReturnData.OK).add('sha1', file_hash_).add('size', os.path.getsize(
+            os.path.join(upl_folder, file_hash_)))

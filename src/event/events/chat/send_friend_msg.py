@@ -22,6 +22,7 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import copy
+import logging
 import time
 
 from src import util
@@ -43,10 +44,11 @@ class SendFriendMsg(BaseEvent):
             user: User = u.value
             if friend_id not in user.friend_dict:
                 return ReturnData(ReturnData.NULL, _('The person is not your friend.'))
-
+        print(msg_)
         try:
-            msg_ = util.msg_process(msg_)
-        except:
+            msg_ = util.msg_process(msg_,self.server)
+        except Exception as err:
+            logging.exception(err)
             return ReturnData(ReturnData.ERROR, _('Illegal messages.'))
 
         with self.server.open_user(self.user_id) as u:

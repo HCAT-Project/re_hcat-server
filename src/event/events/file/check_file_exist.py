@@ -13,27 +13,21 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-'''
-@Project : re_hcat-server 
-@File    : block_pm_without_verification.py
-@Date    : 2023/3/3 下午6:27 
-'''
-from permitronix import PermissionTable
+"""
+@File       : check_file_exist.py
 
+@Author     : hsn
+
+@Date       : 4/9/23 8:25 AM
+
+@Version    : 1.0.0
+"""
 from src.containers import ReturnData
 from src.event.base_event import BaseEvent
-from src.event.events.chat.send_friend_msg import SendFriendMsg
 
 
-class BlockPmWithoutVerification(BaseEvent):
-    auth = True
-    main_event = SendFriendMsg
+class CheckFileExist(BaseEvent):
+    auth = False
 
-    def _run(self, friend_id, msg):
-        table: PermissionTable = self.server.permitronix.get_permission_table(f'user_{self.user_id}')
-        # check if the msg is service Account
-        if friend_id[0] in [str(i) for i in range(10)] and friend_id[1] == 's':
-            return False
-        elif not table.get_permission('email') and self.server.config.get_from_pointer(
-                '/email/enable-email-verification'):
-            return True, ReturnData(ReturnData.ERROR, 'Please verify your email first.')
+    def _run(self, sha1):
+        return ReturnData(ReturnData.OK if self.server.check_file_exists(sha1) else ReturnData.NULL)

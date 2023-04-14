@@ -31,5 +31,5 @@ class BlockGmWithoutVerification(BaseEvent):
 
     def _run(self, friend_id, msg):
         table: PermissionTable = self.server.permitronix.get_permission_table(f'user_{self.user_id}')
-        if not table.get_permission('email'):
+        if not table.get_permission('email') and self.server.config.get_from_pointer('/email/enable-email-verification'):
             return True, ReturnData(ReturnData.ERROR, 'Please verify your email first.')

@@ -14,19 +14,11 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
-@File       : check_file_exists.py
+@File       ：__init__.py.py
 
 @Author     : hsn
 
-@Date       : 4/9/23 8:25 AM
+@Date       ：4/9/23 8:19 AM
 
 @Version    : 1.0.0
 """
-from src.event.base_event import BaseEvent
-
-
-class CheckFileExists(BaseEvent):
-    auth = False
-
-    def _run(self, file_hash):
-        return self.server.check_file_exists(file_hash)

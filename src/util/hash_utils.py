@@ -22,6 +22,7 @@
 
 @Version    : 1.0.0
 """
+import _io
 import hashlib
 import io
 import tempfile
@@ -30,10 +31,9 @@ from typing import IO, Union
 
 
 def read_chunks(file: Union[str, PathLike, IO[bytes]], chunk_size: int = io.DEFAULT_BUFFER_SIZE):
-
     if isinstance(file, (str, PathLike)):
         f = open(file, 'rb')
-    elif isinstance(file, (IO,tempfile.SpooledTemporaryFile)):
+    elif isinstance(file, (IO, tempfile.SpooledTemporaryFile, _io.BufferedReader)):
         f = file
     else:
         raise TypeError(f'Unsupported type {type(file)}')
@@ -50,3 +50,4 @@ def file_hash(file: Union[str, PathLike, IO[bytes]]):
     for chunk in read_chunks(file):
         h.update(chunk)
     return h.hexdigest()
+
