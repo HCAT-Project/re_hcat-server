@@ -61,7 +61,9 @@ class DynamicClassLoader:
                 yield from self.load_classes(i)
             else:
                 class_name = util.under_score_to_pascal_case(i.stem)
-                yield self.load_class(i.relative_to(Path.cwd()).as_posix(), class_name)
+                rt_class = self.load_class(i.relative_to(Path.cwd()).as_posix(), class_name)
+                if rt_class is not None:
+                    yield rt_class
 
     def load_classes_from_group(self, group: str = "default"):
         for i in self.group_dict.get(group, []):
