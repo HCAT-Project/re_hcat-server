@@ -30,7 +30,7 @@ from src.dynamic_class_loader import DynamicClassLoader
 from src.request_receiver.base_receiver import BaseReceiver
 from src.server import Server
 from src.util.config_parser import ConfigParser
-
+from util.i18n import gettext_func as _
 
 class ServerManager:
     def __init__(self, dcl: DynamicClassLoader = None, config: ConfigParser = None):
@@ -76,3 +76,10 @@ class ServerManager:
             c = i(self.request, self.config)
             c.start()
             self.receivers[i.__name__] = c
+
+    def load_auxiliary_events(self):
+        for class_ in self.dcl.load_classes_from_group('auxiliary_events'):
+            # logout
+            self.logger.debug(_('Auxiliary event "{}" loaded.').format(class_.__name__))
+
+            self.e_mgr.add_auxiliary_event(class_.main_event, class_)

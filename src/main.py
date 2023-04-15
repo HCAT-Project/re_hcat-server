@@ -118,5 +118,9 @@ def main():
         name=arg['name']
     )
     server_manager.start_server_core(server_kwargs=server_kwargs)
+    # Load auxiliary events
+    logging.info(_('Loading auxiliary events...'))
+    server_manager.load_auxiliary_events()
+
     server_manager.load_receivers()
     server_manager.join()
