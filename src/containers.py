@@ -268,13 +268,16 @@ class Group(Jelly):
 
 
 class Request:
-    def __init__(self, path: str = '/', data: dict = None, cookies: dict = None):
+    def __init__(self, path: str = '/', form: dict = None, files=None, cookies: dict = None):
         super().__init__()
+        if files is None:
+            files = {}
         if cookies is None:
             cookies = {}
-        if data is None:
-            data = {}
+        if form is None:
+            form = {}
         self.id = uuid.uuid4()
         self.cookies = cookies
-        self.data = data
+        self.form = form
         self.path = path
+        self.files = files

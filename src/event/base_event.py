@@ -49,7 +49,7 @@ class BaseEvent:
     def run(self):
 
         # get req_data
-        req_data = self.req.data
+        req_data = self.req.form
 
         # get lang
         if self.user_id is not None:

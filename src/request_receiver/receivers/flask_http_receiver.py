@@ -50,7 +50,8 @@ class FlaskHttpReceiver(BaseReceiver):
 
         @self.app.route('/api/<path:path>', methods=['GET', 'POST'])
         def recv(path):
-            req = Request(path, request_parse(request), request.cookies)
+
+            req = Request(path=path, form=request_parse(request), files=request.files, cookies=request.cookies)
             rt = self.create_req(req)
 
             if isinstance(rt, ReturnData):
