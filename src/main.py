@@ -30,6 +30,7 @@ from pathlib import Path
 
 from src.dynamic_class_loader import DynamicClassLoader
 from src.server_manager import ServerManager
+from src.util.config_parser import ConfigParser
 from src.util.i18n import gettext_func as _
 from src.util import multi_line_log
 
@@ -110,12 +111,12 @@ def main():
     dcl.add_path_to_group("req_events", Path.cwd() / 'src/event/events')
 
     # init and start server
-    server_manager = ServerManager(dcl=dcl)
+    server_manager = ServerManager(dcl=dcl, config=ConfigParser(config))
     server_kwargs = (lambda **kwargs: kwargs)(
         debug=arg['debug'],
-        http_address=(arg['host'], arg['port']),
         config=config,
         name=arg['name']
     )
     server_manager.start_server_core(server_kwargs=server_kwargs)
+    server_manager.load_receivers()
     server_manager.join()
