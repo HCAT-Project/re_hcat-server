@@ -47,7 +47,8 @@ if __name__ == '__main__':
 
     # add file handler
     handler = logging.FileHandler(
-        os.path.join('logs', f'log_{formatted_time}_{int(now.now().timestamp() % 1 * 10 ** 6)}.txt'), encoding='utf8')
+        os.path.join('logs', f'log_{formatted_time}_{int(now.now().timestamp() % 1 * 10 ** 6)}.txt').replace(':', '_'),
+        encoding='utf8')
     logging.getLogger().addHandler(handler)
 
     # try to run thr `main` func
