@@ -4,4 +4,3 @@ pyaes~=1.6.1
 gevent~=22.10.2
 RP-DataBase
 flask-cors
-Permitronix

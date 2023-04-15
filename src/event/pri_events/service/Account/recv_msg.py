@@ -27,8 +27,6 @@ import logging
 import os
 import re
 
-from permitronix import PermissionTable, PermissionNode
-
 from src import util
 from src.util.regex import regex_email
 from src.containers import EventContainer, User
@@ -49,8 +47,10 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
 
             if cmd[0] == 'bind':
                 if self.server.config['email']['enable-email-verification']:
-                    table: PermissionTable = self.server.permitronix.get_permission_table(f'user_{self.user_id}')
-                    if table.get_permission('email'):
+                    with self.server.open_user(self.user_id) as u:
+                        user: User = u.value
+
+                    if user.email is not None:
                         self.send_msg(_('You have already bound an email.'))
                         return
 
@@ -92,8 +92,9 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
                 return
             elif cmd[0] == 'unbind':
                 if self.server.config['email']['enable-email-verification']:
-                    table: PermissionTable = self.server.permitronix.get_permission_table(f'user_{self.user_id}')
-                    if not table.get_permission('email'):
+                    with self.server.open_user(self.user_id) as u:
+                        user: User = u.value
+                    if user.email is not None:
                         self.send_msg(_('You have not bound an email.'))
                         return
 
@@ -105,10 +106,6 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
                     with self.server.db_email.enter(unbinding_email) as v:
                         v.value = None
 
-                    with self.server.permitronix.enter('user_' + self.user_id) as p:
-                        pt: PermissionTable = p.value
-                        pt.set_permission(PermissionNode('email', 'Default:-1'))
-
                     self.send_msg(_('Email unbinding successful.'))
                 else:
                     self.send_msg(_('Email binding is not enabled.'))
@@ -119,10 +116,6 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
                     with self.server.open_user(e['user_id']) as u:
                         user: User = u.value
                         user.email = e['email']
-
-                    with self.server.permitronix.enter('user_' + self.user_id) as p:
-                        pt: PermissionTable = p.value
-                        pt.set_permission(PermissionNode('email'))
 
                     with self.server.db_email.enter(e['email']) as v:
                         e_mail: dict = v.value

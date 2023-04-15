@@ -35,7 +35,6 @@ from RPDB.database import FRPDB, RPDB
 from flask import Flask, request, url_for, send_from_directory
 from flask_cors import CORS
 from gevent import pywsgi
-from permitronix import Permitronix
 
 from src import util
 from src.containers import User, ReturnData
@@ -92,11 +91,8 @@ class Server:
         self.db_event = FRPDB(os.path.join(os.getcwd(), 'data', 'event'))
         self.db_group = FRPDB(os.path.join(os.getcwd(), 'data', 'group'))
         self.db_email = FRPDB(os.path.join(os.getcwd(), 'data', 'email'))
-        self.db_permitronix = RPDB(os.path.join(os.getcwd(), 'data', 'permitronix'))
 
         self.event_sid_table = {}
-
-        self.permitronix: Permitronix = Permitronix(self.db_permitronix)
 
     def request_handler(self, req):
         return self.e_mgr.create_event(RecvEvent, req, req.path)
@@ -148,20 +144,9 @@ class Server:
 
             time.sleep(30)
 
-    def load_auxiliary_events(self):
-        for class_ in self.dcl.load_classes_from_group('auxiliary_events'):
-            # logout
-            self.logger.debug(_('Auxiliary event "{}" loaded.').format(class_.__name__))
-
-            self.e_mgr.add_auxiliary_event(class_.main_event, class_)
-
     def start(self):
         # Log server start
         self.logger.info(_('Starting server...'))
-
-        # Load auxiliary events
-        self.logger.info(_('Loading auxiliary events...'))
-        self.load_auxiliary_events()
 
         # Create route for handling incoming requests
         self.logger.info(_('Creating route...'))
@@ -206,7 +191,7 @@ class Server:
         self.db_email.close()
         self.db_group.close()
         self.db_account.close()
-        self.db_permitronix.close()
+
 
         self.logger.info(_('Server closed.'))
 
