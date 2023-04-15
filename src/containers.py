@@ -22,6 +22,7 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import time
+import uuid
 from typing import Any
 
 from RPDB.database import RPDB
@@ -265,3 +266,15 @@ class Group(Jelly):
             # Invalid permission level
             return False
 
+
+class Request:
+    def __init__(self, path: str = '/', data: dict = None, cookies: dict = None):
+        super().__init__()
+        if cookies is None:
+            cookies = {}
+        if data is None:
+            data = {}
+        self.id = uuid.uuid4()
+        self.cookies = cookies
+        self.data = data
+        self.path = path
