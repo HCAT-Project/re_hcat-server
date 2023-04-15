@@ -26,7 +26,7 @@ import json
 import logging
 import os
 
-from flask import Request
+from src.containers import Request
 
 from src import util
 from src.containers import ReturnData, User
@@ -49,7 +49,7 @@ class BaseEvent:
     def run(self):
 
         # get req_data
-        req_data = util.request_parse(self.req)
+        req_data = self.req.data
 
         # get lang
         if self.user_id is not None:
