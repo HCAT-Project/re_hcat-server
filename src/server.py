@@ -49,29 +49,13 @@ from src.util.i18n import gettext_func as _
 class Server:
     ver = '2.3.0'
 
-    def __init__(self, http_address: tuple[str, int] = None, tcp_address: tuple[str, int] = None, debug: bool = False,
+    def __init__(self, debug: bool = False,
                  name=__name__, config=None, dcl: DynamicClassLoader = None):
         self.wsgi_server = None
         if dcl is None:
             self.dcl = DynamicClassLoader()
         else:
             self.dcl = dcl
-        # Initialize Flask object
-
-        self.tcp_server_handle = None
-        self.app = Flask(__name__)
-        if debug:
-            self.app.config['SESSION_COOKIE_SAMESITE'] = 'None'
-            self.app.config['SESSION_COOKIE_SECURE'] = False
-        self.app.config['UPLOAD_FOLDER'] = config.get('sys', {}).get('upload_folder', 'static/files')
-        self.app.config['MAX_CONTENT_LENGTH'] = config.get('sys', {}).get('max_content_length', 16 * 1024 * 1024)
-
-        # Enable Cross-Origin Resource Sharing (CORS)
-        CORS(self.app, supports_credentials=True)
-
-        # Set host and port for the server
-        self.http_host, self.http_port = http_address if http_address is not None else ('0.0.0.0', 8080)
-        self.tcp_host, self.tcp_port = tcp_address if tcp_address is not None else ('0.0.0.0', 29876)
 
         # Set debug mode
         self.debug = debug
@@ -114,11 +98,8 @@ class Server:
 
         self.permitronix: Permitronix = Permitronix(self.db_permitronix)
 
-    def http_server_thread(self):
-        # Start the WSGI server
-        server = pywsgi.WSGIServer((self.http_host, self.http_port), self.app)
-        self.wsgi_server = server
-        server.serve_forever()
+    def request_handler(self, req):
+        return self.e_mgr.create_event(RecvEvent, req, req.path)
 
     def activity_list_thread(self):
         # Monitor the activity of users and mark them as offline if they are inactive
@@ -185,35 +166,20 @@ class Server:
         # Create route for handling incoming requests
         self.logger.info(_('Creating route...'))
 
-        @self.app.route('/<path:path>', methods=['GET', 'POST'])
-        def send_static(path):
-            return send_from_directory(os.path.join(os.getcwd(), 'static'), path)
-
-        @self.app.route('/api/<path:path>', methods=['GET', 'POST'])
-        def recv(path):
-            rt = self.e_mgr.create_event(RecvEvent, request, path)
-            # format return data
-            if isinstance(rt, ReturnData):
-                rt = rt.jsonify()
-            elif rt is None:
-                rt = ReturnData(ReturnData.NULL, '').jsonify()
-            return rt
-
         # Create handler for handling incoming tcp requests
         self.logger.info(_('Creating tcp handler...'))
 
         # Start server threads
         self.logger.info(_('Starting server threads...'))
-        server_thread = threading.Thread(target=self.http_server_thread, daemon=True, name='server_thread')
         cleaner_thread = threading.Thread(target=self.event_cleaner_thread, daemon=True, name='event_cleaner_thread')
         activity_thread = threading.Thread(target=self.activity_list_thread, daemon=True, name='activity_thread')
 
-        threads = [server_thread, cleaner_thread, activity_thread]
+        threads = [cleaner_thread, activity_thread]
         for t in threads:
             t.start()
         # Log server status and information
         self.logger.info(_('Server started.'))
-        self.logger.info(_('Server listening on {}:{}.').format(self.http_host, self.http_port))
+
         self.logger.info(_('----Server information----'))
         self.logger.info(_('Version: {}').format(self.ver))
         self.logger.info(_('Python version: {}').format(sys.version))
@@ -229,7 +195,7 @@ class Server:
         try:
             # Wait for the server thread to finish
             while True:
-                server_thread.join(0.1)
+                cleaner_thread.join(0.1)
         except KeyboardInterrupt:
             self.close()
 
@@ -241,7 +207,6 @@ class Server:
         self.db_group.close()
         self.db_account.close()
         self.db_permitronix.close()
-
 
         self.logger.info(_('Server closed.'))
 
