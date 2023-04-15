@@ -25,44 +25,54 @@
 import threading
 import uuid
 
+from src.containers import Request
 from src.dynamic_class_loader import DynamicClassLoader
+from src.request_receiver.base_receiver import BaseReceiver
 from src.server import Server
+from src.util.config_parser import ConfigParser
 
 
 class ServerManager:
-    def __init__(self, dcl: DynamicClassLoader = None):
-        self.servers = {}
+    def __init__(self, dcl: DynamicClassLoader = None, config: ConfigParser = None):
+        self.config = config if config is not None else ConfigParser({})
+        self.server = {}
         if dcl is None:
             self.dcl = DynamicClassLoader()
         else:
             self.dcl = dcl
+        self.receivers = {}
 
-    def join(self, timeout_per_server: float = None):
+    def join(self, timeout: float = None):
 
-        for _, i in self.servers.items():
-            i: dict
-            t = i.get('thread', None)
-            if isinstance(t, threading.Thread):
-                try:
-                    t.join(timeout=timeout_per_server)
-                except KeyboardInterrupt:
-                    self.close()
+        t = self.server.get('thread', None)
+        if isinstance(t, threading.Thread):
+            try:
+                t.join(timeout=timeout)
+            except KeyboardInterrupt:
+                self.close()
 
     def close(self):
-        for _, i in self.servers.items():
-            i: dict
-            s = i.get('server', None)
-            if isinstance(s, Server):
-                s.close()
 
-    def start_server_core(self, name: str = uuid.uuid4(), server_kwargs: dict = None):
+        s = self.server.get('server', None)
+        if isinstance(s, Server):
+            s.close()
+
+    def start_server_core(self, server_kwargs: dict = None):
         if server_kwargs is None:
             server_kwargs = {}
         server_kwargs['dcl'] = self.dcl
         s = Server(**server_kwargs)
-        t = threading.Thread(target=s.start, name=name)
+        t = threading.Thread(target=s.start)
         t.start()
-        self.servers[name] = {'server': s, 'thread': t}
+        self.server = {'server': s, 'thread': t}
+
+    def request(self, req: dict = None):
+        if req is None:
+            req = Request()
+        return self.server['server'].request_handler(req)
 
     def load_receivers(self):
-        self.dcl.load_class()
+        for i in self.dcl.load_classes_from_group("receiver"):
+            c = i(self.request, self.config)
+            c.start()
+            self.receivers[i.__name__] = c
