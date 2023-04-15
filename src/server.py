@@ -47,7 +47,7 @@ from src.util.i18n import gettext_func as _
 
 
 class Server:
-    ver = '2.3.0'
+    ver = '2.4.0'
 
     def __init__(self, debug: bool = False,
                  name=__name__, config=None, dcl: DynamicClassLoader = None):
