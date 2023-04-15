@@ -39,12 +39,14 @@ class FlaskHttpReceiver(BaseReceiver):
         self.app.config['MAX_CONTENT_LENGTH'] = self.config.get('sys', {}).get('max_content_length', 16 * 1024 * 1024)
 
         # Enable Cross-Origin Resource Sharing (CORS)
-
-        CORS(self.app, supports_credentials=True)
-
-        @self.app.route('/<path:path>', methods=['GET', 'POST'])
-        def send_static(path):
-            return send_from_directory(os.path.join(os.getcwd(), 'static'), path)
+        if self.config.get_from_pointer('/receivers/FlaskHttpReceiver/enable-cors', True):
+            CORS(self.app, supports_credentials=True)
+        # optional, but recommended
+        if self.config.get_from_pointer('/receivers/FlaskHttpReceiver/enable-static', True):
+            @self.app.route('/<path:path>', methods=['GET', 'POST'])
+            def send_static(path):
+                folder = self.config.get_from_pointer('/receivers/FlaskHttpReceiver/enable-static', 'static')
+                return send_from_directory(os.path.join(os.getcwd(), folder), path)
 
         @self.app.route('/api/<path:path>', methods=['GET', 'POST'])
         def recv(path):
