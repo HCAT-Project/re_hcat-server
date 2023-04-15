@@ -78,3 +78,9 @@ class DynamicClassLoader:
         existing = self.group_dict.get(group, [])
         existing.append(path_)
         self.group_dict[group] = existing
+
+    def del_path_from_group(self, group: str = "default", path: Union[str, Path] = None):
+        path_ = path if isinstance(path, str) else path.as_posix()
+        existing = self.group_dict.get(group, [])
+        existing.remove(path_)
+        self.group_dict[group] = existing
