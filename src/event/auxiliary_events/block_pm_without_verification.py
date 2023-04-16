@@ -14,9 +14,9 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 '''
-@Project ：re_hcat-server 
-@File    ：block_pm_without_verification.py
-@Date    ：2023/3/3 下午6:27 
+@Project : re_hcat-server 
+@File    : block_pm_without_verification.py
+@Date    : 2023/3/3 下午6:27 
 '''
 from permitronix import PermissionTable
 
@@ -34,5 +34,6 @@ class BlockPmWithoutVerification(BaseEvent):
         # check if the msg is service Account
         if friend_id[0] in [str(i) for i in range(10)] and friend_id[1] == 's':
             return False
-        elif not table.get_permission('email'):
+        elif not table.get_permission('email') and self.server.config.get_from_pointer(
+                '/email/enable-email-verification'):
             return True, ReturnData(ReturnData.ERROR, 'Please verify your email first.')

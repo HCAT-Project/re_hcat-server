@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 """
-@File       ：main.py
+@File       : start.py
 
 @Author     : hsn
 
-@Date       ：2023/3/1 下午8:35
+@Date       : 2023/3/1 下午8:35
 
 @Version    : 1.0.0
 """
@@ -51,6 +51,7 @@ if __name__ == '__main__':
     logging.getLogger().addHandler(handler)
 
     # try to run thr `main` func
+
     try:
         from src.main import main
 
@@ -60,11 +61,18 @@ if __name__ == '__main__':
         # install the requirements when `main` func throw 'ModuleNotFoundError'
         subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-r', 'requirements.txt'])
 
+        from src.main import main
+
+        main()
+    except ImportError:
+
+        # update the requirements when `main` func throw 'ImportError'
+        subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-r', 'requirements.txt', '--upgrade'])
+
         # retry
         from src.main import main
 
         main()
-
     except BaseException as err:
 
         # log the unknown error

@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 """
-@File       ：containers.py
+@File       : containers.py
 
 @Author     : hsn
 
-@Date       ：2023/3/1 下午6:30
+@Date       : 2023/3/1 下午6:30
 
 @Version    : 1.0.0
 """
@@ -264,3 +264,4 @@ class Group(Jelly):
         else:
             # Invalid permission level
             return False
+

@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 """
-@File       ：send_group_msg.py
+@File       : send_group_msg.py
 
 @Author     : hsn
 
-@Date       ：2023/3/1 下午6:27
+@Date       : 2023/3/1 下午6:27
 
 @Version    : 1.0.0
 """
@@ -42,7 +42,7 @@ class SendGroupMsg(BaseEvent):
             name = user.user_name
 
         try:
-            msg_ = util.msg_process(msg_)
+            msg_ = util.msg_process(msg_,self.server)
         except:
             return ReturnData(ReturnData.ERROR, _('Illegal messages.'))
 

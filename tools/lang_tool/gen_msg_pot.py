@@ -14,11 +14,11 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
-@File       ：gen_msg_pot.py
+@File       : gen_msg_pot.py
 
 @Author     : hsn
 
-@Date       ：3/17/23 5:16 PM
+@Date       : 3/17/23 5:16 PM
 
 @Version    : 1.0.0
 """

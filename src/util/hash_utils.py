@@ -14,17 +14,40 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
-@File       : gen_msg_po.py
+@File       : hash_utils.py
 
 @Author     : hsn
 
-@Date       : 3/17/23 5:19 PM
+@Date       : 4/9/23 11:08 AM
 
 @Version    : 1.0.0
 """
-import os
-import subprocess
+import _io
+import hashlib
+import io
+import tempfile
+from os import PathLike
+from typing import IO, Union
 
-lang = input("language(such as zh_CN or en_US): ")
-os.makedirs(os.path.join('locale', lang, 'LC_MESSAGES'), exist_ok=True)
-subprocess.check_call(['msginit', '--locale', f'locale/{lang}/LC_MESSAGES/all.po', '-i', 'messages.pot'])
+
+def read_chunks(file: Union[str, PathLike, IO[bytes]], chunk_size: int = io.DEFAULT_BUFFER_SIZE):
+    if isinstance(file, (str, PathLike)):
+        f = open(file, 'rb')
+    elif isinstance(file, (IO, tempfile.SpooledTemporaryFile, _io.BufferedReader)):
+        f = file
+    else:
+        raise TypeError(f'Unsupported type {type(file)}')
+
+    while True:
+        chunk = f.read(chunk_size)
+        if not chunk:
+            break
+        yield chunk
+
+
+def file_hash(file: Union[str, PathLike, IO[bytes]]):
+    h = hashlib.sha1()
+    for chunk in read_chunks(file):
+        h.update(chunk)
+    return h.hexdigest()
+

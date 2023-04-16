@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 """
-@File       ：server.py
+@File       : server.py
 
 @Author     : hsn
 
-@Date       ：2023/3/1 下午8:35
+@Date       : 2023/3/1 下午8:35
 
 @Version    : 2.1.1
 """
@@ -26,12 +26,13 @@ import importlib
 import logging
 import os.path
 import platform
+import socket
 import sys
 import threading
 import time
 
-from RPDB.database import RPDB
-from flask import Flask, request
+from RPDB.database import FRPDB, RPDB
+from flask import Flask, request, url_for, send_from_directory
 from flask_cors import CORS
 from gevent import pywsgi
 from permitronix import Permitronix
@@ -40,30 +41,36 @@ from src import util
 from src.containers import User, ReturnData
 from src.event.event_manager import EventManager
 from src.event.recv_event import RecvEvent
+from src.util.config_parser import ConfigParser
 from src.util.i18n import gettext_func as _
 
 
 class Server:
-    ver = '2.2.0'
+    ver = '2.3.0'
 
-    def __init__(self, address: tuple[str, int] = None, debug: bool = False, name=__name__, config=None):
+    def __init__(self, http_address: tuple[str, int] = None, tcp_address: tuple[str, int] = None, debug: bool = False,
+                 name=__name__, config=None):
         # Initialize Flask object
+        self.tcp_server_handle = None
         self.app = Flask(__name__)
         if debug:
             self.app.config['SESSION_COOKIE_SAMESITE'] = 'None'
             self.app.config['SESSION_COOKIE_SECURE'] = False
+        self.app.config['UPLOAD_FOLDER'] = config.get('sys', {}).get('upload_folder', 'static/files')
+        self.app.config['MAX_CONTENT_LENGTH'] = config.get('sys', {}).get('max_content_length', 16 * 1024 * 1024)
 
         # Enable Cross-Origin Resource Sharing (CORS)
-        CORS(self.app)
+        CORS(self.app, supports_credentials=True)
 
         # Set host and port for the server
-        self.host, self.port = address if address is not None else ('0.0.0.0', 8080)
+        self.http_host, self.http_port = http_address if http_address is not None else ('0.0.0.0', 8080)
+        self.tcp_host, self.tcp_port = tcp_address if tcp_address is not None else ('0.0.0.0', 29876)
 
         # Set debug mode
         self.debug = debug
 
         # Initialize config
-        self.config = {} if config is None else copy.deepcopy(config)
+        self.config = ConfigParser({}) if config is None else ConfigParser(copy.deepcopy(config))
 
         # Get logger
         self.logger = logging.getLogger(__name__)
@@ -90,20 +97,29 @@ class Server:
         self.activity_dict_lock = threading.Lock()
 
         # Initialize databases
-        self.db_account = RPDB(os.path.join(os.getcwd(), 'data', 'account'))
-        self.db_event = RPDB(os.path.join(os.getcwd(), 'data', 'event'))
-        self.db_group = RPDB(os.path.join(os.getcwd(), 'data', 'group'))
-        self.db_email = RPDB(os.path.join(os.getcwd(), 'data', 'email'))
+        self.db_account = FRPDB(os.path.join(os.getcwd(), 'data', 'account'))
+        self.db_event = FRPDB(os.path.join(os.getcwd(), 'data', 'event'))
+        self.db_group = FRPDB(os.path.join(os.getcwd(), 'data', 'group'))
+        self.db_email = FRPDB(os.path.join(os.getcwd(), 'data', 'email'))
         self.db_permitronix = RPDB(os.path.join(os.getcwd(), 'data', 'permitronix'))
 
         self.event_sid_table = {}
 
         self.permitronix: Permitronix = Permitronix(self.db_permitronix)
 
-    def server_thread(self):
+    def http_server_thread(self):
         # Start the WSGI server
-        server = pywsgi.WSGIServer((self.host, self.port), self.app)
+        server = pywsgi.WSGIServer((self.http_host, self.http_port), self.app)
         server.serve_forever()
+
+    def tcp_server_thread(self):
+        # Start the tcp server
+        server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server.bind((self.tcp_host, self.tcp_port))
+        server.listen(255)
+        while True:
+            conn, addr = server.accept()
+            threading.Thread(target=self.tcp_server_handle, args=(conn, addr)).start()
 
     def activity_list_thread(self):
         # Monitor the activity of users and mark them as offline if they are inactive
@@ -186,6 +202,10 @@ class Server:
         # Create route for handling incoming requests
         self.logger.info(_('Creating route...'))
 
+        @self.app.route('/<path:path>', methods=['GET', 'POST'])
+        def send_static(path):
+            return send_from_directory(os.path.join(os.getcwd(), 'static'), path)
+
         @self.app.route('/api/<path:path>', methods=['GET', 'POST'])
         def recv(path):
             rt = self.e_mgr.create_event(RecvEvent, request, path)
@@ -196,9 +216,34 @@ class Server:
                 rt = ReturnData(ReturnData.NULL, '').jsonify()
             return rt
 
+        # Create handler for handling incoming tcp requests
+        self.logger.info(_('Creating tcp handler...'))
+
+        def tcp_handler(conn, addr):
+            while True:
+                try:
+                    data = conn.recv(1024)
+                    if not data:
+                        break
+                    tcp_recv(conn, addr, data)
+                except:
+                    break
+            conn.close()
+
+        def tcp_recv(conn, addr, data):
+            rt = self.e_mgr.create_event(RecvEvent, conn, addr, data)
+            # format return data
+            if isinstance(rt, ReturnData):
+                rt = rt.jsonify()
+            elif rt is None:
+                rt = ReturnData(ReturnData.NULL, '').jsonify()
+            conn.send(rt.encode('utf-8'))
+
+        self.tcp_server_handle = tcp_handler
+
         # Start server threads
         self.logger.info(_('Starting server threads...'))
-        server_thread = threading.Thread(target=self.server_thread, daemon=True, name='server_thread')
+        server_thread = threading.Thread(target=self.http_server_thread, daemon=True, name='server_thread')
         cleaner_thread = threading.Thread(target=self.event_cleaner_thread, daemon=True, name='event_cleaner_thread')
         activity_thread = threading.Thread(target=self.activity_list_thread, daemon=True, name='activity_thread')
         threads = [server_thread, cleaner_thread, activity_thread]
@@ -207,13 +252,17 @@ class Server:
 
         # Log server status and information
         self.logger.info(_('Server started.'))
-        self.logger.info(_('Server listening on {}:{}.').format(self.host, self.port))
+        self.logger.info(_('Server listening on {}:{}.').format(self.http_host, self.http_port))
         self.logger.info(_('----Server information----'))
         self.logger.info(_('Version: {}').format(self.ver))
         self.logger.info(_('Python version: {}').format(sys.version))
         self.logger.info(_('System version: {}').format(platform.platform()))
         self.logger.info(_('Debug mode: {}').format(self.debug))
         self.logger.info(_('Current working directory: {}').format(os.getcwd()))
+        if 'client' in self.config \
+                and 'client-branch' in self.config['client'] \
+                and self.config['client']['client-branch'] is not None:
+            self.logger.info(_('Client branch: {}').format(self.config['client']['client-branch']))
         self.logger.info(_('--------------------------'))
 
         try:
@@ -251,3 +300,7 @@ class Server:
 
     def is_user_event_exist(self, event_id: str) -> bool:
         return self.get_user_event(event_id) is not None
+
+    def check_file_exists(self, file_hash):
+        upl_folder = self.config.get_from_pointer('/sys/upload_folder', default='static/files')
+        return os.path.exists(os.path.join(upl_folder, file_hash))

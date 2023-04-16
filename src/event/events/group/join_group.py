@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 """
-@File       ：join_group.py
+@File       : join_group.py
 
 @Author     : hsn
 
-@Date       ：2023/3/1 下午6:28
+@Date       : 2023/3/1 下午6:28
 
 @Version    : 1.0.0
 """
@@ -71,6 +71,7 @@ class JoinGroup(BaseEvent):
                     if add_info == answer:
                         agreed_ec.write_in()
                         join_success = True
+                        group.member_dict[self.user_id] = {'nick': user_name}
                         return ReturnData(ReturnData.OK)
                     else:
                         return ReturnData(ReturnData.ERROR, _('Wrong answer.'))
@@ -78,7 +79,7 @@ class JoinGroup(BaseEvent):
             if join_success:
                 with self.server.open_user(self.user_id) as u:
                     user: User = u.value
-                    user.groups_dict = {'remark': group_name, 'time': time.time()}
+                    user.groups_dict[group_id] = {'remark': group_name, 'time': time.time()}
                     user.add_user_event(agreed_ec)
 
         if verif_method == 'na':

@@ -14,17 +14,11 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
-@File       : gen_msg_po.py
+@File       ：__init__.py.py
 
 @Author     : hsn
 
-@Date       : 3/17/23 5:19 PM
+@Date       ：4/9/23 8:19 AM
 
 @Version    : 1.0.0
 """
-import os
-import subprocess
-
-lang = input("language(such as zh_CN or en_US): ")
-os.makedirs(os.path.join('locale', lang, 'LC_MESSAGES'), exist_ok=True)
-subprocess.check_call(['msginit', '--locale', f'locale/{lang}/LC_MESSAGES/all.po', '-i', 'messages.pot'])

@@ -1,6 +1,8 @@
 {
   "sys": {
-    "domain": null
+    "domain": null,
+    "upload_folder": "static/files",
+    "max_content_length": 104857600
   },
   "email": {
     "enable-email-verification": false,
@@ -10,5 +12,8 @@
       "email-password": null,
       "sender-name": "HCat"
     }
+  },
+  "client": {
+    "client-branch": "main"
   }
 }

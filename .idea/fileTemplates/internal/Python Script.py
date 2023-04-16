@@ -14,11 +14,11 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
-@File       ：${NAME}.py
+@File       : ${NAME}.py
 
 @Author     : ${USER}
 
-@Date       ：${DATE} ${TIME}
+@Date       : ${DATE} ${TIME}
 
 @Version    : 1.0.0
 """

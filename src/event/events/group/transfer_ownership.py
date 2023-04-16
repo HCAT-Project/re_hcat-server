@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 """
-@File       ：transfer_ownership.py
+@File       : transfer_ownership.py
 
 @Author     : hsn
 
-@Date       ：2023/3/1 下午6:29
+@Date       : 2023/3/1 下午6:29
 
 @Version    : 1.0.0
 """

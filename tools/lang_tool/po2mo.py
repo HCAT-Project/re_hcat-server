@@ -14,11 +14,11 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
-@File       ：po2mo.py
+@File       : po2mo.py
 
 @Author     : hsn
 
-@Date       ：3/17/23 5:22 PM
+@Date       : 3/17/23 5:22 PM
 
 @Version    : 1.0.0
 """

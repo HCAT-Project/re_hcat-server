@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 """
-@File       ：event_manager.py
+@File       : event_manager.py
 
 @Author     : hsn
 
-@Date       ：2023/3/1 下午6:24
+@Date       : 2023/3/1 下午6:24
 
 @Version    : 1.0.0
 """

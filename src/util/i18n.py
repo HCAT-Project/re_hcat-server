@@ -14,11 +14,11 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
-@File       ：i18n.py
+@File       : i18n.py
 
 @Author     : hsn
 
-@Date       ：3/17/23 4:07 PM
+@Date       : 3/17/23 4:07 PM
 
 @Version    : 1.0.0
 """

@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 """
-@File       ：login.py
+@File       : login.py
 
 @Author     : hsn
 
-@Date       ：2023/3/1 下午6:25
+@Date       : 2023/3/1 下午6:25
 
 @Version    : 1.0.0
 """
@@ -49,6 +49,7 @@ class Login(BaseEvent):
 
                 # init a response
                 resp = make_response(ReturnData(ReturnData.OK).jsonify(), 200)
+
 
                 # generate auth_data
                 auth_data = json.dumps({'user_id': user_id, 'token': user.token, 'salt': util.get_random_token()})

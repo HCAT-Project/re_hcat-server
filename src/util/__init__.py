@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 """
-@File       ：__init__.py
+@File       : __init__.py
 
 @Author     : hsn
 
-@Date       ：2023/3/1 下午6:30
+@Date       : 2023/3/1 下午6:30
 
 @Version    : 1.0.0
 """
@@ -25,6 +25,7 @@ import base64
 import copy
 import hashlib
 import json
+import logging
 import random
 import smtplib
 from email.header import Header
@@ -146,7 +147,7 @@ def request_parse(req_data: ImmutableMultiDict) -> dict:
     return data
 
 
-def msg_process(msg: Any) -> dict:
+def msg_process(msg: Any, server: "Server") -> dict:
     """
     Processes a message, escaping text messages and raising an error if the message chain is empty.
 
@@ -164,6 +165,9 @@ def msg_process(msg: Any) -> dict:
             if len(msg_['msg_chain'][i]['msg']) == 0:
                 raise ValueError("Element in message chain is empty.")
             msg_['msg_chain'][i]['msg'] = escape(msg_['msg_chain'][i]['msg'])
+
+    # todo:add comments
+    # todo:file process
     return msg_
 
 
@@ -191,3 +195,7 @@ def decorators_with_parameters(func):
 
     return wrapper
 
+
+def multi_line_log(logger: logging.Logger = logging.getLogger(), level: int = logging.INFO, msg: str = ""):
+    for line in msg.splitlines():
+        logger.log(level, line)

@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 """
-@File       ：sv_msg.py
+@File       : sv_msg.py
 
 @Author     : hsn
 
-@Date       ：2023/3/1 下午6:25
+@Date       : 2023/3/1 下午6:25
 
 @Version    : 1.0.0
 """

@@ -14,17 +14,20 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
-@File       : gen_msg_po.py
+@File       : check_file_exist.py
 
 @Author     : hsn
 
-@Date       : 3/17/23 5:19 PM
+@Date       : 4/9/23 8:25 AM
 
 @Version    : 1.0.0
 """
-import os
-import subprocess
+from src.containers import ReturnData
+from src.event.base_event import BaseEvent
 
-lang = input("language(such as zh_CN or en_US): ")
-os.makedirs(os.path.join('locale', lang, 'LC_MESSAGES'), exist_ok=True)
-subprocess.check_call(['msginit', '--locale', f'locale/{lang}/LC_MESSAGES/all.po', '-i', 'messages.pot'])
+
+class CheckFileExist(BaseEvent):
+    auth = False
+
+    def _run(self, sha1):
+        return ReturnData(ReturnData.OK if self.server.check_file_exists(sha1) else ReturnData.NULL)
