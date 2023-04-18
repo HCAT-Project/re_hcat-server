@@ -70,22 +70,24 @@ def load_config(path):
 
 
 def clone_client(branch='master'):
-    if not os.path.exists('static'):
-        multi_line_log(logger=logging.getLogger('git'), msg=subprocess.check_output(
-            ['git', 'clone', 'https://github.com/HCAT-Project/hcat-client.git', 'static'],
-            stderr=subprocess.DEVNULL).decode('utf8'))
     try:
+        if not os.path.exists('static'):
+            multi_line_log(logger=logging.getLogger('git'), msg=subprocess.check_output(
+                ['git', 'clone', 'https://github.com/HCAT-Project/hcat-client.git', 'static'],
+                stderr=subprocess.DEVNULL).decode('utf8'))
+        try:
+            multi_line_log(logger=logging.getLogger('git'),
+                        msg=subprocess.check_output(['git', 'checkout', '-b', branch, f'origin/{branch}'],
+                                                    cwd='static', stderr=subprocess.DEVNULL).decode('utf8'))
+        except subprocess.CalledProcessError:
+            multi_line_log(logger=logging.getLogger('git'),
+                        msg=subprocess.check_output(['git', 'checkout', branch], cwd='static',
+                                                    stderr=subprocess.DEVNULL).decode('utf8'))
         multi_line_log(logger=logging.getLogger('git'),
-                       msg=subprocess.check_output(['git', 'checkout', '-b', branch, f'origin/{branch}'],
-                                                   cwd='static', stderr=subprocess.DEVNULL).decode('utf8'))
-    except subprocess.CalledProcessError:
-        multi_line_log(logger=logging.getLogger('git'),
-                       msg=subprocess.check_output(['git', 'checkout', branch], cwd='static',
-                                                   stderr=subprocess.DEVNULL).decode('utf8'))
-    multi_line_log(logger=logging.getLogger('git'),
-                   msg=subprocess.check_output(['git', 'pull', '--force'], cwd='static',
-                                               stderr=subprocess.DEVNULL).decode('utf8'))
-
+                    msg=subprocess.check_output(['git', 'pull', '--force'], cwd='static',
+                                                stderr=subprocess.DEVNULL).decode('utf8'))
+    except FileExistsError:
+        pass
 
 def main():
     from src.server import Server
