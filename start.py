@@ -26,8 +26,6 @@ import logging
 import os.path
 import subprocess
 import sys
-from src.util.i18n import gettext_func as _
-
 if __name__ == '__main__':
     # check debug mode
     debug = '--debug' in sys.argv
@@ -55,7 +53,7 @@ if __name__ == '__main__':
 
     try:
         from src.main import main
-
+        from src.util.i18n import gettext_func as _
         main()
     except ModuleNotFoundError as err:
 
