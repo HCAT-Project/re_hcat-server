@@ -30,7 +30,7 @@ from src.dynamic_class_loader import DynamicClassLoader
 from src.request_receiver.base_receiver import BaseReceiver
 from src.server import Server
 from src.util.config_parser import ConfigParser
-from util.i18n import gettext_func as _
+from src.util.i18n import gettext_func as _
 
 class ServerManager:
     def __init__(self, dcl: DynamicClassLoader = None, config: ConfigParser = None):
