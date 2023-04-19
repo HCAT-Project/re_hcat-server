@@ -31,7 +31,7 @@ class BlockPmWithoutVerification(BaseEvent):
 
     def _run(self, friend_id, msg):
 
-        with self.server.open_user() as u:
+        with self.server.open_user(self.user_id) as u:
             user: User = u.get_user_by_id(friend_id)
 
         # check if the msg is service Account
