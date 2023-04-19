@@ -77,17 +77,18 @@ def clone_client(branch='master'):
                 stderr=subprocess.DEVNULL).decode('utf8'))
         try:
             multi_line_log(logger=logging.getLogger('git'),
-                        msg=subprocess.check_output(['git', 'checkout', '-b', branch, f'origin/{branch}'],
-                                                    cwd='static', stderr=subprocess.DEVNULL).decode('utf8'))
+                           msg=subprocess.check_output(['git', 'checkout', '-b', branch, f'origin/{branch}'],
+                                                       cwd='static', stderr=subprocess.DEVNULL).decode('utf8'))
         except subprocess.CalledProcessError:
             multi_line_log(logger=logging.getLogger('git'),
-                        msg=subprocess.check_output(['git', 'checkout', branch], cwd='static',
-                                                    stderr=subprocess.DEVNULL).decode('utf8'))
+                           msg=subprocess.check_output(['git', 'checkout', branch], cwd='static',
+                                                       stderr=subprocess.DEVNULL).decode('utf8'))
         multi_line_log(logger=logging.getLogger('git'),
-                    msg=subprocess.check_output(['git', 'pull', '--force'], cwd='static',
-                                                stderr=subprocess.DEVNULL).decode('utf8'))
+                       msg=subprocess.check_output(['git', 'pull', '--force'], cwd='static',
+                                                   stderr=subprocess.DEVNULL).decode('utf8'))
     except FileExistsError:
         pass
+
 
 def main():
     from src.server import Server
@@ -113,16 +114,14 @@ def main():
     dcl.add_path_to_group("req_events", Path.cwd() / 'src/event/events')
 
     # init and start server
-    server_manager = ServerManager(dcl=dcl, config=ConfigParser(config))
     server_kwargs = (lambda **kwargs: kwargs)(
         debug=arg['debug'],
         config=config,
         name=arg['name']
     )
-    server_manager.start_server_core(server_kwargs=server_kwargs)
-    # Load auxiliary events
-    logging.info(_('Loading auxiliary events...'))
-    server_manager.load_auxiliary_events()
+    server_manager = ServerManager(server_kwargs=server_kwargs, dcl=dcl, config=ConfigParser(config))
 
+    server_manager.start()
     server_manager.load_receivers()
+
     server_manager.join()

@@ -34,7 +34,7 @@ class SendFriendMsg(BaseEvent):
     auth = True
 
     def _run(self, friend_id, msg):
-        _=self.gettext_func
+        _ = self.gettext_func
         # {"msg_chain":[{"type":type,"msg":msg},{"type":type,"msg":msg}]}
         msg_ = copy.copy(msg)
         if len(friend_id) <= 1:
@@ -46,7 +46,7 @@ class SendFriendMsg(BaseEvent):
                 return ReturnData(ReturnData.NULL, _('The person is not your friend.'))
         print(msg_)
         try:
-            msg_ = util.msg_process(msg_,self.server)
+            msg_ = util.msg_process(msg_, self.server)
         except Exception as err:
             logging.exception(err)
             return ReturnData(ReturnData.ERROR, _('Illegal messages.'))

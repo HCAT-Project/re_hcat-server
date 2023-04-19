@@ -22,7 +22,10 @@
 
 @Version    : 1.0.0
 """
+import logging
+import subprocess
 import threading
+import time
 import uuid
 
 from src.containers import Request
@@ -32,8 +35,9 @@ from src.server import Server
 from src.util.config_parser import ConfigParser
 from src.util.i18n import gettext_func as _
 
+
 class ServerManager:
-    def __init__(self, dcl: DynamicClassLoader = None, config: ConfigParser = None):
+    def __init__(self, server_kwargs: dict = None, dcl: DynamicClassLoader = None, config: ConfigParser = None):
         self.config = config if config is not None else ConfigParser({})
         self.server = {}
         if dcl is None:
@@ -41,6 +45,10 @@ class ServerManager:
         else:
             self.dcl = dcl
         self.receivers = {}
+        self.server_kwargs = server_kwargs
+        if config.get_from_pointer('/sys/auto-update', False):
+            logging.info(_('Auto update enabled.'))
+            threading.Thread(target=self._update_thread).start()
 
     def join(self, timeout: float = None):
 
@@ -57,11 +65,19 @@ class ServerManager:
         if isinstance(s, Server):
             s.close()
 
-    def start_server_core(self, server_kwargs: dict = None):
+    def start(self):
+        self._start_server_core(self.server_kwargs)
+
+    def _start_server_core(self, server_kwargs: dict = None):
         if server_kwargs is None:
             server_kwargs = {}
         server_kwargs['dcl'] = self.dcl
         s = Server(**server_kwargs)
+
+        # Load auxiliary events
+        logging.info(_('Loading auxiliary events...'))
+        self._load_auxiliary_events(s)
+
         t = threading.Thread(target=s.start)
         t.start()
         self.server = {'server': s, 'thread': t}
@@ -77,9 +93,29 @@ class ServerManager:
             c.start()
             self.receivers[i.__name__] = c
 
-    def load_auxiliary_events(self):
+    def _load_auxiliary_events(self, s: Server):
         for class_ in self.dcl.load_classes_from_group('auxiliary_events'):
             # logout
-            self.logger.debug(_('Auxiliary event "{}" loaded.').format(class_.__name__))
+            logging.debug(_('Auxiliary event "{}" loaded.').format(class_.__name__))
 
-            self.e_mgr.add_auxiliary_event(class_.main_event, class_)
+            s.e_mgr.add_auxiliary_event(class_.main_event, class_)
+
+    def _update_thread(self):
+        while True:
+            b_name = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
+            local_cid = subprocess.check_output(['git', 'rev-parse', '--short', b_name])
+            remote_cid = subprocess.check_output(['git', 'rev-parse', '--short', 'origin/' + b_name])
+            if local_cid != remote_cid:
+                self.update_server()
+            time.sleep(60)
+
+    def update_server(self):
+        self.close()
+        for i in self.receivers:
+            i.pause()
+
+        subprocess.check_output(['git', 'pull'])
+
+        self.start()
+        for i in self.receivers:
+            i.resume()

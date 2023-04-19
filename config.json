@@ -2,7 +2,8 @@
   "sys": {
     "domain": null,
     "upload_folder": "static/files",
-    "max_content_length": 104857600
+    "max_content_length": 104857600,
+    "auto-update": false
   },
   "email": {
     "enable-email-verification": false,
@@ -23,7 +24,6 @@
       "enable-static": true,
       "static-folder": "static",
       "enable-cors": true
-
     }
   }
 }
