@@ -31,7 +31,7 @@ from typing import Union
 from src import util
 
 
-class DynamicClassLoader:
+class DynamicObjLoader:
     def __init__(self):
 
         self.group_dict = {}

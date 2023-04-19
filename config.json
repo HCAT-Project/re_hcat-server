@@ -3,7 +3,9 @@
     "domain": null,
     "upload_folder": "static/files",
     "max_content_length": 104857600,
-    "auto-update": false
+    "auto-update": false,
+    "event-timeout": 604800,
+    "sid-timeout": 300
   },
   "email": {
     "enable-email-verification": false,

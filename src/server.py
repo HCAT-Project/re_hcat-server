@@ -38,7 +38,7 @@ from gevent import pywsgi
 
 from src import util
 from src.containers import User, ReturnData
-from src.dynamic_class_loader import DynamicClassLoader
+from src.dynamic_class_loader import DynamicObjLoader
 from src.event.event_manager import EventManager
 from src.event.recv_event import RecvEvent
 from src.util.config_parser import ConfigParser
@@ -46,26 +46,29 @@ from src.util.i18n import gettext_func as _
 
 
 class Server:
-    ver = '2.4.0'
+    ver = '2.4.1'
 
     def __init__(self, debug: bool = False,
-                 name=__name__, config=None, dcl: DynamicClassLoader = None):
-        self.wsgi_server = None
-        if dcl is None:
-            self.dcl = DynamicClassLoader()
+                 name=__name__, config=None, dol: DynamicObjLoader = None):
+        # Get logger
+        self.logger = logging.getLogger(__name__)
+
+        # Create DynamicObjLoader
+        self.logger.info(_('Creating DynamicObjLoader...'))
+        if dol is None:
+            self.dol = DynamicObjLoader()
         else:
-            self.dcl = dcl
+            self.dol = dol
 
         # Set debug mode
         self.debug = debug
 
         # Initialize config
+        self.logger.info(_('Loading config...'))
         self.config = ConfigParser({}) if config is None else ConfigParser(copy.deepcopy(config))
 
-        # Get logger
-        self.logger = logging.getLogger(__name__)
-
         # Generate AES token
+        self.logger.info(_('Generating AES token...'))
         key_path = os.path.join(os.getcwd(), f'{name}.key')
         if not os.path.exists(key_path):
             self.key = util.get_random_token(16)
@@ -79,8 +82,8 @@ class Server:
         self.e_mgr = EventManager(self)
 
         # Set timeout
-        self.event_timeout = 7 * 24 * 60 * 60  # 1 week
-        self.short_id_timeout = 5 * 60  # 5 minutes
+        self.event_timeout = self.config.get_from_pointer('/sys/event-timeout', 7 * 24 * 60 * 60)  # 1 week
+        self.short_id_timeout = self.config.get_from_pointer('/sys/sid-timeout', 5 * 60)  # 5 minutes
 
         # Keep track of active users
         self.activity_dict = {}
@@ -92,6 +95,7 @@ class Server:
         self.db_group = FRPDB(os.path.join(os.getcwd(), 'data', 'group'))
         self.db_email = FRPDB(os.path.join(os.getcwd(), 'data', 'email'))
 
+        # Initialize sid table
         self.event_sid_table = {}
 
     def request_handler(self, req):
@@ -145,15 +149,6 @@ class Server:
             time.sleep(30)
 
     def start(self):
-        # Log server start
-        self.logger.info(_('Starting server...'))
-
-        # Create route for handling incoming requests
-        self.logger.info(_('Creating route...'))
-
-        # Create handler for handling incoming tcp requests
-        self.logger.info(_('Creating tcp handler...'))
-
         # Start server threads
         self.logger.info(_('Starting server threads...'))
         cleaner_thread = threading.Thread(target=self.event_cleaner_thread, daemon=True, name='event_cleaner_thread')
@@ -191,7 +186,6 @@ class Server:
         self.db_email.close()
         self.db_group.close()
         self.db_account.close()
-
 
         self.logger.info(_('Server closed.'))
 

@@ -28,7 +28,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from src.dynamic_class_loader import DynamicClassLoader
+from src.dynamic_class_loader import DynamicObjLoader
 from src.server_manager import ServerManager
 from src.util.config_parser import ConfigParser
 from src.util.i18n import gettext_func as _
@@ -107,7 +107,7 @@ def main():
     except KeyError:
         pass
 
-    dcl = DynamicClassLoader()
+    dcl = DynamicObjLoader()
 
     dcl.add_path_to_group("receiver", Path.cwd() / 'src/request_receiver/receivers')
     dcl.add_path_to_group("auxiliary_events", Path.cwd() / 'src/event/auxiliary_events')
@@ -119,7 +119,7 @@ def main():
         config=config,
         name=arg['name']
     )
-    server_manager = ServerManager(server_kwargs=server_kwargs, dcl=dcl, config=ConfigParser(config))
+    server_manager = ServerManager(server_kwargs=server_kwargs, dol=dcl, config=ConfigParser(config))
 
     server_manager.start()
     server_manager.load_receivers()

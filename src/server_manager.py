@@ -29,7 +29,7 @@ import time
 import uuid
 
 from src.containers import Request
-from src.dynamic_class_loader import DynamicClassLoader
+from src.dynamic_class_loader import DynamicObjLoader
 from src.request_receiver.base_receiver import BaseReceiver
 from src.server import Server
 from src.util.config_parser import ConfigParser
@@ -37,13 +37,13 @@ from src.util.i18n import gettext_func as _
 
 
 class ServerManager:
-    def __init__(self, server_kwargs: dict = None, dcl: DynamicClassLoader = None, config: ConfigParser = None):
+    def __init__(self, server_kwargs: dict = None, dol: DynamicObjLoader = None, config: ConfigParser = None):
         self.config = config if config is not None else ConfigParser({})
         self.server = {}
-        if dcl is None:
-            self.dcl = DynamicClassLoader()
+        if dol is None:
+            self.dol = DynamicObjLoader()
         else:
-            self.dcl = dcl
+            self.dol = dol
         self.receivers = {}
         self.server_kwargs = server_kwargs
         if config.get_from_pointer('/sys/auto-update', False):
@@ -71,7 +71,7 @@ class ServerManager:
     def _start_server_core(self, server_kwargs: dict = None):
         if server_kwargs is None:
             server_kwargs = {}
-        server_kwargs['dcl'] = self.dcl
+        server_kwargs['dol'] = self.dol
         s = Server(**server_kwargs)
 
         # Load auxiliary events
@@ -88,13 +88,13 @@ class ServerManager:
         return self.server['server'].request_handler(req)
 
     def load_receivers(self):
-        for i in self.dcl.load_classes_from_group("receiver"):
+        for i in self.dol.load_classes_from_group("receiver"):
             c = i(self.request, self.config)
             c.start()
             self.receivers[i.__name__] = c
 
     def _load_auxiliary_events(self, s: Server):
-        for class_ in self.dcl.load_classes_from_group('auxiliary_events'):
+        for class_ in self.dol.load_classes_from_group('auxiliary_events'):
             # logout
             logging.debug(_('Auxiliary event "{}" loaded.').format(class_.__name__))
 
