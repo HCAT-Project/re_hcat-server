@@ -30,7 +30,7 @@ class BlockGmWithoutVerification(BaseEvent):
 
     def _run(self, friend_id, msg):
         with self.server.open_user(self.user_id) as u:
-            user: User = u.get_user_by_id(friend_id)
+            user: User = u.value
 
-        if (not user.is_email_bound) and self.server.config.get_from_pointer('/email/enable-email-verification'):
+        if (user.email is None) and self.server.config.get_from_pointer('/email/enable-email-verification'):
             return True, ReturnData(ReturnData.ERROR, 'Please verify your email first.')
