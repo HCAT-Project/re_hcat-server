@@ -50,13 +50,12 @@ if __name__ == '__main__':
     logging.getLogger().addHandler(handler)
 
     # try to run thr `main` func
-
     try:
         from src.main import main
         from src.util.i18n import gettext_func as _
+        from src.util.config_parser import ConfigParser
         main()
     except ModuleNotFoundError as err:
-
         # install the requirements when `main` func throw 'ModuleNotFoundError'
         subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-r', 'requirements.txt'])
 

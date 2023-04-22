@@ -18,7 +18,6 @@
     "client-branch": "main"
   },
   "network": {
-    "pypi-url": "https://pypi.org/simple",
     "upload": {
       "upload_folder": "static/files",
       "max_content_length": 104857600
