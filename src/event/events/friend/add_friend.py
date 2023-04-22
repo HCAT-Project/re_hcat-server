@@ -31,9 +31,13 @@ class AddFriend(BaseEvent):
     auth = True
 
     def _run(self, user_id, add_info=''):
-        _=self.gettext_func
+        _ = self.gettext_func
         if not self.server.is_user_exist(user_id):
             return ReturnData(ReturnData.NULL, _('User does not exist.')).jsonify()
+
+        if user_id == self.user_id:
+            return ReturnData(ReturnData.ERROR, _('You cannot add yourself as a friend.')).jsonify()
+
         with self.server.open_user(self.user_id) as u:
             user: User = u.value
             if user_id in user.friend_dict:
