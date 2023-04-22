@@ -22,7 +22,7 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import importlib
-import traceback
+import logging
 
 from flask import make_response
 
@@ -43,12 +43,12 @@ class RecvSvAccountMsg(BaseEvent):
 
             event_class = getattr(event_module, 'RecvMsg')
 
-        except:
+        except ImportError as e:
             if self.server.debug:
-                traceback.print_exc()
+                logging.exception(e)
             return make_response('No Found', 404)
         try:
             return self.e_mgr.create_event(event_class, self.req, self.path)
-        except Exception:
-            traceback.print_exc()
+        except Exception as e:
+            logging.exception(e)
             return make_response('Internal Server Error', 500)

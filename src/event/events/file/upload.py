@@ -22,8 +22,6 @@
 
 @Version    : 1.0.0
 """
-import hashlib
-import logging
 import os
 
 from src.containers import ReturnData
@@ -45,7 +43,7 @@ class Upload(BaseEvent):
 
         # get the file's hash
         file_hash_ = file_hash(file.stream)
-        upl_folder = self.server.config.get_from_pointer('/sys/upload_folder', default='static/files')
+        upl_folder = self.server.config.get_from_pointer('/network/upload/upload_folder', default='static/files')
 
         # check if the file exists
         if not os.path.exists(upl_folder):

@@ -1,14 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
-"""
-@File       : get_owner.py
-
-@Author     : hsn
-
-@Date       : 2023/3/1 下午6:28
-
-@Version    : 1.0.0
-"""
 
 #  Copyright (C) 2023. HCAT-Project-Team
 #  This program is free software: you can redistribute it and/or modify
@@ -21,18 +12,13 @@
 #  GNU Affero General Public License for more details.
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
-from src.containers import Group, ReturnData
-from src.event.base_event import BaseEvent
 
+"""
+@File       : file_mananger.py
 
-class GetOwner(BaseEvent):
-    auth = True
+@Author     : hsn
 
-    def _run(self, group_id):
-        _ = self.gettext_func
-        with self.server.db_group.enter(group_id) as g:
-            group: Group = g.value
-            if self.user_id in group.member_dict:
-                return ReturnData(ReturnData.OK).add('data', group.owner)
-            else:
-                return ReturnData(ReturnData.NULL, _('You are not in the group.'))
+@Date       : 4/22/23 10:21 PM
+
+@Version    : 1.0.0
+"""

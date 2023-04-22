@@ -26,11 +26,9 @@ import logging
 import subprocess
 import threading
 import time
-import uuid
 
 from src.containers import Request
 from src.dynamic_class_loader import DynamicObjLoader
-from src.request_receiver.base_receiver import BaseReceiver
 from src.server import Server
 from src.util.config_parser import ConfigParser
 from src.util.i18n import gettext_func as _

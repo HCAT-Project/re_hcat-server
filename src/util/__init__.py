@@ -34,7 +34,7 @@ from html import escape
 from typing import Iterable, Any
 
 import pyaes
-from werkzeug.datastructures import ImmutableMultiDict
+from flask import Request
 
 
 class AesCrypto:
@@ -49,7 +49,8 @@ class AesCrypto:
             self.key = key
         else:
             raise ValueError(
-                'The AES key length should be greater than 16 bytes and less than 32 bytes and be an integer multiple of 4 bytes.')
+                'The AES key length should be greater than 16 bytes and less than 32 bytes and be an integer multiple '
+                'of 4 bytes.')
         self.aes = self.mode(self.key.encode('utf8'))
 
     def encrypt(self, data: str):
@@ -128,7 +129,7 @@ def not_ins(obj: Iterable, collection: Iterable) -> bool:
     return all(elem not in collection for elem in obj)
 
 
-def request_parse(req_data: ImmutableMultiDict) -> dict:
+def request_parse(req_data: Request) -> dict:
     """
     Parses the data from a request.
 
@@ -147,7 +148,7 @@ def request_parse(req_data: ImmutableMultiDict) -> dict:
     return data
 
 
-def msg_process(msg: Any, server: "Server") -> dict:
+def msg_process(msg: Any) -> dict:
     """
     Processes a message, escaping text messages and raising an error if the message chain is empty.
 

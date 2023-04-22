@@ -26,8 +26,10 @@
 # regex for email address
 regex_email = r'^[\w.%+-]+@(gmail\.com|yahoo\.com|msn\.com|hotmail\.com|aol\.com|ask\.com|live\.com|qq\.com|0355\.net' \
               r'|163\.com|163\.net|263\.net|3721\.net|yeah\.net|googlemail\.com|mail\.com|aim\.com|walla\.com|inbox' \
-              r'\.com|126\.com|sina\.com|21cn\.com|sohu\.com|yahoo\.com\.zh_CN|tom\.com|etang\.com|eyou\.com|56\.com|x' \
-              r'\.zh_CN|chinaren\.com|sogou\.com|citiz\.com|hongkong\.com|ctimail\.com|hknet\.com|netvigator\.com|mail' \
+              r'\.com|126\.com|sina\.com|21cn\.com|sohu\.com|yahoo\.com\.zh_CN|tom\.com|etang\.com|eyou\.com|56\.com|' \
+              r'x' \
+              r'\.zh_CN|chinaren\.com|sogou\.com|citiz\.com|hongkong\.com|ctimail\.com|hknet\.com|netvigator\.com|' \
+              r'mail' \
               r'\.hk\.com|swe\.com\.hk|ITCCOLP\.COM\.HK|BIZNETVIGATOR\.COM|SEED\.NET\.TW|TOPMARKEPLG\.COM\.TW|PCHOME' \
               r'\.COM\.TW|hinet\.net\.tw|cyber\.net\.pk|omantel\.net\.om|libero\.it|webmail\.co\.za|xtra\.co\.nz' \
               r'|pacific\.net\.sg|FASTMAIL\.FM|emirates\.net\.ae|eim\.ae|net\.sy|scs-net\.org|mail\.sy|ttnet\.net\.tr' \

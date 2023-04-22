@@ -41,7 +41,7 @@ class ChangeGroupSetting(BaseEvent):
                 return ReturnData(ReturnData.ERROR, _('You don\'t have permission.'))
             try:
                 setting_ = setting if type(setting) == dict else json.loads(setting)
-            except:
+            except json.JSONDecodeError:
                 return ReturnData(ReturnData.ERROR, _('Illegal setting.'))
 
             error_list = list(filter(lambda x: x not in group.group_settings, setting_))

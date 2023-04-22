@@ -46,7 +46,7 @@ class SendFriendMsg(BaseEvent):
                 return ReturnData(ReturnData.NULL, _('The person is not your friend.'))
         print(msg_)
         try:
-            msg_ = util.msg_process(msg_, self.server)
+            msg_ = util.msg_process(msg_)
         except Exception as err:
             logging.exception(err)
             return ReturnData(ReturnData.ERROR, _('Illegal messages.'))

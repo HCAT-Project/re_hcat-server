@@ -27,25 +27,26 @@ import os
 from flask import Flask, send_from_directory, request
 from flask_cors import CORS
 from gevent import pywsgi
-from src.util import request_parse
+
 from src.containers import Request, ReturnData
 from src.request_receiver.base_receiver import BaseReceiver
+from src.util import request_parse
 
 
 class FlaskHttpReceiver(BaseReceiver):
     def _start(self):
         self.app = Flask(__name__)
-        self.app.config['UPLOAD_FOLDER'] = self.config.get('sys', {}).get('upload_folder', 'static/files')
-        self.app.config['MAX_CONTENT_LENGTH'] = self.config.get('sys', {}).get('max_content_length', 16 * 1024 * 1024)
+        self.app.config['UPLOAD_FOLDER'] = self.config.get_from_pointer('/network/upload/upload_folder', 'static/files')
+        self.app.config['MAX_CONTENT_LENGTH'] = self.config.get_from_pointer('/network/upload/max_content_length', 16 * 1024 * 1024)
 
         # Enable Cross-Origin Resource Sharing (CORS)
-        if self.config.get_from_pointer('/receivers/FlaskHttpReceiver/enable-cors', True):
+        if self.config.get_from_pointer('/network/receivers/FlaskHttpReceiver/enable-cors', True):
             CORS(self.app, supports_credentials=True)
         # optional, but recommended
-        if self.config.get_from_pointer('/receivers/FlaskHttpReceiver/enable-static', True):
+        if self.config.get_from_pointer('/network/receivers/FlaskHttpReceiver/enable-static', True):
             @self.app.route('/<path:path>', methods=['GET', 'POST'])
             def send_static(path):
-                folder = self.config.get_from_pointer('/receivers/FlaskHttpReceiver/enable-static', 'static')
+                folder = self.config.get_from_pointer('/network/receivers/FlaskHttpReceiver/enable-static', 'static')
                 return send_from_directory(os.path.join(os.getcwd(), folder), path)
 
         @self.app.route('/api/<path:path>', methods=['GET', 'POST'])

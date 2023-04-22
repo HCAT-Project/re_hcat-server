@@ -34,7 +34,7 @@ class Login(BaseEvent):
     auth = False
 
     def _run(self, user_id, password):
-        _=self.gettext_func
+        _ = self.gettext_func
         if not self.server.is_user_exist(user_id):
             return ReturnData(ReturnData.NULL, _('User does not exist.')).jsonify()
         self.server.activity_dict_lock.acquire()
@@ -49,7 +49,6 @@ class Login(BaseEvent):
 
                 # init a response
                 resp = make_response(ReturnData(ReturnData.OK).jsonify(), 200)
-
 
                 # generate auth_data
                 auth_data = json.dumps({'user_id': user_id, 'token': user.token, 'salt': util.get_random_token()})

@@ -42,8 +42,8 @@ class SendGroupMsg(BaseEvent):
             name = user.user_name
 
         try:
-            msg_ = util.msg_process(msg_,self.server)
-        except:
+            msg_ = util.msg_process(msg_)
+        except ValueError:
             return ReturnData(ReturnData.ERROR, _('Illegal messages.'))
 
         with self.server.db_group.enter(group_id) as g:

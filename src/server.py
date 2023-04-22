@@ -22,22 +22,17 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import copy
-import importlib
 import logging
 import os.path
 import platform
-import socket
 import sys
 import threading
 import time
 
-from RPDB.database import FRPDB, RPDB
-from flask import Flask, request, url_for, send_from_directory
-from flask_cors import CORS
-from gevent import pywsgi
+from RPDB.database import FRPDB
 
 from src import util
-from src.containers import User, ReturnData
+from src.containers import User
 from src.dynamic_class_loader import DynamicObjLoader
 from src.event.event_manager import EventManager
 from src.event.recv_event import RecvEvent
@@ -126,6 +121,7 @@ class Server:
             del_sid_count = 0
             for i in copy.deepcopy(self.db_event.keys):
                 with self.db_event.enter(i) as v:
+                    assert isinstance(v.value, dict)
                     e: dict = v.value
                     if e and time.time() - e['time'] > self.event_timeout:
                         v.value = None
@@ -135,7 +131,7 @@ class Server:
                 try:
                     allow_del = v not in self.db_event.keys or time.time() - self.get_user_event(v)[
                         'time'] > self.short_id_timeout
-                except:
+                except KeyError:
                     allow_del = True
 
                 if allow_del:
@@ -209,5 +205,5 @@ class Server:
         return self.get_user_event(event_id) is not None
 
     def check_file_exists(self, file_hash):
-        upl_folder = self.config.get_from_pointer('/sys/upload_folder', default='static/files')
+        upl_folder = self.config.get_from_pointer('/network/upload/upload_folder', default='static/files')
         return os.path.exists(os.path.join(upl_folder, file_hash))

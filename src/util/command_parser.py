@@ -76,7 +76,6 @@ class Command:
         :param cmd_str: The command string to be parsed.
         :return: True if the command string was parsed successfully, False otherwise.
         """
-        i = 0
         in_ctrl = False
         cmd_str_p = ''
 
@@ -157,7 +156,3 @@ class Command:
         return self.sep.join(self.cmd_list)
 
 
-if __name__ == '__main__':
-    cmd = Command('/eee "55 5" "666 123"')
-    for i in cmd:
-        print(i)

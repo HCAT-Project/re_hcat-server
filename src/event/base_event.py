@@ -26,9 +26,8 @@ import json
 import logging
 import os
 
-from src.containers import Request
-
 from src import util
+from src.containers import Request
 from src.containers import ReturnData, User
 from src.event.event_manager import EventManager
 from src.util.command_parser import Command
@@ -105,7 +104,7 @@ class BaseEventOfSVACRecvMsg(BaseEvent):
         self.cmd = cmd
 
         @cmd(head='help')
-        def help_(cmd_):
+        def help_(_):
             _ = self.gettext_func
             self.send_msg(_('Commands') + ':' + '<br>/'.join(self.cmds.keys()))
 

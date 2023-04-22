@@ -10,6 +10,8 @@
 @Version    : 1.0.0
 """
 
+from send_friend_msg import SendFriendMsg
+from send_group_msg import SendGroupMsg
 #  Copyright (C) 2023. HCAT-Project-Team
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU Affero General Public License as
@@ -22,8 +24,6 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from src.event.base_event import BaseEvent
-from send_friend_msg import SendFriendMsg
-from send_group_msg import SendGroupMsg
 
 
 class SendMsg(BaseEvent):

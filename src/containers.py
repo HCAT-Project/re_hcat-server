@@ -24,13 +24,13 @@
 import time
 import uuid
 from typing import Any
+from uuid import uuid1
 
 from RPDB.database import RPDB
 from flask import jsonify
 
 from src import util
 from src.util.jelly import Jelly
-from uuid import uuid1
 
 
 class EventContainer:

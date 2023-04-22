@@ -22,9 +22,7 @@
 
 @Version    : 1.0.0
 """
-import hashlib
 import importlib
-import logging
 from pathlib import Path
 from typing import Union
 
@@ -48,7 +46,7 @@ class DynamicObjLoader:
             # get the class of the event
             event_class = getattr(event_module, class_name)
 
-        except ImportError as err:
+        except ImportError:
             return None
 
         return event_class

@@ -91,7 +91,7 @@ class EventManager:
                 with self.server.open_user(auth_data_json['user_id']) as v:
                     user: User = v.value
                     auth_success = user.auth_token(auth_data_json['token'])
-            except:
+            except json.JSONDecodeError:
                 if event.auth:
                     return ReturnData(ReturnData.ERROR, 'Invalid token.').jsonify()
 

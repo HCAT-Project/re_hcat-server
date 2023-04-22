@@ -14,28 +14,19 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
-@Project : re_hcat-server
-@File    : block_pm_without_verification.py
-@Date    : 2023/3/3 下午6:27
+@File       : user_tl_is_changed.py
+
+@Author     : hsn
+
+@Date       : 4/19/23 8:38 PM
+
+@Version    : 1.0.0
 """
-
-from src.containers import ReturnData, User
 from src.event.base_event import BaseEvent
-from src.event.events.chat.send_friend_msg import SendFriendMsg
 
 
-class BlockPmWithoutVerification(BaseEvent):
+class UserTlIsChanged(BaseEvent):
     auth = True
-    main_event = SendFriendMsg
 
-    def _run(self, friend_id, msg):
-
-        with self.server.open_user(self.user_id) as u:
-            user: User = u.value
-
-        # check if the msg is service Account
-        if friend_id[0] in [str(i) for i in range(10)] and friend_id[1] == 's':
-            return False
-        elif (user.email is None) and self.server.config.get_from_pointer(
-                '/email/enable-email-verification'):
-            return True, ReturnData(ReturnData.ERROR, 'Please verify your email first.')
+    def _run(self):
+        ...

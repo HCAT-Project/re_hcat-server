@@ -46,7 +46,7 @@ class Ban(BaseEvent):
 
             try:
                 group.ban_dict[member_id] = {'time': time.time() + float(ban_time)}
-            except:
+            except TypeError:
                 return ReturnData(ReturnData.ERROR, _('Wrong data type.'))
 
             ec = EventContainer(self.server.db_event)

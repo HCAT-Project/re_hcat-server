@@ -31,7 +31,7 @@ class AgreeFriendRequest(BaseEvent):
     auth = True
 
     def _run(self, rid):
-        _=self.gettext_func
+        _ = self.gettext_func
         agree_time = time.time()
 
         with self.server.db_event.enter(rid) as v:

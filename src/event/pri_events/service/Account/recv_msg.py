@@ -28,9 +28,9 @@ import os
 import re
 
 from src import util
-from src.util.regex import regex_email
 from src.containers import EventContainer, User
 from src.event.base_event import BaseEventOfSVACRecvMsg
+from src.util.regex import regex_email
 
 
 class RecvMsg(BaseEventOfSVACRecvMsg):

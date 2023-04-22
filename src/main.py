@@ -30,9 +30,9 @@ from pathlib import Path
 
 from src.dynamic_class_loader import DynamicObjLoader
 from src.server_manager import ServerManager
+from src.util import multi_line_log
 from src.util.config_parser import ConfigParser
 from src.util.i18n import gettext_func as _
-from src.util import multi_line_log
 
 
 def get_start_arg(default_list):
@@ -91,7 +91,6 @@ def clone_client(branch='master'):
 
 
 def main():
-    from src.server import Server
     arg = get_start_arg({'debug': False, 'config': 'config.json', 'host': '0.0.0.0', 'port': 8080, 'name': 'server'})
 
     # get config
