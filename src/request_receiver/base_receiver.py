@@ -34,8 +34,8 @@ class BaseReceiver:
         self.callback = callback
         self.lock = threading.Lock()
         self.config = config if config is not None else ConfigParser({})
-        self.host = self.config.get_from_pointer(f"/receivers/{type(self).__name__}/host", "0.0.0.0")
-        self.port = self.config.get_from_pointer(f"/receivers/{type(self).__name__}/port", random.randint(10000, 65535))
+        self.host = self.config.get_from_pointer(f"/network/receivers/{type(self).__name__}/host", "0.0.0.0")
+        self.port = self.config.get_from_pointer(f"/network/receivers/{type(self).__name__}/port", random.randint(10000, 65535))
 
     def pause(self):
         self.lock.acquire()
