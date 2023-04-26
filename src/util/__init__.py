@@ -30,7 +30,7 @@ import random
 import smtplib
 from email.header import Header
 from email.mime.text import MIMEText
-from html import escape
+
 from typing import Iterable, Any
 
 import pyaes
@@ -165,7 +165,7 @@ def msg_process(msg: Any) -> dict:
         if msg_['msg_chain'][i]['type'] == 'text':
             if len(msg_['msg_chain'][i]['msg']) == 0:
                 raise ValueError("Element in message chain is empty.")
-            msg_['msg_chain'][i]['msg'] = escape(msg_['msg_chain'][i]['msg'])
+            msg_['msg_chain'][i]['msg'] = msg_['msg_chain'][i]['msg']
 
     # todo:add comments
     # todo:file process

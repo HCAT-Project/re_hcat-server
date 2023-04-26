@@ -22,7 +22,6 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import re
-from html import escape
 
 from src.containers import ReturnData, User
 from src.event.base_event import BaseEvent
@@ -48,7 +47,7 @@ class Register(BaseEvent):
             return ReturnData(ReturnData.ERROR, _('Password is too short.'))
 
         with self.server.open_user(user_id) as u:
-            user = User(user_id, password, escape(username))
+            user = User(user_id, password, username)
             user.language = self.lang
             u.value = user
             user.add_fri_msg2todos(self.server, '0sAccount', _('Account_BOT'), _('Account_BOT'),

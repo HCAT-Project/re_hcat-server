@@ -22,7 +22,7 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import time
-from html import escape
+
 
 from src import util
 from src.containers import Group, User, ReturnData
@@ -33,7 +33,7 @@ class CreateGroup(BaseEvent):
     auth = True
 
     def _run(self, group_name):
-        group_name_ = escape(group_name)
+        group_name_ = group_name
         while True:
             group_id = '0g' + util.get_random_token(5, upper=False)
             if not self.server.db_group.exists(group_id):

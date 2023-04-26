@@ -21,7 +21,7 @@
 #  GNU Affero General Public License for more details.
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
-from html import escape
+
 
 from src.containers import User, ReturnData
 from src.event.base_event import BaseEvent
@@ -33,5 +33,5 @@ class Rename(BaseEvent):
     def _run(self, name):
         with self.server.open_user(self.user_id) as u:
             user: User = u.value
-            user.user_name = escape(name)
+            user.user_name = name
             return ReturnData(ReturnData.OK)

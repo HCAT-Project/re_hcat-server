@@ -21,7 +21,7 @@
 #  GNU Affero General Public License for more details.
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
-from html import escape
+
 
 from src.containers import ReturnData, Group
 from src.event.base_event import BaseEvent
@@ -45,4 +45,4 @@ class ChangeUserNick(BaseEvent):
             if _user_id not in group.member_dict:
                 return ReturnData(ReturnData.ERROR, _('You are not in the group.'))
 
-            group.member_dict[_user_id]['nick'] = escape(nick)
+            group.member_dict[_user_id]['nick'] = nick

@@ -21,7 +21,7 @@
 #  GNU Affero General Public License for more details.
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
-from html import escape
+
 
 from src.containers import ReturnData, User
 from src.event.base_event import BaseEvent
@@ -36,5 +36,5 @@ class SetFriendNick(BaseEvent):
             user: User = u.value
             if friend_id not in user.friend_dict:
                 return ReturnData(ReturnData.NULL, _('The person is not your friend.'))
-            user.friend_dict[friend_id]['nick'] = escape(nick)
+            user.friend_dict[friend_id]['nick'] = nick
             return ReturnData(ReturnData.OK)

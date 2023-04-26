@@ -43,7 +43,7 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
         @self.cmd('email')
         def email(cmd):
             if len(cmd) == 0:
-                self.send_msg(_('Command') + ':<br>/email bind [email]<br>/email code [code]<br>/email unbind')
+                self.send_msg(_('Command') + ':\\n/email bind [email]\\n/email code [code]\\n/email unbind')
 
             if cmd[0] == 'bind':
                 if self.server.config['email']['enable-email-verification']:
@@ -132,7 +132,7 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
         def lang(cmd):
             _ = self.gettext_func
             if len(cmd) == 0:
-                self.send_msg(_('Command') + ':<br>/lang set [lang]<br>/lang list')
+                self.send_msg(_('Command') + ':\\n/lang set [lang]\\n/lang list')
                 return
             if cmd[0] == 'set':
                 if cmd[1] in os.listdir('locale'):
@@ -148,5 +148,5 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
                     self.send_msg(_('Invalid language.'))
                 return
             elif cmd[0] == 'list':
-                self.send_msg(_('Available language') + ':<br>' + '<br>'.join(os.listdir('locale')))
+                self.send_msg(_('Available language') + ':\\n' + '\\n'.join(os.listdir('locale')))
                 return
