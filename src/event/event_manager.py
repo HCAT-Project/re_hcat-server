@@ -26,6 +26,7 @@ import logging
 
 from src.containers import ReturnData, User
 from src.util import AesCrypto
+from src.util.config_parser import ConfigParser
 
 
 class EventManager:
@@ -40,6 +41,7 @@ class EventManager:
         self.auxiliary_events[main_event].append(event)
 
     def create_event(self, event, req, path):
+        assert isinstance(self.server.config, ConfigParser)
         # run auxiliary events
         ae_rt = None
         cancel = False

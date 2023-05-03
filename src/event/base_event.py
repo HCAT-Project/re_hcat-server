@@ -31,6 +31,7 @@ from src.containers import Request
 from src.containers import ReturnData, User
 from src.event.event_manager import EventManager
 from src.util.command_parser import Command
+from src.util.config_parser import ConfigParser
 
 
 class BaseEvent:
@@ -76,7 +77,7 @@ class BaseEvent:
         # check if the parameters meet the requirements
         if util.ins(m_requirements, req_data):
             if len(requirements) > 0:
-                return self._run(*[req_data[k] for k in requirements])
+                return self._run(**{k: req_data[k] for k in filter(lambda x: x in requirements, req_data)})
             else:
                 return self._run()
         else:
@@ -84,7 +85,7 @@ class BaseEvent:
             return ReturnData(ReturnData.ERROR,
                               _('Parameters do not meet the requirements:[{}]').format(req_str))
 
-    def _run(self, *args):
+    def _run(self, **kwargs):
         ...
 
 

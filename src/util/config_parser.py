@@ -37,6 +37,8 @@ class ConfigParser:
                 self.config: dict = json.load(f)
         elif isinstance(config, IO):
             self.config: dict = json.load(config)
+        elif isinstance(config,ConfigParser):
+            self.config=config.config
 
     def __contains__(self, item):
         return self.get_from_pointer(item) is not None

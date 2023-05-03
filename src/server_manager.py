@@ -36,7 +36,7 @@ from src.util.i18n import gettext_func as _
 
 class ServerManager:
     def __init__(self, server_kwargs: dict = None, dol: DynamicObjLoader = None, config: ConfigParser = None):
-        self.config = config if config is not None else ConfigParser({})
+        self.config = ConfigParser(config) if config is not None else ConfigParser({})
         self.server = {}
         if dol is None:
             self.dol = DynamicObjLoader()

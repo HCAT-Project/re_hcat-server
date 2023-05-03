@@ -39,7 +39,8 @@ class FileManager:
         return path if path.exists() else None
 
     def save_file(self, file: IO[bytes], timeout=7 * 24 * 60) -> str:
-        hash_ = file_hash(file, file_hash)
+
+        hash_ = file_hash(file)
         file.seek(0)
 
         with open(Path(self.path) / hash_, 'wb') as f:
