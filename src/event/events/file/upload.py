@@ -26,13 +26,14 @@ import os
 
 from src.containers import ReturnData
 from src.event.base_event import BaseEvent
+from src.util.file_manager import FileManager
 from src.util.hash_utils import file_hash
 
 
 class Upload(BaseEvent):
     auth = True
 
-    def _run(self):
+    def _run(self, file_type='file'):
         _ = self.gettext_func
         # check if the file is in the request
         if 'file' not in self.req.files:
@@ -40,17 +41,8 @@ class Upload(BaseEvent):
 
         # get the file
         file = self.req.files['file']
-
-        # get the file's hash
-        file_hash_ = file_hash(file.stream)
-        upl_folder = self.server.config.get_from_pointer('/network/upload/upload_folder', default='static/files')
-
-        # check if the file exists
-        if not os.path.exists(upl_folder):
-            os.makedirs(upl_folder)
-
-        # save the file
-        file.stream.seek(0)
-        file.save(os.path.join(upl_folder, file_hash_))
-        return ReturnData(ReturnData.OK).add('sha1', file_hash_).add('size', os.path.getsize(
-            os.path.join(upl_folder, file_hash_)))
+        assert isinstance(self.server.upload_folder, FileManager)
+        file_timeout = self.server.config.get_from_point('/network/upload/file_timeout', default=86400)
+        if file_type == 'profile_photo':
+            file_timeout = 300
+        self.server.upload_folder.save_file(file, timeout=file_timeout)

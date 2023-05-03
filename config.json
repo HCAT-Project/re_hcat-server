@@ -20,7 +20,8 @@
   "network": {
     "upload": {
       "upload_folder": "static/files",
-      "max_content_length": 104857600
+      "max_content_length": 104857600,
+      "file_timeout": 86400
     },
     "receivers": {
       "FlaskHttpReceiver": {

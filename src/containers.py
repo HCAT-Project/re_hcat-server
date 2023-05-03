@@ -27,7 +27,7 @@ from typing import Any
 from uuid import uuid1
 
 from RPDB.database import RPDB
-from flask import jsonify
+from flask import jsonify, make_response
 
 from src import util
 from src.util.jelly import Jelly
@@ -80,12 +80,21 @@ class ReturnData:
 
     def add(self, key: str, value: Any) -> 'ReturnData':
         # add a new key-value pair to the response data and return the object
+        if key.startswith('_'):
+            raise ValueError('key must not start with "_"', key)
         self.json_data[key] = value
         return self
 
     def jsonify(self):
         # convert the response data to a JSON object
         return jsonify(self.json_data)
+
+    def flask_respify(self):
+        resp = make_response(jsonify(self.json_data), 200)
+        if self.json_data.get('_cookie', False):
+            for k, v in self.json_data['_cookie'].items():
+                resp.set_cookie(k, v)
+        return resp
 
     def __call__(self) -> dict:
         # return the response data as a dictionary

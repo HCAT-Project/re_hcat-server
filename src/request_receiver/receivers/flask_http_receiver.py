@@ -23,6 +23,7 @@
 @Version    : 1.0.0
 """
 import os
+import threading
 
 from flask import Flask, send_from_directory, request
 from flask_cors import CORS
@@ -37,7 +38,8 @@ class FlaskHttpReceiver(BaseReceiver):
     def _start(self):
         self.app = Flask(__name__)
         self.app.config['UPLOAD_FOLDER'] = self.config.get_from_pointer('/network/upload/upload_folder', 'static/files')
-        self.app.config['MAX_CONTENT_LENGTH'] = self.config.get_from_pointer('/network/upload/max_content_length', 16 * 1024 * 1024)
+        self.app.config['MAX_CONTENT_LENGTH'] = self.config.get_from_pointer('/network/upload/max_content_length',
+                                                                             16 * 1024 * 1024)
 
         # Enable Cross-Origin Resource Sharing (CORS)
         if self.config.get_from_pointer('/network/receivers/FlaskHttpReceiver/enable-cors', True):
@@ -46,7 +48,7 @@ class FlaskHttpReceiver(BaseReceiver):
         if self.config.get_from_pointer('/network/receivers/FlaskHttpReceiver/enable-static', True):
             @self.app.route('/<path:path>', methods=['GET', 'POST'])
             def send_static(path):
-                folder = self.config.get_from_pointer('/network/receivers/FlaskHttpReceiver/enable-static', 'static')
+                folder = self.config.get_from_pointer('/network/receivers/FlaskHttpReceiver/static-folder', 'static')
                 return send_from_directory(os.path.join(os.getcwd(), folder), path)
 
         @self.app.route('/api/<path:path>', methods=['GET', 'POST'])
@@ -59,8 +61,11 @@ class FlaskHttpReceiver(BaseReceiver):
                 rt = rt.jsonify()
             elif rt is None:
                 rt = ReturnData(ReturnData.NULL, '').jsonify()
+
             return rt
 
         server = pywsgi.WSGIServer((self.host, self.port), self.app)
         self.wsgi_server = server
         server.serve_forever()
+
+

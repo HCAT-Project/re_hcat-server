@@ -38,10 +38,11 @@ from src.event.event_manager import EventManager
 from src.event.recv_event import RecvEvent
 from src.util.config_parser import ConfigParser
 from src.util.i18n import gettext_func as _
+from src.util.file_manager import FileManager
 
 
 class Server:
-    ver = '2.4.1'
+    ver = '2.4.2'
 
     def __init__(self, debug: bool = False,
                  name=__name__, config=None, dol: DynamicObjLoader = None):
@@ -89,6 +90,10 @@ class Server:
         self.db_event = FRPDB(os.path.join(os.getcwd(), 'data', 'event'))
         self.db_group = FRPDB(os.path.join(os.getcwd(), 'data', 'group'))
         self.db_email = FRPDB(os.path.join(os.getcwd(), 'data', 'email'))
+        self.db_file_info = FRPDB(os.path.join(os.getcwd(), 'data', 'file_info'))
+        # Initialize file manager
+        self.upload_folder = FileManager(self.config.get_from_pointer('/network/upload/upload_folder', 'static/files'),
+                                         self.db_file_info)
 
         # Initialize sid table
         self.event_sid_table = {}
@@ -114,7 +119,7 @@ class Server:
                     user.status = 'offline'
             time.sleep(1)
 
-    def event_cleaner_thread(self):
+    def cleaner_thread(self):
         # Remove expired events from the event database
         while True:
             del_e_count = 0
@@ -138,16 +143,17 @@ class Server:
                     self.event_sid_table.pop(k)
                     del_sid_count += 1
 
-            if del_sid_count > 0 or del_e_count > 0:
-                self.logger.info(_('Event cleaner: {} events deleted, {} short IDs deleted.')
-                                 .format(del_e_count, del_sid_count))
+            del_file_c = self.upload_folder.clear_timeout()
+            if del_sid_count > 0 or del_e_count > 0 or del_file_c > 0:
+                self.logger.info(_('Event cleaner: {} events deleted, {} short IDs deleted,{} files deleted.')
+                                 .format(del_e_count, del_sid_count, del_file_c))
 
             time.sleep(30)
 
     def start(self):
         # Start server threads
         self.logger.info(_('Starting server threads...'))
-        cleaner_thread = threading.Thread(target=self.event_cleaner_thread, daemon=True, name='event_cleaner_thread')
+        cleaner_thread = threading.Thread(target=self.cleaner_thread, daemon=True, name='event_cleaner_thread')
         activity_thread = threading.Thread(target=self.activity_list_thread, daemon=True, name='activity_thread')
 
         threads = [cleaner_thread, activity_thread]
