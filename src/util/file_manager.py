@@ -52,7 +52,8 @@ class FileManager:
 
     def add_ref(self, sha1: str):
         with self.info_db.enter(sha1) as info:
-            assert isinstance(info.value, dict)
+            if not isinstance(info.value, dict):
+                raise TypeError("info.value should be a dictionary")
             info.value['ref'] += 1
 
     def clear_timeout(self) -> int:
@@ -64,7 +65,9 @@ class FileManager:
                     Path(key).unlink()
                     continue
 
-                assert isinstance(info.value, dict)
+                if not isinstance(info.value, dict):
+                    raise TypeError("info.value should be a dictionary")
+
                 if info.value.get('timeout', 0) < time.time() and info.value['ref'] == 0:
                     Path(key).unlink()
                     info.value = None
