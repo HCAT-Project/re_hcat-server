@@ -23,6 +23,7 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import time
 import uuid
+from datetime import timedelta, datetime
 from typing import Any
 from uuid import uuid1
 
@@ -85,15 +86,31 @@ class ReturnData:
         self.json_data[key] = value
         return self
 
+    def set_cookie(self,
+                   key: str,
+                   value: str = "",
+                   max_age: timedelta | int | None = None,
+                   expires: str | datetime | int | float | None = None,
+                   path: str | None = "/",
+                   domain: str | None = None,
+                   secure: bool = False,
+                   httponly: bool = False,
+                   samesite: str | None = None):
+        if '_cookies' not in self.json_data:
+            self.json_data['_cookies'] = {}
+        self.json_data['_cookies'][key] = {'value': value, 'max_age': max_age, 'expires': expires, 'path': path,
+                                           'domain': domain, 'secure': secure, 'httponly': httponly,
+                                           'samesite': samesite}
+
     def jsonify(self):
         # convert the response data to a JSON object
         return jsonify(self.json_data)
 
     def flask_respify(self):
         resp = make_response(jsonify(self.json_data), 200)
-        if self.json_data.get('_cookie', False):
-            for k, v in self.json_data['_cookie'].items():
-                resp.set_cookie(k, v)
+        if self.json_data.get('_cookies', False):
+            for k, v in self.json_data['_cookies'].items():
+                resp.set_cookie(key=k, **v)
         return resp
 
     def __call__(self) -> dict:

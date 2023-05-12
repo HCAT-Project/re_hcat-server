@@ -48,7 +48,7 @@ class Login(BaseEvent):
                 user.token = util.get_random_token()
 
                 # init a response
-                resp = make_response(ReturnData(ReturnData.OK).jsonify(), 200)
+                resp = ReturnData(ReturnData.OK)
 
                 # generate auth_data
                 auth_data = json.dumps({'user_id': user_id, 'token': user.token, 'salt': util.get_random_token()})
@@ -62,8 +62,10 @@ class Login(BaseEvent):
                     resp.set_cookie('auth_data', aes.encrypt(auth_data), domain=self.server.config['sys']['domain'])
                 else:
                     resp.set_cookie('auth_data', aes.encrypt(auth_data))
+
                 # check if @0sAccount in friend_list
                 user.add_user_to_friend_list('0sAccount', _('Account_BOT'))
+
                 # return
                 return resp
             else:
