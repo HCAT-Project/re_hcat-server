@@ -59,13 +59,18 @@ class FlaskHttpReceiver(BaseReceiver):
             rt = self.create_req(req)
 
             if isinstance(rt, ReturnData):
-                rt = rt.flask_respify()
+                rt_resp = rt.flask_respify()
             elif rt is None:
-                rt = ReturnData(ReturnData.NULL, '').flask_respify()
+                rt_resp = ReturnData(ReturnData.NULL, '').flask_respify()
             else:
                 raise TypeError(f"Return type of {type(self).__name__} must be ReturnData or None, not {type(rt)}")
 
-            return rt
+            # [High severity]CVE-2023-30861: Flask vulnerable to possible disclosure of permanent session cookie due
+            # to missing Vary: Cookie header
+            if '_cookie' in rt.json_data:
+                rt_resp.headers.add('Vary', 'Cookie')
+
+            return rt_resp
 
         server = pywsgi.WSGIServer((self.host, self.port), self.app)
         self.wsgi_server = server

@@ -28,7 +28,7 @@ from typing import Any
 from uuid import uuid1
 
 from RPDB.database import RPDB
-from flask import jsonify, make_response
+from flask import jsonify, make_response, Response
 
 from src import util
 from src.util.jelly import Jelly
@@ -106,7 +106,7 @@ class ReturnData:
         # convert the response data to a JSON object
         return jsonify(self.json_data)
 
-    def flask_respify(self):
+    def flask_respify(self) -> Response:
         resp = make_response(jsonify(self.json_data), 200)
         if self.json_data.get('_cookies', False):
             for k, v in self.json_data['_cookies'].items():
