@@ -95,7 +95,7 @@ class EventManager:
                     auth_success = user.auth_token(auth_data_json['token'])
             except json.JSONDecodeError:
                 if event.auth:
-                    return ReturnData(ReturnData.ERROR, 'Invalid token.').jsonify()
+                    return ReturnData(ReturnData.ERROR, 'Invalid token.')
 
         # check if the auth is successful
         if auth_success or not event.auth:
@@ -117,4 +117,4 @@ class EventManager:
 
             return rt
         else:
-            return ReturnData(ReturnData.ERROR, 'Invalid token.').jsonify()
+            return ReturnData(ReturnData.ERROR, 'Invalid token.')

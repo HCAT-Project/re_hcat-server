@@ -25,6 +25,7 @@
 import os
 import threading
 
+import pysnooper as pysnooper
 from flask import Flask, send_from_directory, request
 from flask_cors import CORS
 from gevent import pywsgi
@@ -58,14 +59,14 @@ class FlaskHttpReceiver(BaseReceiver):
             rt = self.create_req(req)
 
             if isinstance(rt, ReturnData):
-                rt = rt.jsonify()
+                rt = rt.flask_respify()
             elif rt is None:
-                rt = ReturnData(ReturnData.NULL, '').jsonify()
+                rt = ReturnData(ReturnData.NULL, '').flask_respify()
+            else:
+                raise TypeError(f"Return type of {type(self).__name__} must be ReturnData or None, not {type(rt)}")
 
             return rt
 
         server = pywsgi.WSGIServer((self.host, self.port), self.app)
         self.wsgi_server = server
         server.serve_forever()
-
-
