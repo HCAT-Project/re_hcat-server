@@ -91,7 +91,7 @@ def clone_client(branch='master'):
 
 
 def main():
-    arg = get_start_arg({'debug': False, 'config': 'config.json', 'host': '0.0.0.0', 'port': 8080, 'name': 'server'})
+    arg = get_start_arg({'debug': False, 'config': 'config.json', 'host': '127.0.0.1', 'port': 8080, 'name': 'server'})
 
     # get config
     logging.getLogger().info(_('Loading config from {}').format(arg['config']))
