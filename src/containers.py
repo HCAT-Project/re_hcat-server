@@ -129,7 +129,7 @@ class User(Jelly):
         :param password: The new password to set.
         """
         self.salt = util.get_random_token(16)
-        self.hash_password = util.salted_hash(password, self.salt, self.user_id)
+        self.hash_password = util.salted_sha256(password, self.salt, self.user_id)
 
     def auth(self, password: str) -> bool:
         """
@@ -137,7 +137,13 @@ class User(Jelly):
         :param password: The password to check.
         :return: True if the password is correct, False otherwise.
         """
-        return util.salted_hash(password, self.salt, self.user_id) == self.hash_password
+        if util.salted_sha256(password, self.salt, self.user_id) == self.hash_password:
+            return True
+        elif util.salted_sha1(password, self.salt, self.user_id) == self.hash_password:
+            # old password hash
+            return True
+        else:
+            return False
 
     def is_in_group(self, server, group_id: str) -> bool:
         """

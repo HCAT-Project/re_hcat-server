@@ -50,7 +50,7 @@ def read_chunks(file: Union[str, PathLike, IO[bytes]], chunk_size: int = io.DEFA
 def file_hash(file: Union[str, PathLike, IO[bytes]] = None, hasher=None):
 
     assert file is not None
-    h = hasher() if hasher is not None else hashlib.sha1()
+    h = hasher() if hasher is not None else hashlib.sha1(usedforsecurity=False)
     for chunk in read_chunks(file):
         h.update(chunk)
     return h.hexdigest()

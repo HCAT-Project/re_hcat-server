@@ -79,7 +79,21 @@ class AesCrypto:
         return rt_bytes.rstrip(b'\x00').decode('utf8')
 
 
-def salted_hash(data, salt, additional_string=None):
+def salted_sha256(data, salt, additional_string=None):
+    """
+    Generates a salted hash for the given data and salt.
+    :param data: The data to be hashed.
+    :param salt: The salt to use for the hash.
+    :param additional_string: An additional string to add to the hash if desired.
+    :return: The salted hash as a hexadecimal string.
+    """
+    hash_salt = salt
+    if additional_string is not None:
+        hash_salt += hashlib.sha256(additional_string.encode('utf8')).hexdigest()
+    return hashlib.sha256((data + hash_salt).encode('utf8')).hexdigest()
+
+
+def salted_sha1(data, salt, additional_string=None):
     """
     Generates a salted hash for the given data and salt.
     :param data: The data to be hashed.
