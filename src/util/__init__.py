@@ -35,6 +35,8 @@ from typing import Iterable, Any
 
 import pyaes
 from flask import Request
+import secrets
+import string
 
 
 class AesCrypto:
@@ -103,8 +105,8 @@ def salted_sha1(data, salt, additional_string=None):
     """
     hash_salt = salt
     if additional_string is not None:
-        hash_salt += hashlib.sha1(additional_string.encode('utf8'),usedforsecurity=False).hexdigest()
-    return hashlib.sha1((data + hash_salt).encode('utf8'),usedforsecurity=False).hexdigest()
+        hash_salt += hashlib.sha1(additional_string.encode('utf8'), usedforsecurity=False).hexdigest()
+    return hashlib.sha1((data + hash_salt).encode('utf8'), usedforsecurity=False).hexdigest()
 
 
 def get_random_token(key_len=128, upper=True):
@@ -115,10 +117,10 @@ def get_random_token(key_len=128, upper=True):
     :return: The generated token as a string.
     """
     if upper:
-        choices = list(range(65, 91)) + list(range(97, 123)) + list(range(48, 58))
+        choices = string.ascii_letters + string.digits
     else:
-        choices = list(range(97, 123)) + list(range(48, 58))
-    return ''.join([chr(random.choice(choices)) for _ in range(key_len)])
+        choices = string.ascii_lowercase + string.digits
+    return ''.join(secrets.choice(choices) for _ in range(key_len))
 
 
 def ins(obj: Iterable, collection: Iterable) -> bool:
