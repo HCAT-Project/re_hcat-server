@@ -73,17 +73,17 @@ def clone_client(branch='master'):
     try:
         if not os.path.exists('static'):
             cmd = 'git clone https://github.com/HCAT-Project/hcat-client.git static'
-            subprocess.run(cmd, shell=True, check=True, stderr=subprocess.DEVNULL, text=True)
+            subprocess.run(cmd, shell=False, check=True, stderr=subprocess.DEVNULL, text=True)
 
         cmd = f'git checkout -b {branch} origin/{branch}'
         try:
-            subprocess.run(cmd, cwd='static', shell=True, check=True, stderr=subprocess.DEVNULL, text=True)
+            subprocess.run(cmd, cwd='static', shell=False, check=True, stderr=subprocess.DEVNULL, text=True)
         except subprocess.CalledProcessError:
             cmd = f'git checkout {branch}'
-            subprocess.run(cmd, cwd='static', shell=True, check=True, stderr=subprocess.DEVNULL, text=True)
+            subprocess.run(cmd, cwd='static', shell=False, check=True, stderr=subprocess.DEVNULL, text=True)
 
         cmd = 'git pull --force'
-        subprocess.run(cmd, cwd='static', shell=True, check=True, stderr=subprocess.DEVNULL, text=True)
+        subprocess.run(cmd, cwd='static', shell=False, check=True, stderr=subprocess.DEVNULL, text=True)
 
     except FileExistsError:
         pass
