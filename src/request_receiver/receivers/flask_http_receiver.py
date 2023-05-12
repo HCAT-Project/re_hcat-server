@@ -50,6 +50,8 @@ class FlaskHttpReceiver(BaseReceiver):
             @self.app.route('/<path:path>', methods=['GET', 'POST'])
             def send_static(path):
                 folder = self.config.get_from_pointer('/network/receivers/FlaskHttpReceiver/static-folder', 'static')
+                if path == '':
+                    path = 'index.html'
                 return send_from_directory(os.path.join(os.getcwd(), folder), path)
 
         @self.app.route('/api/<path:path>', methods=['GET', 'POST'])
