@@ -103,8 +103,8 @@ def salted_sha1(data, salt, additional_string=None):
     """
     hash_salt = salt
     if additional_string is not None:
-        hash_salt += hashlib.sha1(additional_string.encode('utf8')).hexdigest()
-    return hashlib.sha1((data + hash_salt).encode('utf8')).hexdigest()
+        hash_salt += hashlib.sha1(additional_string.encode('utf8'),usedforsecurity=False).hexdigest()
+    return hashlib.sha1((data + hash_salt).encode('utf8'),usedforsecurity=False).hexdigest()
 
 
 def get_random_token(key_len=128, upper=True):
