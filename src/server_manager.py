@@ -86,13 +86,13 @@ class ServerManager:
         return self.server['server'].request_handler(req)
 
     def load_receivers(self):
-        for i in self.dol.load_classes_from_group("receiver"):
+        for i in self.dol.load_objs_from_group("receiver"):
             c = i(self.request, self.config)
             c.start()
             self.receivers[i.__name__] = c
 
     def _load_auxiliary_events(self, s: Server):
-        for class_ in self.dol.load_classes_from_group('auxiliary_events'):
+        for class_ in self.dol.load_objs_from_group('auxiliary_events'):
             # logout
             logging.debug(_('Auxiliary event "{}" loaded.').format(class_.__name__))
 

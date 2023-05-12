@@ -35,42 +35,42 @@ class DynamicObjLoader:
         self.group_dict = {}
 
     @staticmethod
-    def load_class(path: str, class_name: str = None):
-        if class_name is None:
-            class_name = util.under_score_to_pascal_case(Path(path).stem)
+    def load_obj(path: str, obj_name: str = None):
+        if obj_name is None:
+            obj_name = util.under_score_to_pascal_case(Path(path).stem)
 
         try:
             # get the module
-            event_module = importlib.import_module(f'{path.replace("/", ".").rstrip(".py")}')
+            module_ = importlib.import_module(f'{path.replace("/", ".").rstrip(".py")}')
 
             # get the class of the event
-            event_class = getattr(event_module, class_name)
+            obj_ = getattr(module_, obj_name)
 
         except ImportError:
             return None
 
-        return event_class
+        return obj_
 
-    def load_classes(self, path: Union[str, Path]):
-        classes_dir = path if isinstance(path, Path) else Path(path)
+    def load_objs(self, path: Union[str, Path]):
+        modules_dir = path if isinstance(path, Path) else Path(path)
 
-        for i in filter(lambda p: p.suffix == '.py', classes_dir.iterdir()):
+        for i in filter(lambda p: p.suffix == '.py', modules_dir.iterdir()):
             if i.is_dir():
-                yield from self.load_classes(i)
+                yield from self.load_objs(i)
             else:
-                class_name = util.under_score_to_pascal_case(i.stem)
-                rt_class = self.load_class(i.relative_to(Path.cwd()).as_posix(), class_name)
-                if rt_class is not None:
-                    yield rt_class
+                obj_name = util.under_score_to_pascal_case(i.stem)
+                rt_obj = self.load_obj(i.relative_to(Path.cwd()).as_posix(), obj_name)
+                if rt_obj is not None:
+                    yield rt_obj
 
-    def load_classes_from_group(self, group: str = "default"):
+    def load_objs_from_group(self, group: str = "default"):
         for i in self.group_dict.get(group, []):
-            yield from self.load_classes(i)
+            yield from self.load_objs(i)
 
-    def load_class_from_group(self, path: Union[str, Path], class_name: str = None, group: str = "default"):
+    def load_obj_from_group(self, path: Union[str, Path], obj_name: str = None, group: str = "default"):
         for i in self.group_dict.get(group, []):
             if (Path(i) / path).with_suffix(".py").exists():
-                return self.load_class((Path(i) / path).relative_to(Path.cwd()).as_posix(), class_name=class_name)
+                return self.load_obj((Path(i) / path).relative_to(Path.cwd()).as_posix(), obj_name=obj_name)
         return None
 
     def add_path_to_group(self, group: str = "default", path: Union[str, Path] = None):

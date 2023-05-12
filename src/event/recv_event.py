@@ -33,7 +33,7 @@ class RecvEvent(BaseEvent):
 
     def _run(self):
 
-        event_class = self.server.dol.load_class_from_group(path=self.path, group='req_events')
+        event_class = self.server.dol.load_obj_from_group(path=self.path, group='req_events')
 
         if event_class is None:
             return make_response('No Found', 404)
