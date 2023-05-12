@@ -72,20 +72,19 @@ def load_config(path):
 def clone_client(branch='master'):
     try:
         if not os.path.exists('static'):
-            multi_line_log(logger=logging.getLogger('git'), msg=subprocess.check_output(
-                ['git', 'clone', 'https://github.com/HCAT-Project/hcat-client.git', 'static'],
-                stderr=subprocess.DEVNULL).decode('utf8'))
+            cmd = 'git clone https://github.com/HCAT-Project/hcat-client.git static'
+            subprocess.run(cmd, shell=True, check=True, stderr=subprocess.DEVNULL, text=True)
+
+        cmd = f'git checkout -b {branch} origin/{branch}'
         try:
-            multi_line_log(logger=logging.getLogger('git'),
-                           msg=subprocess.check_output(['git', 'checkout', '-b', branch, f'origin/{branch}'],
-                                                       cwd='static', stderr=subprocess.DEVNULL).decode('utf8'))
+            subprocess.run(cmd, cwd='static', shell=True, check=True, stderr=subprocess.DEVNULL, text=True)
         except subprocess.CalledProcessError:
-            multi_line_log(logger=logging.getLogger('git'),
-                           msg=subprocess.check_output(['git', 'checkout', branch], cwd='static',
-                                                       stderr=subprocess.DEVNULL).decode('utf8'))
-        multi_line_log(logger=logging.getLogger('git'),
-                       msg=subprocess.check_output(['git', 'pull', '--force'], cwd='static',
-                                                   stderr=subprocess.DEVNULL).decode('utf8'))
+            cmd = f'git checkout {branch}'
+            subprocess.run(cmd, cwd='static', shell=True, check=True, stderr=subprocess.DEVNULL, text=True)
+
+        cmd = 'git pull --force'
+        subprocess.run(cmd, cwd='static', shell=True, check=True, stderr=subprocess.DEVNULL, text=True)
+
     except FileExistsError:
         pass
 

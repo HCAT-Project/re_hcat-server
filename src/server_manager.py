@@ -100,9 +100,12 @@ class ServerManager:
 
     def _update_thread(self):
         while True:
-            b_name = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
-            local_cid = subprocess.check_output(['git', 'rev-parse', '--short', b_name])
-            remote_cid = subprocess.check_output(['git', 'rev-parse', '--short', 'origin/' + b_name])
+            b_name = subprocess.run(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], capture_output=True, text=True,
+                                    check=True).stdout.strip()
+            local_cid = subprocess.run(['git', 'rev-parse', '--short', b_name], capture_output=True, text=True,
+                                       check=True).stdout.strip()
+            remote_cid = subprocess.run(['git', 'rev-parse', '--short', 'origin/' + b_name], capture_output=True,
+                                        text=True, check=True).stdout.strip()
             if local_cid != remote_cid:
                 self.update_server()
             time.sleep(60)
@@ -112,7 +115,7 @@ class ServerManager:
         for i in self.receivers:
             i.pause()
 
-        subprocess.check_output(['git', 'pull'])
+        subprocess.run(['git', 'pull'], check=True)
 
         self.start()
         for i in self.receivers:
