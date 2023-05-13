@@ -1,0 +1,57 @@
+# 项目结构
+
+- data/: 存储服务器的数据.
+    - account/: 存储所有的用户账号信息.
+    - event/: 存储所有的事件信息.
+    - group/: 存储所有的群组信息.
+- doc/: 项目文档.
+  - dev-guide_zh-cmn-CN.md: 开发者指南文档.
+  - how-to-translate-the-hcat_en-US.md: 如何翻译Hcat.
+  - project-structure_en-US.md: 项目结构文档.
+  - project-structure_zh-cmn-CN.md: 项目结构文档(中文).
+- locale/: 语言文件.
+  - zh_CN/: 中文语言文件.
+  - meow_CN/: 喵语言文件.
+  - en_US/: 英文语言文件.
+- logs/: 服务器日志.
+- src/: 项目源代码.
+  - containers.py: 包含了一些数据容器,例如EventContainer,GroupContainer,UserContainer等.
+  - event/: 事件相关的源代码.
+    - auxiliary_events/: 辅助事件源代码.
+      - block_gm_without_verification.py: 不使用验证的情况下屏蔽私聊事件的代码.
+      - block_pm_without_verification.py: 不使用验证的情况下屏蔽群聊事件的代码.
+      - sv_msg.py: 服务消息的代码.
+    - base_event.py: 事件的基类代码.
+    - events/: 基础事件源代码.
+      - account/: 账户事件代码.
+      - chat/: 聊天事件代码.
+      - file/: 文件事件代码.
+      - friend/: 好友事件代码.
+      - group/: 群组事件代码.
+      - other/: 其他事件代码.
+    - pri_events/: 私有事件源代码.
+      - service/: 服务事件源代码.
+        - Account/: 账户服务事件源代码.
+        - recv_sv_account_msg.py: 接收账户服务消息的代码.
+    - event_manager.py: 事件管理器的代码.
+    - pri_events.py: 私有事件的代码.
+    - recv_event.py: 接收事件的事件.
+  - main.py: 服务器主函数的代码.
+  - request_receiver/: 请求接收器相关的代码.
+    - receivers/: 存储接收器代码.
+  - server.py: 服务器核心代码.
+  - util/: 工具代码.
+- tools/: 存储工具.
+  - lang_tool/: 语言工具.
+    - gen_msg_po.py: 生成.po文件的工具代码.
+    - gen_msg_pot.py: 生成.pot文件的工具代码.
+    - po2mo.py: 将.po文件转换为.mo文件的工具代码.
+    - update_po.py: 更新.po文件的工具代码.
+- config.json: 用于配置服务器的参数.
+- LICENSE: 项目许可证.
+- messages.pot: 用于翻译的.pot文件.
+- README.md: 项目README.
+- README.zh-cmn-CN.md: 项目README(中文).
+- requirements.txt: 项目依赖.
+- server.key: 服务器私钥.
+- start.py: 服务器启动脚本.

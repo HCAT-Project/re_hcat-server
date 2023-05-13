@@ -73,13 +73,13 @@ python start.py
 
 # 项目结构
 
-点此查看:[项目结构](doc/project_structure_zh-hans.md)
+点此查看:[项目结构](doc/project-structure_zh-cmn-CN.md)
 
 **不保证实时更新**
 
 # 开发指南
 
-点此查看:[开发指南](doc/dev_guide_zh-hans.md)
+点此查看:[开发指南](doc/dev-guide_zh-cmn-CN.md)
 
 # 维护者
 

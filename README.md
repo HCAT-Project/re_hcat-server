@@ -78,13 +78,13 @@ python start.py
 
 # Project Structure
 
-Click here to view: [Project Structure](doc/project_structure_zh-hans.md)
+Click here to view: [Project Structure](doc/project-structure_zh-cmn-CN.md)
 
 **Real-time updates are not guaranteed**
 
 # Development Guide
 
-Click here to view: [Development Guide](doc/dev_guide_zh-hans.md)
+Click here to view: [Development Guide](doc/dev-guide_zh-cmn-CN.md)
 # Maintainers
 [@hsn8086](https://github.com/hsn8086)
 # License

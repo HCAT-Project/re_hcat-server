@@ -1,0 +1,57 @@
+# Project Structure
+
+- data/: stores the data of the server.
+    - account/: stores information about all user accounts.
+    - event/: stores information about all events.
+    - group/: stores information about all groups.
+- doc/: project documentation.
+  - dev-guide_zh-cmn-CN.md: developer's guide documentation.
+  - how-to-translate-the-hcat_en-US.md: documentation on how to translate Hcat.
+  - project-structure_en-US.md: project structure documentation.
+  - project-structure_zh-cmn-CN.md: project structure documentation(Chinese).
+- locale/: language files.
+  - zh_CN/: Chinese language files.
+  - meow_CN/: Meow language files.
+  - en_US/: English language files.
+- logs/: server logs.
+- src/: project source code.
+  - containers.py: contains some data containers, such as EventContainer, GroupContainer, UserContainer, etc.
+  - event/: source code related to events.
+    - auxiliary_events/: auxiliary event source code.
+      - block_gm_without_verification.py: code to block private chat events without verification.
+      - block_pm_without_verification.py: code to block group chat events without verification.
+      - sv_msg.py: code for service messages.
+    - base_event.py: code for the base class of events.
+    - events/: basic event source code.
+      - account/: account event code.
+      - chat/: chat event code.
+      - file/: file event code.
+      - friend/: friend event code.
+      - group/: group event code.
+      - other/: other event code.
+    - pri_events/: private event source code.
+      - service/: service event source code.
+        - Account/: account service event source code.
+        - recv_sv_account_msg.py: code to receive account service messages.
+    - event_manager.py: code for the event manager.
+    - pri_events.py: code for private events.
+    - recv_event.py: event to receive events.
+  - main.py: code for the main function of the server.
+  - request_receiver/: code related to the request receiver.
+    - receivers/: stores receiver code.
+  - server.py: core code of the server.
+  - util/: utility code.
+- tools/: stores tools.
+  - lang_tool/: language tools.
+    - gen_msg_po.py: code for generating .po files.
+    - gen_msg_pot.py: code for generating .pot files.
+    - po2mo.py: code to convert .po files to .mo files.
+    - update_po.py: code to update .po files.
+- config.json: used to configure server parameters.
+- LICENSE: project license.
+- messages.pot: .pot file used for translation.
+- README.md: project README.
+- README.zh-cmn-CN.md: project README (Chinese).
+- requirements.txt: project dependencies.
+- server.key: server private key.
+- start.py: server startup script.
