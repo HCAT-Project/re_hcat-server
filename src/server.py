@@ -40,12 +40,27 @@ from src.util.config_parser import ConfigParser
 from src.util.i18n import gettext_func as _
 from src.util.file_manager import FileManager
 
+''' markdown
+> I believe that communication is our freedom and should not be controlled by any country, regime, or corporation.
+>       -- hsn8086
+'''
+
 
 class Server:
-    ver = '2.4.2'
+    """
+    The core of the server.
+    """
+    ver = '2.4.3'
 
     def __init__(self, debug: bool = False,
                  name=__name__, config=None, dol: DynamicObjLoader = None):
+        """
+        Initialize the server.
+        :param debug:
+        :param name: The name of server.
+        :param config: Server config.
+        :param dol: DynamicObjLoader.
+        """
         # Get logger
         self.logger = logging.getLogger(__name__)
 

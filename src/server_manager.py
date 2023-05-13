@@ -27,7 +27,7 @@ import subprocess
 import threading
 import time
 
-from src.containers import Request
+from src.containers import Request, ReturnData
 from src.dynamic_class_loader import DynamicObjLoader
 from src.server import Server
 from src.util.config_parser import ConfigParser
@@ -35,7 +35,18 @@ from src.util.i18n import gettext_func as _
 
 
 class ServerManager:
+    """
+    Main class of server.
+    """
+
     def __init__(self, server_kwargs: dict = None, dol: DynamicObjLoader = None, config: ConfigParser = None):
+        """
+
+        :param server_kwargs: The kwargs of server.
+        :param dol: DynamicObjLoader.
+        :param config: The config of server.
+        """
+        # Init the variables
         self.config = ConfigParser(config) if config is not None else ConfigParser({})
         self.server = {}
         if dol is None:
@@ -44,12 +55,18 @@ class ServerManager:
             self.dol = dol
         self.receivers = {}
         self.server_kwargs = server_kwargs
+
+        # Load update service
         if config.get_from_pointer('/sys/auto-update', False):
             logging.info(_('Auto update enabled.'))
             threading.Thread(target=self._update_thread).start()
 
     def join(self, timeout: float = None):
-
+        """
+        Join the server thread.
+        :param timeout: The timeout of join.
+        :return:
+        """
         t = self.server.get('thread', None)
         if isinstance(t, threading.Thread):
             try:
@@ -58,40 +75,70 @@ class ServerManager:
                 self.close()
 
     def close(self):
-
+        """
+        Close the server.
+        :return:
+        """
         s = self.server.get('server', None)
         if isinstance(s, Server):
             s.close()
 
     def start(self):
+        """
+        Start the server.
+        :return:
+        """
         self._start_server_core(self.server_kwargs)
 
     def _start_server_core(self, server_kwargs: dict = None):
+        """
+        Start the server core.
+        :param server_kwargs: The kwargs of server.
+        :return:
+        """
+        # Init the server args.
         if server_kwargs is None:
             server_kwargs = {}
         server_kwargs['dol'] = self.dol
+
+        # Init the server.
         s = Server(**server_kwargs)
 
-        # Load auxiliary events
+        # Load auxiliary events.
         logging.info(_('Loading auxiliary events...'))
         self._load_auxiliary_events(s)
 
+        # Start the thread of server.
         t = threading.Thread(target=s.start)
         t.start()
         self.server = {'server': s, 'thread': t}
 
-    def request(self, req: dict = None):
+    def request(self, req: Request = None) -> ReturnData:
+        """
+        The handler of request.
+        :param req: The request.
+        :return:
+        """
         if req is None:
             req = Request()
         return self.server['server'].request_handler(req)
 
     def load_receivers(self):
+        """
+        Load receivers.
+        :return:
+        """
         for i in self.dol.load_objs_from_group("receiver"):
-            c = i(self.request, self.config)
-            c.start()
-            self.receivers[i.__name__] = c
+            receiver = i(self.request, self.config)
+            receiver.start()
+            self.receivers[i.__name__] = receiver
 
     def _load_auxiliary_events(self, s: Server):
+        """
+        Load auxiliary events.
+        :param s: The server.
+        :return:
+        """
         for class_ in self.dol.load_objs_from_group('auxiliary_events'):
             # logout
             logging.debug(_('Auxiliary event "{}" loaded.').format(class_.__name__))
@@ -99,6 +146,10 @@ class ServerManager:
             s.e_mgr.add_auxiliary_event(class_.main_event, class_)
 
     def _update_thread(self):
+        """
+        WARN: This function is untested.
+        :return:
+        """
         while True:
             b_name = subprocess.run(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], capture_output=True, text=True,
                                     check=True).stdout.strip()
@@ -111,6 +162,10 @@ class ServerManager:
             time.sleep(60)
 
     def update_server(self):
+        """
+        WARN: This function is untested.
+        :return:
+        """
         self.close()
         for i in self.receivers:
             i.pause()
