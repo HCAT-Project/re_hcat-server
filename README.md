@@ -3,11 +3,12 @@ English | [中文(普通话-大陆)](README.zh-cmn-CN.md)
 # Table of Contents
 
 <!-- TOC -->
+
 * [Table of Contents](#table-of-contents)
 * [Introduction](#introduction)
 * [Installation](#installation)
-  * [Server](#server)
-  * [Client](#client)
+    * [Server](#server)
+    * [Client](#client)
 * [Running](#running)
 * [Features Implemented](#features-implemented)
 * [To-Do List](#to-do-list)
@@ -16,6 +17,7 @@ English | [中文(普通话-大陆)](README.zh-cmn-CN.md)
 * [Maintainers](#maintainers)
 * [License](#license)
 * [Disclaimer](#disclaimer)
+
 <!-- TOC -->
 
 # Introduction
@@ -29,7 +31,8 @@ We welcome more developers to join our project and build a more perfect HCat ser
 
 ## Server
 
-Currently, the server is not available in any release version(It may not be available in the future). Please use Git to get the server:
+Currently, the server is not available in any release version(It may not be available in the future). Please use Git to
+get the server:
 
 ```shell
 git clone https://github.com/HCAT-Project/re_hcat-server.git
@@ -76,17 +79,18 @@ python start.py
 - Delete groups/cancel accounts.
 - Add multiple ways to add friends.
 
-# Project Structure
+# Document
 
-Click here to view: [Project Structure](doc/project-structure_zh-cmn-CN.md)
+| Document                                                    | Remarks      |
+|-------------------------------------------------------------|--------------|
+| [Project Structure](doc/project-structure_en-US.md)         |              |
+| [Development Guide](doc/dev-guide_en-US.md)                 |              |
+| [Translation Guide](doc/how-to-translate-the-hcat_en-US.md) | English only |
 
-**Real-time updates are not guaranteed**
-
-# Development Guide
-
-Click here to view: [Development Guide](doc/dev-guide_zh-cmn-CN.md)
 # Maintainers
+
 [@hsn8086](https://github.com/hsn8086)
+
 # License
 
 ```
