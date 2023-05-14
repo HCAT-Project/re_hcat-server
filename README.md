@@ -3,21 +3,18 @@ English | [中文(普通话-大陆)](README.zh-cmn-CN.md)
 # Table of Contents
 
 <!-- TOC -->
-
 * [Table of Contents](#table-of-contents)
 * [Introduction](#introduction)
 * [Installation](#installation)
-    * [Server](#server)
-    * [Client](#client)
+  * [Server](#server)
+  * [Client](#client)
 * [Running](#running)
 * [Features Implemented](#features-implemented)
 * [To-Do List](#to-do-list)
-* [Project Structure](#project-structure)
-* [Development Guide](#development-guide)
+* [Document](#document)
 * [Maintainers](#maintainers)
 * [License](#license)
 * [Disclaimer](#disclaimer)
-
 <!-- TOC -->
 
 # Introduction
