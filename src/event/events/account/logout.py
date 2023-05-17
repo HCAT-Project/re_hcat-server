@@ -9,7 +9,8 @@
 
 @Version    : 1.0.0
 """
-
+import src.util.crypto
+import src.util.text
 #  Copyright (C) 2023. HCAT-Project-Team
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU Affero General Public License as
@@ -33,5 +34,5 @@ class Logout(BaseEvent):
         with self.server.open_user(self.user_id) as u:
             user: User = u.value
             user.status = 'offline'
-            user.token = util.get_random_token(256)
+            user.token = src.util.crypto.get_random_token(256)
         return ReturnData(ReturnData.OK)

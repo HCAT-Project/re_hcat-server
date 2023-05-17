@@ -29,7 +29,7 @@ from werkzeug.datastructures import FileStorage
 from src.containers import ReturnData
 from src.event.base_event import BaseEvent
 from src.util.file_manager import FileManager
-from src.util.hash_utils import file_hash
+from src.util.crypto import file_hash
 
 
 class Upload(BaseEvent):

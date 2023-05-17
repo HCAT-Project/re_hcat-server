@@ -25,13 +25,15 @@
 import time
 from pathlib import Path
 from typing import Union, IO
-from src.util.hash_utils import file_hash
+from src.util.crypto import file_hash
 
 
 class FileManager:
-    def __init__(self, path: Union[Path, str] = '/', info_db=None):
+    def __init__(self, path: Union[Path, str] = '/', info_db=None, *, mkdir=True):
         self.info_db = info_db
-        self.path = path
+        self.path = Path(path)
+        # if not self.path.exists():
+        #     self.path.mkdir(parents=True)
 
     def get_file_path(self, sha1: str):
         path = Path(self.path) / sha1

@@ -24,6 +24,7 @@
 import copy
 import time
 
+import src.util.text
 from src import util
 from src.containers import User, ReturnData, EventContainer, Group
 from src.event.base_event import BaseEvent
@@ -42,7 +43,7 @@ class SendGroupMsg(BaseEvent):
             name = user.user_name
 
         try:
-            msg_ = util.msg_process(msg_)
+            msg_ = src.util.text.msg_process(msg_)
         except ValueError:
             return ReturnData(ReturnData.ERROR, _('Illegal messages.'))
 

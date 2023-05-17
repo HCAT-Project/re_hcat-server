@@ -27,28 +27,6 @@ import os.path
 import subprocess
 import sys
 if __name__ == '__main__':
-    # check debug mode
-    debug = '--debug' in sys.argv
-
-    # set logger
-    logging.basicConfig(level=logging.DEBUG if debug else logging.INFO,
-                        format='[%(asctime)s][%(filename)s(%(lineno)d)][%(levelname)s] %(message)s',
-                        datefmt='%b/%d/%Y-%H:%M:%S')
-
-    # create logs folder
-    if not os.path.exists('logs'):
-        os.mkdir('logs')
-
-    # format the time
-    now = datetime.datetime.now()
-    formatted_time = now.strftime("%m-%d-%Y_%H:%M:%S")
-
-    # add file handler
-    handler = logging.FileHandler(
-        os.path.join('logs', f'log_{formatted_time}_{int(now.now().timestamp() % 1 * 10 ** 6)}.txt').replace(':', '_'),
-        encoding='utf8')
-    logging.getLogger().addHandler(handler)
-
     # try to run thr `main` func
     try:
         from src.main import main

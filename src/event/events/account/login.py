@@ -25,6 +25,8 @@ import json
 
 from flask import make_response
 
+import src.util.crypto
+import src.util.text
 from src import util
 from src.containers import ReturnData, User
 from src.event.base_event import BaseEvent
@@ -45,16 +47,16 @@ class Login(BaseEvent):
             if user.auth(password):
                 user.status = 'online'
                 # generate token
-                user.token = util.get_random_token()
+                user.token = src.util.crypto.get_random_token()
 
                 # init a response
                 resp = ReturnData(ReturnData.OK)
 
                 # generate auth_data
-                auth_data = json.dumps({'user_id': user_id, 'token': user.token, 'salt': util.get_random_token()})
+                auth_data = json.dumps({'user_id': user_id, 'token': user.token, 'salt': src.util.crypto.get_random_token()})
 
                 # crypto
-                aes = util.AesCrypto(self.server.key)
+                aes = src.util.crypto.AesCrypto(self.server.key)
 
                 # set a @Yummy_Cookies_S
                 # XD

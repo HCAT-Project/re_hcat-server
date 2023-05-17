@@ -23,7 +23,8 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import time
 
-
+import src.util.crypto
+import src.util.text
 from src import util
 from src.containers import Group, User, ReturnData
 from src.event.base_event import BaseEvent
@@ -35,7 +36,7 @@ class CreateGroup(BaseEvent):
     def _run(self, group_name):
         group_name_ = group_name
         while True:
-            group_id = '0g' + util.get_random_token(5, upper=False)
+            group_id = '0g' + src.util.crypto.get_random_token(5, upper=False)
             if not self.server.db_group.exists(group_id):
                 break
         group = Group(group_id)

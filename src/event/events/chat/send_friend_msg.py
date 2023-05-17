@@ -25,6 +25,7 @@ import copy
 import logging
 import time
 
+import src.util.text
 from src import util
 from src.containers import User, ReturnData, EventContainer
 from src.event.base_event import BaseEvent
@@ -46,7 +47,7 @@ class SendFriendMsg(BaseEvent):
                 return ReturnData(ReturnData.NULL, _('The person is not your friend.'))
         print(msg_)
         try:
-            msg_ = util.msg_process(msg_)
+            msg_ = src.util.text.msg_process(msg_)
         except Exception as err:
             logging.exception(err)
             return ReturnData(ReturnData.ERROR, _('Illegal messages.'))

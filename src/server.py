@@ -31,6 +31,8 @@ import time
 
 from RPDB.database import FRPDB
 
+import src.util.crypto
+import src.util.text
 from src import util
 from src.containers import User
 from src.dynamic_class_loader import DynamicObjLoader
@@ -82,7 +84,7 @@ class Server:
         self.logger.info(_('Generating AES token...'))
         key_path = os.path.join(os.getcwd(), f'{name}.key')
         if not os.path.exists(key_path):
-            self.key = util.get_random_token(16)
+            self.key = src.util.crypto.get_random_token(16)
             with open(key_path, 'w', encoding='utf8') as f:
                 f.write(self.key)
         else:

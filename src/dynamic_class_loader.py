@@ -26,6 +26,7 @@ import importlib
 from pathlib import Path
 from typing import Union
 
+import src.util.text
 from src import util
 
 
@@ -37,7 +38,7 @@ class DynamicObjLoader:
     @staticmethod
     def load_obj(path: str, obj_name: str = None):
         if obj_name is None:
-            obj_name = util.under_score_to_pascal_case(Path(path).stem)
+            obj_name = src.util.text.under_score_to_pascal_case(Path(path).stem)
 
         try:
             # get the module
@@ -58,7 +59,7 @@ class DynamicObjLoader:
             if i.is_dir():
                 yield from self.load_objs(i)
             else:
-                obj_name = util.under_score_to_pascal_case(i.stem)
+                obj_name = src.util.text.under_score_to_pascal_case(i.stem)
                 rt_obj = self.load_obj(i.relative_to(Path.cwd()).as_posix(), obj_name)
                 if rt_obj is not None:
                     yield rt_obj

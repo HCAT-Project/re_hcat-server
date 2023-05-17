@@ -30,6 +30,8 @@ from uuid import uuid1
 from RPDB.database import RPDB
 from flask import jsonify, make_response, Response
 
+import src.util.crypto
+import src.util.text
 from src import util
 from src.util.jelly import Jelly
 
@@ -62,7 +64,7 @@ class EventContainer:
     def get_sid(self, table: dict) -> str:
         # get a 4 digit random string
         while True:
-            sid = util.get_random_token(4).lower()
+            sid = src.util.crypto.get_random_token(4).lower()
             if sid not in table:
                 break
         table[sid] = self.rid
@@ -188,8 +190,8 @@ class User(Jelly):
         Changes the user's password and generates a new salted hash.
         :param password: The new password to set.
         """
-        self.salt = util.get_random_token(16)
-        self.hash_password = util.salted_sha256(password, self.salt, self.user_id)
+        self.salt = src.util.crypto.get_random_token(16)
+        self.hash_password = src.util.crypto.salted_sha256(password, self.salt, self.user_id)
 
     def auth(self, password: str) -> bool:
         """
@@ -197,9 +199,9 @@ class User(Jelly):
         :param password: The password to check.
         :return: True if the password is correct, False otherwise.
         """
-        if util.salted_sha256(password, self.salt, self.user_id) == self.hash_password:
+        if src.util.crypto.salted_sha256(password, self.salt, self.user_id) == self.hash_password:
             return True
-        elif util.salted_sha1(password, self.salt, self.user_id) == self.hash_password:
+        elif src.util.crypto.salted_sha1(password, self.salt, self.user_id) == self.hash_password:
             # old password hash
             return True
         else:
