@@ -27,6 +27,7 @@
 """
 import os
 import threading
+from pathlib import Path
 
 import pysnooper as pysnooper
 from flask import Flask, send_from_directory, request
@@ -50,12 +51,16 @@ class FlaskHttpReceiver(BaseReceiver):
             CORS(self.app, supports_credentials=True)
         # optional, but recommended
         if self.config.get_from_pointer('/network/receivers/FlaskHttpReceiver/enable-static', True):
-            @self.app.route('/<path:path>', methods=['GET', 'POST'])
-            def send_static(path):
-                folder = self.config.get_from_pointer('/network/receivers/FlaskHttpReceiver/static-folder', 'static')
-                if path == '':
+            @self.app.route('/', methods=['GET'])
+            @self.app.route('/<path:path>', methods=['GET'])
+            def send_static(path=None):
+                static_folder = self.config.get_from_pointer('/network/receivers/FlaskHttpReceiver/static-folder',
+                                                             'static')
+
+                if path is None:
                     path = 'index.html'
-                return send_from_directory(os.path.join(os.getcwd(), folder), path)
+
+                return send_from_directory(Path.cwd() / static_folder, path)
 
         @self.app.route('/api/<path:path>', methods=['GET', 'POST'])
         def recv(path):
