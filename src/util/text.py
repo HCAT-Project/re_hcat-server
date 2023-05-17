@@ -23,14 +23,19 @@
 
 @Date       : 5/17/23 7:19 PM
 
-@Version    : 1.0.0
+@Version    : 1.0.1
 """
 import copy
 import json
 from typing import Any
 
 
-def under_score_to_pascal_case(name):
+def under_score_to_pascal_case(name) -> str:
+    """
+    Converts a string from under_score to PascalCase.
+    :param name: The string to convert.
+    :return: The converted string.
+    """
     return ''.join([x.capitalize() for x in name.split('_')])
 
 
@@ -43,18 +48,39 @@ def msg_process(msg: Any) -> dict:
     """
     msg_ = copy.copy(msg)
     if isinstance(msg_, str):
-        msg_ = json.loads(msg_)
+        try:
+            msg_ = json.loads(msg_)
+        except json.decoder.JSONDecodeError:
+            msg_ = {'msg_chain': [{'type': 'text', 'msg': msg_}]}
     if len(msg_['msg_chain']) == 0:
         raise ValueError("Message chain is empty.")
 
-    for i in range(len(msg_['msg_chain'])):
-        if msg_['msg_chain'][i]['type'] == 'text':
-            if len(msg_['msg_chain'][i]['msg']) == 0:
+    # Check if the type is legal
+    for i in msg_['msg_chain']:
+        if i not in ['text', 'img', 'file', 'sticker', 'at', 'reply', 'voice']:
+            raise ValueError("Illegal type in message chain.")
+
+    # Check if the reply is in the top of the message chain
+    _temp_end = False
+    for i, msg_e in enumerate(msg_['msg_chain']):
+        if msg_e['type'] == 'reply':
+            if _temp_end:
+                raise ValueError("Reply is not in the top of the message chain.")
+        else:
+            _temp_end = True
+
+    # Check if the message is legal
+    for i, msg_e in enumerate(msg_['msg_chain']):
+        if msg_e['type'] == 'text':
+            if len(msg_e['msg']) == 0:
                 raise ValueError("Element in message chain is empty.")
-            msg_['msg_chain'][i]['msg'] = msg_['msg_chain'][i]['msg']
+            elif len(msg_e['msg']) > 500:
+                raise ValueError("Element in message chain is too long.")
+
+        elif msg_e['type'] in ['img', 'file', 'voice', 'sticker']:
+            if len(msg_e['msg']) != 40:
+                raise ValueError("Img hash is illegal.")
 
     # todo:add comments
     # todo:file process
     return msg_
-
-
