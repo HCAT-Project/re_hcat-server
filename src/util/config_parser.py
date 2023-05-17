@@ -23,7 +23,7 @@
 
 @Date       : 4/9/23 9:22 AM
 
-@Version    : 1.0.0
+@Version    : 1.0.1
 """
 import copy
 import json
@@ -72,3 +72,8 @@ class ConfigParser:
 
     def __getattr__(self, item):
         return self.config.__getattribute__(item)
+
+    def __deepcopy__(self, memo=None):
+        if memo is None:
+            memo = {}
+        return ConfigParser(copy.deepcopy(self.config, memo))
