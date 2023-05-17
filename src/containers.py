@@ -123,7 +123,50 @@ class ReturnData:
 
 
 class User(Jelly):
+    """
+    Assuming we need to create a new user in a chat application, we can use the User class to create a new user object and perform various operations on the user, such as changing passwords, adding to-do items, adding friends, joining groups, etc.
+
+    Firstly, we need to instantiate the User class and pass in the user ID, password, and username:
+
+    user = User('jane123', 'password123', 'Jane')
+
+    Then, we can use the add_user_event() method to add an event container to the user's to-do list:
+
+    ec = EventContainer(db_event)
+    ec.add('type', 'message')
+    ec.add('friend_id', '789012')
+    ec.add('msg', 'Hello, how are you?')
+    ec.add('time', time.time())
+    user.add_user_event(ec)
+
+    Next, we can use the change_password() method to change the user's password:
+
+    user.change_password('newpassword123')
+
+    Then, we can use the auth() method to verify if the user's password is correct:
+
+    if user.auth('newpassword123'):
+        print('Password is correct')
+    else:
+        print('Password is incorrect')
+
+    Finally, we can use the auth_token() method to verify if the user's token is correct:
+
+    if user.auth_token('mytoken'):
+        print('Token is correct')
+    else:
+        print('Token is incorrect')
+
+    In this way, we have successfully created a new user and performed various operations on it, such as adding to-do items, changing passwords, verifying passwords and tokens, adding friends, etc.
+    """
+
     def __init__(self, user_id: str, password: str, user_name: str):
+        """
+        Creates a new user object.
+        :param user_id: The ID of the user.
+        :param password: The password of the user.
+        :param user_name: The name of the user.
+        """
         super().__init__()
         self.hash_password = None
         self.salt = None
@@ -177,6 +220,10 @@ class User(Jelly):
         if group_id in self.groups_dict and self.user_id in group.member_dict:
             return True
 
+        # todo: fix the case that
+        #  user in group member list but group not in user group list
+        #  or group in user group list but user not in group member list.
+
         return False
 
     def add_user_event(self, ec: EventContainer):
@@ -226,6 +273,13 @@ class User(Jelly):
         return self.token == token
 
     def add_user_to_friend_list(self, user_id, nick):
+        """
+        This function adds a user to the friend list.
+        :param user_id: The user ID to add.
+        :param nick: The nickname you want to set.
+        :return: If the user is added successfully, return True, otherwise return False.
+        """
+        # Check if the user is already in the friend list.
         if user_id not in self.friend_dict:
             self.friend_dict[user_id] = {'nick': nick, 'time': time.time()}
             return True
@@ -233,6 +287,38 @@ class User(Jelly):
 
 
 class Group(Jelly):
+    """
+    Assuming we want to create a new group in a chat application and add members to it, we can use the Group class to achieve this.
+
+    Firstly, we need to instantiate the Group class and pass in the group ID:
+
+    group = Group('group_123')
+
+    Then, we can add members to the group, as shown below:
+
+    group.add_member(user1)
+    group.add_member(user2)
+    group.add_member(user3)
+
+    Next, we can set one of the members as the group owner, as shown below:
+
+    group.owner = user1.user_id
+
+    Then, we can set a member as an administrator, as shown below:
+
+    group.admin_list.add(user2.user_id)
+
+    Finally, we can broadcast a message to the group, as shown below:
+
+    ec = EventContainer(db_event)
+    ec.add('type', 'message')
+    ec.add('sender', 'user_1')
+    ec.add('msg', 'Hello, group!')
+    ec.add('time', time.time())
+    group.broadcast(server, user1.username, ec)
+
+    In this way, we have successfully created a new group, added members to it, set a group owner and administrator, and broadcasted a message to the group.
+    """
     # Define permission constants
     PERMISSION_OWNER = 0
     PERMISSION_ADMIN = 1
