@@ -7,7 +7,7 @@
 
 @Date       : 2023/3/1 下午6:29
 
-@Version    : 1.0.1
+@Version    : 1.0.2
 """
 #  Copyright (C) 2023. HCAT-Project-Team
 #  _
@@ -24,20 +24,9 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import copy
-# Copyright 2023. hsn
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 from types import FunctionType
+
+
 
 
 class Command:
@@ -79,6 +68,7 @@ class Command:
         :param cmd_str: The command string to be parsed.
         :return: True if the command string was parsed successfully, False otherwise.
         """
+
         in_ctrl = False
         cmd_str_p = ''
 
@@ -98,13 +88,18 @@ class Command:
                 if i not in self.control_characters:
                     cmd_str_p += i
 
-        # Get the prefix of the command string.
-        match_list = list(filter(lambda x: cmd_str.startswith(x), cmd_str_p))
-        if len(match_list) > 0:
-            prefix_len = max([len(i) for i in match_list])
-        else:
-            return False
-
+        # # Get the prefix of the command string.
+        # match_list = list(filter(lambda x: cmd_str.startswith(x), cmd_str_p))
+        # if len(match_list) > 0:
+        #     prefix_len = max([len(i) for i in match_list])
+        # else:
+        #     return False
+        # ^^^^^
+        # > uh..?这是什么东西啊?谁写的?
+        # > * 看了看注解
+        # > 啊?居然是我写的?
+        # >       - hsn8086
+        prefix_len = len(self.cmd_header)
         # Split the command string into parameters.
         cmd_list = cmd_str_p[prefix_len:].split(self.sep, self.max_len)
 
@@ -126,7 +121,6 @@ class Command:
             return ''
 
     def __getitem__(self, item):
-
         if isinstance(item, int):
 
             if item < len(self.cmd_list):
@@ -157,5 +151,3 @@ class Command:
 
     def __str__(self):
         return self.sep.join(self.cmd_list)
-
-
