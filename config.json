@@ -15,7 +15,9 @@
     }
   },
   "client": {
-    "client-branch": "main"
+    "repo": "https://github.com/HCAT-Project/hcat-client.git",
+    "client-branch": "main",
+    "cmds-after-update": []
   },
   "network": {
     "upload": {

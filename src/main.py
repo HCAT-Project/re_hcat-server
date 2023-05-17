@@ -45,6 +45,7 @@ from pathlib import Path
 from src.dynamic_class_loader import DynamicObjLoader
 from src.server_manager import ServerManager
 from src.util import multi_line_log
+from src.util.command_parser import Command
 from src.util.config_parser import ConfigParser
 from src.util.i18n import gettext_func as _
 
@@ -80,15 +81,31 @@ def get_start_arg(default_list):
 
 def load_config(path):
     with open(path, 'r', encoding='utf8') as f:
-        return json.load(f)
+        return ConfigParser(json.load(f))
 
 
-def clone_client(branch='master'):
+def clone_client(repo="https://github.com/HCAT-Project/hcat-client.git", branch='master', cmds=None):
+    if cmds is None:
+        cmds = []
     try:
-        if not os.path.exists('static'):
+        if Path('static').exists():
+
+            if repo != subprocess.check_output(['git', 'remote', 'get-url', 'origin'],
+                                               cwd='static', stderr=subprocess.DEVNULL).decode('utf8').rstrip('\n'):
+                multi_line_log(logger=logging.getLogger('git'),
+                               msg=subprocess.check_output(['git', 'remote', 'set-url', 'origin', repo], cwd='static',
+                                                           stderr=subprocess.DEVNULL).decode('utf8'))
+
+        else:
             multi_line_log(logger=logging.getLogger('git'), msg=subprocess.check_output(
-                ['git', 'clone', 'https://github.com/HCAT-Project/hcat-client.git', 'static'],
+                ['git', 'clone', repo, 'static'],
                 stderr=subprocess.DEVNULL).decode('utf8'))
+        try:
+            multi_line_log(logger=logging.getLogger('git'),
+                           msg=subprocess.check_output(['git', 'pull'],
+                                                       cwd='static', stderr=subprocess.DEVNULL).decode('utf8'))
+        except subprocess.CalledProcessError:
+            logging.warning(_('Failed to pull the repo, try to checkout the branch'))
         try:
             multi_line_log(logger=logging.getLogger('git'),
                            msg=subprocess.check_output(['git', 'checkout', '-b', branch, f'origin/{branch}'],
@@ -100,12 +117,17 @@ def clone_client(branch='master'):
         multi_line_log(logger=logging.getLogger('git'),
                        msg=subprocess.check_output(['git', 'pull', '--force'], cwd='static',
                                                    stderr=subprocess.DEVNULL).decode('utf8'))
-    except FileExistsError:
-        pass
+
+        for cmd in cmds:
+            multi_line_log(logger=logging.getLogger('git'),
+                           msg=subprocess.check_output(Command(cmd,cmd_header='').cmd_list, cwd='static',
+                                                       stderr=subprocess.DEVNULL).decode('utf8'))
+    except FileExistsError as e:
+        logging.warning(_('Failed to clone the repo, the folder is already exists.err: {}').format(e))
 
 
 def main():
-    arg = get_start_arg({'debug': False, 'config': 'config.json', 'host': '127.0.0.1', 'port': 8080, 'name': 'server'})
+    arg = get_start_arg({'debug': False, 'config': 'config.json', 'name': 'server'})
 
     # check debug mode
     debug = arg['debug']
@@ -134,10 +156,15 @@ def main():
     config = load_config(config_path)
 
     # try to clone client
+    repo = config.get_from_pointer('/client/repo', 'https://github.com/HCAT-Project/hcat-client.git')
     logging.getLogger().info(_('Cloning client from github...'))
+    logging.getLogger().info(_('Repo: {}').format(repo))
     try:
         if config['client'].get('client-branch', None) is not None:
-            clone_client(config['client']['client-branch'])
+            clone_client(
+                repo=repo,
+                branch=config['client']['client-branch'],
+                cmds=config.get_from_pointer('/client/cmds-after-update', None))
     except KeyError:
         pass
 
