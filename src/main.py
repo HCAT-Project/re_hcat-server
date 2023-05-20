@@ -147,7 +147,7 @@ def main():
 
     # add file handler
     handler = logging.FileHandler(
-        os.path.join('logs', f'log_{formatted_time}_{int(now.now().timestamp() % 1 * 10 ** 6)}.txt').replace(':', '_'),
+        os.path.join('logs', f'log_{formatted_time}_{int(now.now().timestamp() % 1 * 10 ** 6)}.log').replace(':', '_'),
         encoding='utf8')
     logging.getLogger().addHandler(handler)
     # get config
