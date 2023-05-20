@@ -146,7 +146,7 @@ class ServerManager:
             # logout
             logging.debug(_('Auxiliary event "{}" loaded.').format(class_.__name__))
 
-            s.e_mgr.add_auxiliary_event(class_.main_event, class_)
+            s.e_mgr.add_auxiliary_event(event=class_)
 
     def _update_thread(self):
         """
