@@ -23,8 +23,9 @@
 
 @Date       : 4/14/23 7:40 PM
 
-@Version    : 1.0.0
+@Version    : 1.0.1
 """
+import abc
 import random
 import threading
 
@@ -32,13 +33,14 @@ from src.containers import ReturnData
 from src.util.config_parser import ConfigParser
 
 
-class BaseReceiver:
+class BaseReceiver(metaclass=abc.ABCMeta):
     def __init__(self, callback=None, config: ConfigParser = None):
         self.callback = callback
         self.lock = threading.Lock()
         self.config = config if config is not None else ConfigParser({})
         self.host = self.config.get_from_pointer(f"/network/receivers/{type(self).__name__}/host", "127.0.0.1")
-        self.port = self.config.get_from_pointer(f"/network/receivers/{type(self).__name__}/port", random.randint(10000, 65535))
+        self.port = self.config.get_from_pointer(f"/network/receivers/{type(self).__name__}/port",
+                                                 random.randint(10000, 65535))
 
     def pause(self):
         self.lock.acquire()
@@ -52,6 +54,7 @@ class BaseReceiver:
     def start(self):
         threading.Thread(target=self._start, daemon=True).start()
 
+    @abc.abstractmethod
     def _start(self):
         ...
 
@@ -62,5 +65,5 @@ class BaseReceiver:
             rt = self.callback(req)
         finally:
             self.lock.release()
-            # format return data
-            return rt
+        # format return data
+        return rt

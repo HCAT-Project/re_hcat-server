@@ -1,14 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
-"""
-@File       : base_event.py
-
-@Author     : hsn
-
-@Date       : 2023/3/1 下午6:29
-
-@Version    : 1.0.0
-"""
 #  Copyright (C) 2023. HCAT-Project-Team
 #  _
 #  This program is free software: you can redistribute it and/or modify
@@ -23,6 +14,16 @@
 #  _
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+"""
+@File       : base_event.py
+
+@Author     : hsn
+
+@Date       : 2023/3/1 下午6:29
+
+@Version    : 1.0.1
+"""
+
 import gettext
 #  Copyright (C) 2023. HCAT-Project-Team
 #  This program is free software: you can redistribute it and/or modify
@@ -46,9 +47,10 @@ from src.containers import ReturnData, User
 from src.event.event_manager import EventManager
 from src.util.command_parser import Command
 from src.util.config_parser import ConfigParser
+import abc
 
 
-class BaseEvent:
+class BaseEvent(metaclass=abc.ABCMeta):
     auth = True
 
     def __init__(self, server, req, path: str, e_mgr: EventManager, user_id=None):
@@ -99,11 +101,12 @@ class BaseEvent:
             return ReturnData(ReturnData.ERROR,
                               _('Parameters do not meet the requirements:[{}]').format(req_str))
 
+    @abc.abstractmethod
     def _run(self, **kwargs):
         ...
 
 
-class BaseEventOfSVACRecvMsg(BaseEvent):
+class BaseEventOfSVACRecvMsg(BaseEvent, metaclass=abc.ABCMeta):
     bot_id = None
     bot_name = None
 
@@ -121,7 +124,7 @@ class BaseEventOfSVACRecvMsg(BaseEvent):
         @cmd(head='help')
         def help_(_):
             _ = self.gettext_func
-            self.send_msg(_('Commands') + ':' + '<br>/'.join(self.cmds.keys()))
+            self.send_msg(_('Commands') + ':' + '\n/'.join(self.cmds.keys()))
 
     def send_msg(self, msg: str):
         with self.server.open_user(self.user_id) as u:
@@ -143,10 +146,11 @@ class BaseEventOfSVACRecvMsg(BaseEvent):
                     self.cmds[cmd[0]](cmd)
             else:
                 self.send_msg(_("Sorry,i can't understand, please use `/help` for help."))
-        except BaseException as err:
+        except Exception as err:
             logging.exception(err)
             self.send_msg(_('Hello, please use `/help` for help.'))
         return ReturnData(ReturnData.OK)
 
+    @abc.abstractmethod
     def _reg_cmds(self):
         ...
