@@ -112,7 +112,7 @@ class ServerManager:
         self._load_auxiliary_events(s)
 
         # Start the thread of server.
-        t = threading.Thread(target=s.start)
+        t = threading.Thread(target=s.server_forever, name='ServerThread')
         t.start()
         self.server = {'server': s, 'thread': t}
 

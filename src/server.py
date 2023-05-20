@@ -33,7 +33,7 @@ import threading
 import time
 
 from RPDB.database import FRPDB
-
+import schedule
 import src.util.crypto
 import src.util.text
 from src import util
@@ -121,64 +121,58 @@ class Server:
     def request_handler(self, req):
         return self.e_mgr.create_event(RecvEvent, req, req.path)
 
-    def activity_list_thread(self):
+    def _schedule_activity_list(self):
         # Monitor the activity of users and mark them as offline if they are inactive
-        while True:
-            del_list = []
-            with self.activity_dict_lock:
-                for i in self.activity_dict:
-                    self.activity_dict[i] -= 1
-                    if self.activity_dict[i] <= 0:
-                        del_list.append(i)
-                for i in del_list:
-                    self.activity_dict.pop(i)
 
+        del_list = []
+        with self.activity_dict_lock:
+            for i in self.activity_dict:
+                self.activity_dict[i] -= 1
+                if self.activity_dict[i] <= 0:
+                    del_list.append(i)
             for i in del_list:
-                with self.open_user(i) as u:
-                    user: User = u.value
-                    user.status = 'offline'
-            time.sleep(1)
+                self.activity_dict.pop(i)
 
-    def cleaner_thread(self):
+        for i in del_list:
+            with self.open_user(i) as u:
+                user: User = u.value
+                user.status = 'offline'
+
+    def _schedule_cleaner(self):
         # Remove expired events from the event database
-        while True:
-            del_e_count = 0
-            del_sid_count = 0
-            for i in copy.deepcopy(self.db_event.keys):
-                with self.db_event.enter(i) as v:
-                    assert isinstance(v.value, dict)
-                    e: dict = v.value
-                    if e and time.time() - e['time'] > self.event_timeout:
-                        v.value = None
-                        del_e_count += 1
 
-            for k, v in copy.deepcopy(self.event_sid_table).items():
-                try:
-                    allow_del = v not in self.db_event.keys or time.time() - self.get_user_event(v)[
-                        'time'] > self.short_id_timeout
-                except KeyError:
-                    allow_del = True
+        del_e_count = 0
+        del_sid_count = 0
+        for i in copy.deepcopy(self.db_event.keys):
+            with self.db_event.enter(i) as v:
+                assert isinstance(v.value, dict)
+                e: dict = v.value
+                if e and time.time() - e['time'] > self.event_timeout:
+                    v.value = None
+                    del_e_count += 1
 
-                if allow_del:
-                    self.event_sid_table.pop(k)
-                    del_sid_count += 1
+        for k, v in copy.deepcopy(self.event_sid_table).items():
+            try:
+                allow_del = v not in self.db_event.keys or time.time() - self.get_user_event(v)[
+                    'time'] > self.short_id_timeout
+            except KeyError:
+                allow_del = True
 
-            del_file_c = self.upload_folder.clear_timeout()
-            if del_sid_count > 0 or del_e_count > 0 or del_file_c > 0:
-                self.logger.info(_('Event cleaner: {} events deleted, {} short IDs deleted,{} files deleted.')
-                                 .format(del_e_count, del_sid_count, del_file_c))
+            if allow_del:
+                self.event_sid_table.pop(k)
+                del_sid_count += 1
 
-            time.sleep(30)
+        del_file_c = self.upload_folder.clear_timeout()
+        if del_sid_count > 0 or del_e_count > 0 or del_file_c > 0:
+            self.logger.info(_('Event cleaner: {} events deleted, {} short IDs deleted,{} files deleted.')
+                             .format(del_e_count, del_sid_count, del_file_c))
 
     def start(self):
         # Start server threads
-        self.logger.info(_('Starting server threads...'))
-        cleaner_thread = threading.Thread(target=self.cleaner_thread, daemon=True, name='event_cleaner_thread')
-        activity_thread = threading.Thread(target=self.activity_list_thread, daemon=True, name='activity_thread')
+        self.logger.info(_('Starting scheduler...'))
+        schedule.every(30).seconds.do(self._schedule_cleaner)
+        schedule.every(1).seconds.do(self._schedule_activity_list)
 
-        threads = [cleaner_thread, activity_thread]
-        for t in threads:
-            t.start()
         # Log server status and information
         self.logger.info(_('Server started.'))
 
@@ -194,12 +188,11 @@ class Server:
             self.logger.info(_('Client branch: {}').format(self.config['client']['client-branch']))
         self.logger.info(_('--------------------------'))
 
-        try:
-            # Wait for the server thread to finish
-            while True:
-                cleaner_thread.join(0.1)
-        except KeyboardInterrupt:
-            self.close()
+    def server_forever(self):
+        self.start()
+        while True:
+            schedule.run_pending()
+            time.sleep(0.1)
 
     def close(self):
         # save data and exit
