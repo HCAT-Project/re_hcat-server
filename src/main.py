@@ -48,6 +48,7 @@ from src.util import multi_line_log
 from src.util.command_parser import Command
 from src.util.config_parser import ConfigParser
 from src.util.i18n import gettext_func as _
+from src.util.multi_thread import run_by_multi_thread
 
 
 def get_start_arg(default_list):
@@ -161,10 +162,12 @@ def main():
     logging.getLogger().info(_('Repo: {}').format(repo))
     try:
         if config['client'].get('client-branch', None) is not None:
-            clone_client(
-                repo=repo,
-                branch=config['client']['client-branch'],
-                cmds=config.get_from_pointer('/client/cmds-after-update', None))
+            @run_by_multi_thread
+            def __():
+                clone_client(
+                    repo=repo,
+                    branch=config['client']['client-branch'],
+                    cmds=config.get_from_pointer('/client/cmds-after-update', None))
     except KeyError:
         pass
 
