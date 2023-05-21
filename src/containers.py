@@ -35,7 +35,6 @@ from flask import jsonify, make_response, Response
 
 import src.util.crypto
 import src.util.text
-from src import util
 from src.util.jelly import Jelly
 
 

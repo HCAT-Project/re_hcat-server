@@ -32,18 +32,18 @@ import sys
 import threading
 import time
 
-from RPDB.database import FRPDB
 import schedule
+from RPDB.database import FRPDB
+
 import src.util.crypto
 import src.util.text
-from src import util
 from src.containers import User
 from src.dynamic_class_loader import DynamicObjLoader
 from src.event.event_manager import EventManager
 from src.event.recv_event import RecvEvent
 from src.util.config_parser import ConfigParser
-from src.util.i18n import gettext_func as _
 from src.util.file_manager import FileManager
+from src.util.i18n import gettext_func as _
 
 ''' markdown
 > I believe that communication is our freedom and should not be controlled by any country, regime, or corporation.

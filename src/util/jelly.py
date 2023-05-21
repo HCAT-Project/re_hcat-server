@@ -28,6 +28,7 @@ class Jelly:
     """
     A class for pickling and unpickling instances of itself
     """
+
     def __init__(self):
         self._var_init()
 

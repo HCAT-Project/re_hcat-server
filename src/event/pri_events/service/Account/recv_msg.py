@@ -152,4 +152,3 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
 
             elif cmd[0] == 'list':
                 self.send_msg(_('Available language') + ':\\n' + '\\n'.join(os.listdir('locale')))
-

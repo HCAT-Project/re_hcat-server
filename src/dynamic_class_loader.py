@@ -30,7 +30,6 @@ from pathlib import Path
 from typing import Union
 
 import src.util.text
-from src import util
 
 
 class DynamicObjLoader:

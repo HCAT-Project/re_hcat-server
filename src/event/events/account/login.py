@@ -26,11 +26,8 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import json
 
-from flask import make_response
-
 import src.util.crypto
 import src.util.text
-from src import util
 from src.containers import ReturnData, User
 from src.event.base_event import BaseEvent
 
@@ -56,7 +53,8 @@ class Login(BaseEvent):
                 resp = ReturnData(ReturnData.OK)
 
                 # generate auth_data
-                auth_data = json.dumps({'user_id': user_id, 'token': user.token, 'salt': src.util.crypto.get_random_token()})
+                auth_data = json.dumps(
+                    {'user_id': user_id, 'token': user.token, 'salt': src.util.crypto.get_random_token()})
 
                 # crypto
                 aes = src.util.crypto.AesCrypto(self.server.key)

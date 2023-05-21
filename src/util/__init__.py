@@ -28,7 +28,6 @@ import logging
 import smtplib
 from email.header import Header
 from email.mime.text import MIMEText
-
 from typing import Iterable
 
 from flask import Request
@@ -103,5 +102,3 @@ def decorators_with_parameters(func):
 def multi_line_log(logger: logging.Logger = logging.getLogger(), level: int = logging.INFO, msg: str = ""):
     for line in msg.splitlines():
         logger.log(level, line)
-
-

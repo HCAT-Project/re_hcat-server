@@ -121,7 +121,7 @@ def clone_client(repo="https://github.com/HCAT-Project/hcat-client.git", branch=
 
         for cmd in cmds:
             multi_line_log(logger=logging.getLogger('git'),
-                           msg=subprocess.check_output(Command(cmd,cmd_header='').cmd_list, cwd='static',
+                           msg=subprocess.check_output(Command(cmd, cmd_header='').cmd_list, cwd='static',
                                                        stderr=subprocess.DEVNULL).decode('utf8'))
     except FileExistsError as e:
         logging.warning(_('Failed to clone the repo, the folder is already exists.err: {}').format(e))

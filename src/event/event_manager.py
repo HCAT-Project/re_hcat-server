@@ -29,8 +29,8 @@ import logging
 from typing import Union
 
 from src.containers import ReturnData, User
-from src.util.crypto import AesCrypto
 from src.util.config_parser import ConfigParser
+from src.util.crypto import AesCrypto
 
 
 class EventManager:

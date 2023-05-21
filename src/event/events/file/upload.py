@@ -25,14 +25,12 @@
 
 @Version    : 1.0.0
 """
-import os
 
 from werkzeug.datastructures import FileStorage
 
 from src.containers import ReturnData
 from src.event.base_event import BaseEvent
 from src.util.file_manager import FileManager
-from src.util.crypto import file_hash
 
 
 class Upload(BaseEvent):
@@ -45,7 +43,7 @@ class Upload(BaseEvent):
             return ReturnData(ReturnData.NULL, _('No file uploaded.'))
 
         # get the file
-        _file:FileStorage = self.req.files['file']
+        _file: FileStorage = self.req.files['file']
 
         assert isinstance(self.server.upload_folder, FileManager)
         file_timeout = self.server.config.get_from_pointer('/network/upload/file_timeout', default=86400)

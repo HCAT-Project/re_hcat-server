@@ -28,7 +28,6 @@ import copy
 import time
 
 import src.util.text
-from src import util
 from src.containers import User, ReturnData, EventContainer, Group
 from src.event.base_event import BaseEvent
 

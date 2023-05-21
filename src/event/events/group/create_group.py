@@ -28,7 +28,6 @@ import time
 
 import src.util.crypto
 import src.util.text
-from src import util
 from src.containers import Group, User, ReturnData
 from src.event.base_event import BaseEvent
 

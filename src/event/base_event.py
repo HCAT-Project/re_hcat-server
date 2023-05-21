@@ -24,6 +24,7 @@
 @Version    : 1.0.1
 """
 
+import abc
 import gettext
 #  Copyright (C) 2023. HCAT-Project-Team
 #  This program is free software: you can redistribute it and/or modify
@@ -46,8 +47,6 @@ from src.containers import Request
 from src.containers import ReturnData, User
 from src.event.event_manager import EventManager
 from src.util.command_parser import Command
-from src.util.config_parser import ConfigParser
-import abc
 
 
 class BaseEvent(metaclass=abc.ABCMeta):
