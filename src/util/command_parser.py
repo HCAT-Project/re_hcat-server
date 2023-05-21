@@ -27,8 +27,6 @@ import copy
 from types import FunctionType
 
 
-
-
 class Command:
     def __init__(self,
                  cmd_str: str = None,
@@ -61,6 +59,16 @@ class Command:
             if not self.load(cmd_str):
                 raise ValueError()
 
+    def _escape(self, _i):
+        if _i == ' ':
+            return '/_'
+        elif _i == '/':
+            return '//'
+        else:
+            if _i not in self.control_characters:
+                return _i
+        return ''
+
     def load(self, cmd_str: str) -> bool:
         """
         Parse the command string and load the parameters into the command list.
@@ -77,13 +85,7 @@ class Command:
             if i in self.control_characters:
                 in_ctrl = not in_ctrl
             if in_ctrl:
-                if i == ' ':
-                    cmd_str_p += '/_'
-                elif i == '/':
-                    cmd_str_p += '//'
-                else:
-                    if i not in self.control_characters:
-                        cmd_str_p += i
+                cmd_str_p += self._escape(i)
             else:
                 if i not in self.control_characters:
                     cmd_str_p += i
@@ -144,10 +146,10 @@ class Command:
         return self.cmd_list.__iter__()
 
     def __reversed__(self):
-        return self.__reversed__()
+        return self.cmd_list.__reversed__()
 
     def __contains__(self, item):
-        return self.__contains__(item)
+        return self.cmd_list.__contains__(item)
 
     def __str__(self):
         return self.sep.join(self.cmd_list)

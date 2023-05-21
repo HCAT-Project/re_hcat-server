@@ -92,7 +92,7 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
 
                 else:
                     self.send_msg(_('Email binding is not enabled.'))
-                return
+
             elif cmd[0] == 'unbind':
                 if self.server.config['email']['enable-email-verification']:
                     with self.server.open_user(self.user_id) as u:
@@ -112,7 +112,7 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
                     self.send_msg(_('Email unbinding successful.'))
                 else:
                     self.send_msg(_('Email binding is not enabled.'))
-                return
+
             elif cmd[0] == 'code':
                 if self.server.is_user_event_exist(str(cmd[1]).lower()):
                     e = self.server.get_user_event(str(cmd[1]).lower())
@@ -149,7 +149,7 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
                     self.send_msg(_('Language set successfully.'))
                 else:
                     self.send_msg(_('Invalid language.'))
-                return
+
             elif cmd[0] == 'list':
                 self.send_msg(_('Available language') + ':\\n' + '\\n'.join(os.listdir('locale')))
-                return
+

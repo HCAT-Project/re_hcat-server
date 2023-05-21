@@ -56,20 +56,20 @@ def msg_process(msg: Any) -> dict:
         raise ValueError("Message chain is empty.")
 
     # Check if the type is legal
-    for i in msg_['msg_chain']:
-        if i not in ['text', 'img', 'file', 'sticker', 'at', 'reply', 'voice']:
-            raise ValueError("Illegal type in message chain.")
+    _check_msg_type(msg_)
 
     # Check if the reply is in the top of the message chain
-    _temp_end = False
-    for i, msg_e in enumerate(msg_['msg_chain']):
-        if msg_e['type'] == 'reply':
-            if _temp_end:
-                raise ValueError("Reply is not in the top of the message chain.")
-        else:
-            _temp_end = True
+    _check_msg_reply(msg_)
 
     # Check if the message is legal
+    _check_if_msg_is_legal(msg_)
+
+    # todo:add comments
+    # todo:file process
+    return msg_
+
+
+def _check_if_msg_is_legal(msg_):
     for i, msg_e in enumerate(msg_['msg_chain']):
         if msg_e['type'] == 'text':
             if len(msg_e['msg']) == 0:
@@ -81,6 +81,18 @@ def msg_process(msg: Any) -> dict:
             if len(msg_e['msg']) != 40:
                 raise ValueError("Img hash is illegal.")
 
-    # todo:add comments
-    # todo:file process
-    return msg_
+
+def _check_msg_reply(msg_):
+    _temp_end = False
+    for i, msg_e in enumerate(msg_['msg_chain']):
+        if msg_e['type'] == 'reply':
+            if _temp_end:
+                raise ValueError("Reply is not in the top of the message chain.")
+        else:
+            _temp_end = True
+
+
+def _check_msg_type(msg_):
+    for i in msg_['msg_chain']:
+        if i not in ['text', 'img', 'file', 'sticker', 'at', 'reply', 'voice']:
+            raise ValueError("Illegal type in message chain.")

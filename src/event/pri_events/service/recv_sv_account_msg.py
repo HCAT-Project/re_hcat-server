@@ -39,9 +39,6 @@ class RecvSvAccountMsg(BaseEvent):
         service_id = friend_id[2:].rstrip(' ')
 
         try:
-            class_name = ''
-            for i in self.path.split("/")[-1].split("_"):
-                class_name += i[0].upper() + (i[1:] if len(i) > 0 else '')
             event_module = importlib.import_module(f'src.event.pri_events.service.{service_id}.recv_msg')
 
             event_class = getattr(event_module, 'RecvMsg')

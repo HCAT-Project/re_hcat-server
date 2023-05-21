@@ -78,10 +78,11 @@ class ReturnData:
     ERROR = 1
     NULL = 2
     OK = 0
+    status_text_list = ['ok', 'error', 'null']
 
     def __init__(self, status: int = OK, msg: str = ''):
         # initialize a new ReturnData object with a status and message
-        status_text = 'ok' if status == self.OK else 'error' if status == self.ERROR else 'null'
+        status_text = self.status_text_list[status]
         self.json_data = {'status': status_text, 'message': msg}
 
     def add(self, key: str, value: Any) -> 'ReturnData':

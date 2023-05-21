@@ -5,9 +5,9 @@
 
 @Author     : hsn
 
-@Date       : 2023/3/1 下午9:02
+@Date       : 01/15/2023(MM/DD/YYYY)
 
-@Version    : 1.0.0
+@Version    : 2.0.0
 """
 
 
@@ -28,10 +28,6 @@ class Jelly:
     """
     A class for pickling and unpickling instances of itself
     """
-
-    # auther: hsn
-    # data: 01/15/2023(MM/DD/YYYY)
-    # ver: 2.0
     def __init__(self):
         self._var_init()
 
@@ -56,7 +52,6 @@ class Jelly:
         """
         Set the state of the object after unpickling
         """
-        state = state
         self._var_init()
         for k, v in state.items():
             setattr(self, k, v)

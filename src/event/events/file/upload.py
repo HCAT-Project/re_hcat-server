@@ -45,11 +45,11 @@ class Upload(BaseEvent):
             return ReturnData(ReturnData.NULL, _('No file uploaded.'))
 
         # get the file
-        file:FileStorage = self.req.files['file']
+        _file:FileStorage = self.req.files['file']
 
         assert isinstance(self.server.upload_folder, FileManager)
         file_timeout = self.server.config.get_from_pointer('/network/upload/file_timeout', default=86400)
         if file_type == 'profile_photo':
             file_timeout = 300
 
-        self.server.upload_folder.save_file(file.stream, timeout=file_timeout)
+        self.server.upload_folder.save_file(_file.stream, timeout=file_timeout)
