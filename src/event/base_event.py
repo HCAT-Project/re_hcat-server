@@ -106,6 +106,11 @@ class BaseEvent(metaclass=abc.ABCMeta):
         ...
 
 
+class BaseEventOfAuxiliary(BaseEvent, metaclass=abc.ABCMeta):
+    main_event = None
+    priority = 1000
+
+
 class BaseEventOfSVACRecvMsg(BaseEvent, metaclass=abc.ABCMeta):
     bot_id = None
     bot_name = None
