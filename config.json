@@ -5,6 +5,9 @@
     "event-timeout": 604800,
     "sid-timeout": 300
   },
+  "plugin": {
+    "folder": "plugins"
+  },
   "email": {
     "enable-email-verification": false,
     "email-account": {

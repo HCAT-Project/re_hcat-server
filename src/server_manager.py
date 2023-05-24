@@ -32,6 +32,7 @@ import time
 
 from src.containers import Request, ReturnData
 from src.dynamic_class_loader import DynamicObjLoader
+from src.plugin_manager import PluginManager
 from src.server import Server
 from src.util.config_parser import ConfigParser
 from src.util.i18n import gettext_func as _
@@ -42,7 +43,8 @@ class ServerManager:
     Main class of server.
     """
 
-    def __init__(self, server_kwargs: dict = None, dol: DynamicObjLoader = None, config: ConfigParser = None):
+    def __init__(self, server_kwargs: dict = None, dol: DynamicObjLoader = None, config: ConfigParser = None,
+                 plugin_mgr: PluginManager = None):
         """
 
         :param server_kwargs: The kwargs of server.
@@ -52,10 +54,9 @@ class ServerManager:
         # Init the variables
         self.config = ConfigParser(config) if config is not None else ConfigParser({})
         self.server = {}
-        if dol is None:
-            self.dol = DynamicObjLoader()
-        else:
-            self.dol = dol
+
+        self.dol = DynamicObjLoader() if dol is None else dol
+        self.plugin_mgr = PluginManager() if plugin_mgr is None else plugin_mgr
         self.receivers = {}
         self.server_kwargs = server_kwargs
 
@@ -110,6 +111,13 @@ class ServerManager:
         # Load auxiliary events.
         logging.info(_('Loading auxiliary events...'))
         self._load_auxiliary_events(s)
+
+        # Load plugins
+        logging.info(_('Loading plugins...'))
+        for plugin_info, plugin_work_folder in self.plugin_mgr.load_plugins():
+            logging.info(_('The plugin "{}-{}" is loaded.')
+                         .format(plugin_info.get_from_pointer('/name', 'Unknown'),
+                                 plugin_info.get_from_pointer('/version', '0.0.0.0')))
 
         # Start the thread of server.
         t = threading.Thread(target=s.server_forever, name='ServerThread')

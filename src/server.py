@@ -37,7 +37,7 @@ from RPDB.database import FRPDB
 
 import src.util.crypto
 import src.util.text
-from src.containers import User
+from src.containers import User, ReturnData
 from src.dynamic_class_loader import DynamicObjLoader
 from src.event.event_manager import EventManager
 from src.event.recv_event import RecvEvent
@@ -55,7 +55,7 @@ class Server:
     """
     The core of the server.
     """
-    ver = '2.4.3'
+    ver = '2.5.0'
 
     def __init__(self, debug: bool = False,
                  name=__name__, config=None, dol: DynamicObjLoader = None):
@@ -119,7 +119,11 @@ class Server:
         self.event_sid_table = {}
 
     def request_handler(self, req):
-        return self.e_mgr.create_event(RecvEvent, req, req.path)
+        rt = self.e_mgr.create_event(RecvEvent, req, req.path)
+        if isinstance(rt, ReturnData):
+            return rt
+        else:
+            return ReturnData(ReturnData.OK, rt)
 
     def _schedule_activity_list(self):
         # Monitor the activity of users and mark them as offline if they are inactive

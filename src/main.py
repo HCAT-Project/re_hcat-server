@@ -24,17 +24,6 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import datetime
-#  Copyright (C) 2023. HCAT-Project-Team
-#  This program is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU Affero General Public License as
-#  published by the Free Software Foundation, either version 3 of the
-#  License, or (at your option) any later version.
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU Affero General Public License for more details.
-#  You should have received a copy of the GNU Affero General Public License
-#  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import json
 import logging
 import os.path
@@ -43,6 +32,7 @@ import sys
 from pathlib import Path
 
 from src.dynamic_class_loader import DynamicObjLoader
+from src.plugin_manager import PluginManager
 from src.server_manager import ServerManager
 from src.util import multi_line_log
 from src.util.command_parser import Command
@@ -177,13 +167,14 @@ def main():
     dcl.add_path_to_group("auxiliary_events", Path.cwd() / 'src/event/auxiliary_events')
     dcl.add_path_to_group("req_events", Path.cwd() / 'src/event/events')
 
+    p_mgr = PluginManager(config=config, dcl=dcl)
     # init and start server
     server_kwargs = (lambda **kwargs: kwargs)(
         debug=arg['debug'],
         config=config,
         name=arg['name']
     )
-    server_manager = ServerManager(server_kwargs=server_kwargs, dol=dcl, config=ConfigParser(config))
+    server_manager = ServerManager(server_kwargs=server_kwargs, dol=dcl, config=ConfigParser(config), plugin_mgr=p_mgr)
 
     server_manager.start()
     server_manager.load_receivers()

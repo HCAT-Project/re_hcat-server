@@ -27,21 +27,28 @@
 """
 import copy
 import json
+from io import TextIOWrapper, BytesIO, BufferedRandom
 from os import PathLike
 from typing import IO, Union
+from zipfile import ZipExtFile
+
+
 
 
 class ConfigParser:
-    def __init__(self, config: Union['ConfigParser', dict, PathLike, str, IO[bytes]]):
+
+    def __init__(self, config: Union['ConfigParser', dict, PathLike, str, IO, TextIOWrapper, BytesIO, BufferedRandom]):
         if isinstance(config, dict):
             self.config: dict = config
         elif isinstance(config, (str, PathLike)):
             with open(config, 'r') as f:
                 self.config: dict = json.load(f)
-        elif isinstance(config, IO):
+        elif isinstance(config, (IO, TextIOWrapper, BytesIO, BufferedRandom, ZipExtFile)):
             self.config: dict = json.load(config)
         elif isinstance(config, ConfigParser):
             self.config = config.config
+        else:
+            raise TypeError('config type error')
 
     def __contains__(self, item):
         return self.get_from_pointer(item) is not None

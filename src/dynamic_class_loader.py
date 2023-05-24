@@ -23,11 +23,13 @@
 
 @Date       : 4/14/23 7:44 PM
 
-@Version    : 1.0.0
+@Version    : 1.0.1
 """
 import importlib
-from pathlib import Path
+from pathlib import Path, PosixPath
 from typing import Union
+
+import pysnooper
 
 import src.util.text
 
@@ -38,13 +40,16 @@ class DynamicObjLoader:
         self.group_dict = {}
 
     @staticmethod
-    def load_obj(path: str, obj_name: str = None):
+    def load_obj(path: str | PosixPath, obj_name: str = None):
+        if isinstance(path, Path):
+            path = str(path)
         if obj_name is None:
             obj_name = src.util.text.under_score_to_pascal_case(Path(path).stem)
 
         try:
+            m_name = f'{path.replace("/", ".").rstrip(".py")}'
             # get the module
-            module_ = importlib.import_module(f'{path.replace("/", ".").rstrip(".py")}')
+            module_ = importlib.import_module(m_name)
 
             # get the class of the event
             obj_ = getattr(module_, obj_name)
@@ -72,8 +77,11 @@ class DynamicObjLoader:
 
     def load_obj_from_group(self, path: Union[str, Path], obj_name: str = None, group: str = "default"):
         for i in self.group_dict.get(group, []):
-            if (Path(i) / path).with_suffix(".py").exists():
-                return self.load_obj((Path(i) / path).relative_to(Path.cwd()).as_posix(), obj_name=obj_name)
+            module_path = Path(i) / path
+            if module_path.with_suffix(".py").exists():
+                if isinstance(module_path, PosixPath):
+                    module_path = module_path.resolve()
+                return self.load_obj(module_path.relative_to(Path.cwd()).as_posix(), obj_name=obj_name)
         return None
 
     def add_path_to_group(self, group: str = "default", path: Union[str, Path] = None):

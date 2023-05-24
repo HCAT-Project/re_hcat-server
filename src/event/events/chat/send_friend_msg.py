@@ -47,7 +47,7 @@ class SendFriendMsg(BaseEvent):
             user: User = u.value
             if friend_id not in user.friend_dict:
                 return ReturnData(ReturnData.NULL, _('The person is not your friend.'))
-        print(msg_)
+
         try:
             msg_ = src.util.text.msg_process(msg_)
         except Exception as err:

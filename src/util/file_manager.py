@@ -65,7 +65,7 @@ class FileManager:
     def clear_timeout(self) -> int:
         i = 0
         for key in self.get_all_keys():
-            print(key)
+
             with self.info_db.enter(key) as info:
                 if info.value is None:
                     Path(key).unlink()

@@ -29,8 +29,8 @@ import sys
 if __name__ == '__main__':
     # try to run thr `main` func
     try:
-        from src.main import main
         from src.util.i18n import gettext_func as _
+        from src.main import main
         from src.util.config_parser import ConfigParser
         main()
     except ModuleNotFoundError as err:
