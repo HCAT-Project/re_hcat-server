@@ -67,6 +67,7 @@ class Server:
         :param dol: DynamicObjLoader.
         """
         # Get logger
+        self.running = True
         self.logger = logging.getLogger(__name__)
 
         # Create DynamicObjLoader
@@ -194,7 +195,7 @@ class Server:
 
     def server_forever(self):
         self.start()
-        while True:
+        while self.running:
             schedule.run_pending()
             time.sleep(0.1)
 
@@ -205,6 +206,8 @@ class Server:
         self.db_email.close()
         self.db_group.close()
         self.db_account.close()
+
+        self.running=False
 
         self.logger.info(_('Server closed.'))
 

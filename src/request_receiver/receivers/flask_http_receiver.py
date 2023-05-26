@@ -25,6 +25,7 @@
 
 @Version    : 1.0.0
 """
+import logging
 from pathlib import Path
 
 from flask import Flask, send_from_directory, request
@@ -81,4 +82,8 @@ class FlaskHttpReceiver(BaseReceiver):
 
         server = pywsgi.WSGIServer((self.host, self.port), self.app)
         self.wsgi_server = server
-        server.serve_forever()
+        try:
+            server.serve_forever()
+        except KeyboardInterrupt:
+            server.close()
+            logging.info("FlaskHttpReceiver stopped")

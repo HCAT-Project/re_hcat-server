@@ -123,6 +123,12 @@ class ServerManager:
         t = threading.Thread(target=s.server_forever, name='ServerThread')
         t.start()
         self.server = {'server': s, 'thread': t}
+        while True:
+            try:
+                time.sleep(0.1)
+            except KeyboardInterrupt:
+                self.close()
+                break
 
     def request(self, req: Request = None) -> ReturnData:
         """

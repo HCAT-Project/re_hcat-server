@@ -75,43 +75,48 @@ def load_config(path):
         return ConfigParser(json.load(f))
 
 
-def clone_client(repo="https://github.com/HCAT-Project/hcat-client.git", branch='master', cmds=None):
+def clone_client(repo="https://github.com/HCAT-Project/hcat-client.git",
+                 folder: str | Path = 'static', branch='master',
+                 cmds=None):
+    if isinstance(folder, str):
+        folder = Path(folder)
     if cmds is None:
         cmds = []
     try:
-        if Path('static').exists():
+
+        if folder.exists():
 
             if repo != subprocess.check_output(['git', 'remote', 'get-url', 'origin'],
-                                               cwd='static', stderr=subprocess.DEVNULL).decode('utf8').rstrip('\n'):
+                                               cwd=folder, stderr=subprocess.DEVNULL).decode('utf8').rstrip('\n'):
                 multi_line_log(logger=logging.getLogger('git'),
-                               msg=subprocess.check_output(['git', 'remote', 'set-url', 'origin', repo], cwd='static',
+                               msg=subprocess.check_output(['git', 'remote', 'set-url', 'origin', repo], cwd=folder,
                                                            stderr=subprocess.DEVNULL).decode('utf8'))
 
         else:
             multi_line_log(logger=logging.getLogger('git'), msg=subprocess.check_output(
-                ['git', 'clone', repo, 'static'],
+                ['git', 'clone', repo, folder],
                 stderr=subprocess.DEVNULL).decode('utf8'))
         try:
             multi_line_log(logger=logging.getLogger('git'),
                            msg=subprocess.check_output(['git', 'pull'],
-                                                       cwd='static', stderr=subprocess.DEVNULL).decode('utf8'))
+                                                       cwd=folder, stderr=subprocess.DEVNULL).decode('utf8'))
         except subprocess.CalledProcessError:
             logging.warning(_('Failed to pull the repo, try to checkout the branch'))
         try:
             multi_line_log(logger=logging.getLogger('git'),
                            msg=subprocess.check_output(['git', 'checkout', '-b', branch, f'origin/{branch}'],
-                                                       cwd='static', stderr=subprocess.DEVNULL).decode('utf8'))
+                                                       cwd=folder, stderr=subprocess.DEVNULL).decode('utf8'))
         except subprocess.CalledProcessError:
             multi_line_log(logger=logging.getLogger('git'),
-                           msg=subprocess.check_output(['git', 'checkout', branch], cwd='static',
+                           msg=subprocess.check_output(['git', 'checkout', branch], cwd=folder,
                                                        stderr=subprocess.DEVNULL).decode('utf8'))
         multi_line_log(logger=logging.getLogger('git'),
-                       msg=subprocess.check_output(['git', 'pull', '--force'], cwd='static',
+                       msg=subprocess.check_output(['git', 'pull', '--force'], cwd=folder,
                                                    stderr=subprocess.DEVNULL).decode('utf8'))
 
         for cmd in cmds:
             multi_line_log(logger=logging.getLogger('git'),
-                           msg=subprocess.check_output(Command(cmd, cmd_header='').cmd_list, cwd='static',
+                           msg=subprocess.check_output(Command(cmd, cmd_header='').cmd_list, cwd=folder,
                                                        stderr=subprocess.DEVNULL).decode('utf8'))
     except FileExistsError as e:
         logging.warning(_('Failed to clone the repo, the folder is already exists.err: {}').format(e))
@@ -152,12 +157,16 @@ def main():
     logging.getLogger().info(_('Repo: {}').format(repo))
     try:
         if config['client'].get('client-branch', None) is not None:
+            client_folder = Path(config.get_from_pointer('/client/client-folder', 'static'))
+
             @run_by_multi_thread
             def __():
                 clone_client(
                     repo=repo,
+                    folder=client_folder,
                     branch=config['client']['client-branch'],
-                    cmds=config.get_from_pointer('/client/cmds-after-update', None))
+                    cmds=config.get_from_pointer('/client/cmds-after-update', None)
+                )
     except KeyError:
         pass
 
@@ -179,4 +188,4 @@ def main():
     server_manager.start()
     server_manager.load_receivers()
 
-    server_manager.join()
+    server_manager.join(0.1)
