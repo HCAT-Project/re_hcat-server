@@ -31,7 +31,6 @@ import zipfile
 from pathlib import Path
 from typing import Union
 
-
 from src.dynamic_class_loader import DynamicObjLoader
 from src.util.config_parser import ConfigParser
 
@@ -119,6 +118,8 @@ class PluginManager:
         return plugin_path
 
     def load_plugins(self):
+        if not self.plugin_folder.exists():
+            self.plugin_folder.mkdir()
         for i in self.plugin_folder.iterdir():
             if i.is_dir() or i.suffix == '.pyz' or i.suffix == '.zip':
                 yield self.load_plugin(i)
