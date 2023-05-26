@@ -29,8 +29,6 @@ import importlib
 from pathlib import Path, PosixPath
 from typing import Union
 
-import pysnooper
-
 import src.util.text
 
 
