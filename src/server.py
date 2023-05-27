@@ -55,7 +55,7 @@ class Server:
     """
     The core of the server.
     """
-    ver = '2.5.0'
+    ver = '2.5.1'
 
     def __init__(self, debug: bool = False,
                  name=__name__, config=None, dol: DynamicObjLoader = None):
@@ -207,7 +207,7 @@ class Server:
         self.db_group.close()
         self.db_account.close()
 
-        self.running=False
+        self.running = False
 
         self.logger.info(_('Server closed.'))
 
