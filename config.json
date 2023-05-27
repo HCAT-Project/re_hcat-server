@@ -20,6 +20,7 @@
   "client": {
     "repo": "https://github.com/HCAT-Project/hcat-client.git",
     "client-branch": "main",
+    "client-folder": "static",
     "cmds-after-update": []
   },
   "network": {
