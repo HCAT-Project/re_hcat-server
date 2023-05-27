@@ -118,7 +118,7 @@ class BaseEventOfSVACRecvMsg(BaseEvent, metaclass=abc.ABCMeta):
         super().__init__(*args)
         self.cmds = {}
 
-        @util.decorators_with_parameters
+        @util.decorator_with_parameters
         def cmd(func, head):
             self.cmds[head] = func
             return func
