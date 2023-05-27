@@ -73,10 +73,8 @@ class ServerManager:
         """
         t = self.server.get('thread', None)
         if isinstance(t, threading.Thread):
-            try:
-                t.join(timeout=timeout)
-            except KeyboardInterrupt:
-                self.close()
+            t.join(timeout=timeout)
+
 
     def close(self):
         """
@@ -93,6 +91,19 @@ class ServerManager:
         :return:
         """
         self._start_server_core(self.server_kwargs)
+
+    def server_forever(self):
+        """
+        Start the server.
+        :return:
+        """
+        self.start()
+        while True:
+            try:
+                self.join(0.1)
+            except KeyboardInterrupt:
+                self.close()
+                break
 
     def _start_server_core(self, server_kwargs: dict = None):
         """
@@ -123,12 +134,6 @@ class ServerManager:
         t = threading.Thread(target=s.server_forever, name='ServerThread')
         t.start()
         self.server = {'server': s, 'thread': t}
-        while True:
-            try:
-                time.sleep(0.1)
-            except KeyboardInterrupt:
-                self.close()
-                break
 
     def request(self, req: Request = None) -> ReturnData:
         """
