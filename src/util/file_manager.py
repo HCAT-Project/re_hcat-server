@@ -37,7 +37,7 @@ class FileManager:
         self.info_db = info_db
         self.path = Path(path)
         if not self.path.exists():
-            self.path.mkdir(parents=True)
+            self.path.mkdir(parents=True, exist_ok=True)
 
     def get_file_path(self, sha1: str):
         path = Path(self.path) / sha1
@@ -81,5 +81,7 @@ class FileManager:
         return i
 
     def get_all_keys(self):
-        for file in Path(self.path).iterdir():
+        if not self.path.exists():
+            self.path.mkdir(parents=True, exist_ok=True)
+        for file in self.path.iterdir():
             yield str(file)
