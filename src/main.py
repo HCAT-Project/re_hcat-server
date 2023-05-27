@@ -29,8 +29,14 @@ import logging
 import os.path
 import subprocess
 import sys
+import time
+from os import PathLike
 from pathlib import Path
+from typing import Any
 
+import git.exc
+
+from git import Repo
 from src.dynamic_class_loader import DynamicObjLoader
 from src.plugin_manager import PluginManager
 from src.server_manager import ServerManager
@@ -75,54 +81,40 @@ def load_config(path):
         return ConfigParser(json.load(f))
 
 
-def clone_client(repo="https://github.com/HCAT-Project/hcat-client.git",
+def clone_client(repo_url="https://github.com/HCAT-Project/hcat-client.git",
                  folder: str | Path = 'static', branch='master',
                  cmds=None):
+    def run_check_output(cmd_: list | str, cwd: str | bytes | PathLike[str] | PathLike[bytes] | None = None) -> Any:
+        return subprocess.check_output(cmd_, cwd=cwd, stderr=subprocess.DEVNULL).decode('utf8')
+
+    def run_and_logout(cmd_: list | str, cwd: str | bytes | PathLike[str] | PathLike[bytes] | None = None):
+        multi_line_log(logger=logging.getLogger('git'), msg=run_check_output(cmd_, cwd=cwd))
+
     if isinstance(folder, str):
         folder = Path(folder)
+
     if cmds is None:
         cmds = []
+    if folder.exists():
+
+        repo = Repo(folder)
+        if repo.git.remote('get-url', 'origin') != repo_url:
+            repo.git.remote('set-url', 'origin', repo_url)
+
+    else:
+        repo = Repo.clone_from(repo_url, folder)
     try:
+        repo.git.checkout('-b', branch, f'origin/{branch}')
+    except git.exc.GitCommandError:
+        repo.git.checkout(branch)
 
-        if folder.exists():
+    repo.remote().pull()
 
-            if repo != subprocess.check_output(['git', 'remote', 'get-url', 'origin'],
-                                               cwd=folder, stderr=subprocess.DEVNULL).decode('utf8').rstrip('\n'):
-                multi_line_log(logger=logging.getLogger('git'),
-                               msg=subprocess.check_output(['git', 'remote', 'set-url', 'origin', repo], cwd=folder,
-                                                           stderr=subprocess.DEVNULL).decode('utf8'))
-
-        else:
-            multi_line_log(logger=logging.getLogger('git'), msg=subprocess.check_output(
-                ['git', 'clone', repo, folder],
-                stderr=subprocess.DEVNULL).decode('utf8'))
-        try:
-            multi_line_log(logger=logging.getLogger('git'),
-                           msg=subprocess.check_output(['git', 'pull'],
-                                                       cwd=folder, stderr=subprocess.DEVNULL).decode('utf8'))
-        except subprocess.CalledProcessError:
-            logging.warning(_('Failed to pull the repo, try to checkout the branch'))
-        try:
-            multi_line_log(logger=logging.getLogger('git'),
-                           msg=subprocess.check_output(['git', 'checkout', '-b', branch, f'origin/{branch}'],
-                                                       cwd=folder, stderr=subprocess.DEVNULL).decode('utf8'))
-        except subprocess.CalledProcessError:
-            multi_line_log(logger=logging.getLogger('git'),
-                           msg=subprocess.check_output(['git', 'checkout', branch], cwd=folder,
-                                                       stderr=subprocess.DEVNULL).decode('utf8'))
-        multi_line_log(logger=logging.getLogger('git'),
-                       msg=subprocess.check_output(['git', 'pull', '--force'], cwd=folder,
-                                                   stderr=subprocess.DEVNULL).decode('utf8'))
-
-        for cmd in cmds:
-            multi_line_log(logger=logging.getLogger('git'),
-                           msg=subprocess.check_output(Command(cmd, cmd_header='').cmd_list, cwd=folder,
-                                                       stderr=subprocess.DEVNULL).decode('utf8'))
-    except FileExistsError as e:
-        logging.warning(_('Failed to clone the repo, the folder is already exists.err: {}').format(e))
-
+    for cmd in cmds:
+        run_and_logout(Command(cmd, cmd_header='').cmd_list, cwd=folder)
 
 def main():
+    start_time = time.time()
     arg = get_start_arg({'debug': False, 'config': 'config.json', 'name': 'server'})
 
     # check debug mode
@@ -159,10 +151,10 @@ def main():
         if config['client'].get('client-branch', None) is not None:
             client_folder = Path(config.get_from_pointer('/client/client-folder', 'static'))
 
-            @run_by_multi_thread
+            @run_by_multi_thread(enable=Path(client_folder).exists())
             def __():
                 clone_client(
-                    repo=repo,
+                    repo_url=repo,
                     folder=client_folder,
                     branch=config['client']['client-branch'],
                     cmds=config.get_from_pointer('/client/cmds-after-update', None)
@@ -184,8 +176,14 @@ def main():
         name=arg['name']
     )
     server_manager = ServerManager(server_kwargs=server_kwargs, dol=dcl, config=ConfigParser(config), plugin_mgr=p_mgr)
-
     server_manager.start()
     server_manager.load_receivers()
-
-    server_manager.join(0.1)
+    total_time = time.time() - start_time
+    display_time = str(total_time).split('.')[0] + '.' + str(total_time).split('.')[1][:1]
+    logging.info(_('Server started, cost {}s').format(display_time))
+    while True:
+        try:
+            server_manager.join(0.1)
+        except KeyboardInterrupt:
+            server_manager.close()
+            break
