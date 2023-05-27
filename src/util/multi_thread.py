@@ -23,11 +23,17 @@
 
 @Date       : 5/20/23 8:33 PM
 
-@Version    : 1.0.0
+@Version    : 1.0.1
 """
 import threading
 
+from src import util
 
-def run_by_multi_thread(func):
-    thread = threading.Thread(target=func)
-    thread.start()
+
+@util.decorator_with_parameters
+def run_by_multi_thread(func, enable=True):
+    if enable:
+        thread = threading.Thread(target=func)
+        thread.start()
+    else:
+        func()
