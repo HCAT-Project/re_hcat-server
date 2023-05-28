@@ -28,7 +28,7 @@ import logging
 import smtplib
 from email.header import Header
 from email.mime.text import MIMEText
-from typing import Iterable
+from typing import Iterable, Callable
 
 from flask import Request
 
@@ -102,3 +102,22 @@ def decorator_with_parameters(func):
 def multi_line_log(logger: logging.Logger = logging.getLogger(), level: int = logging.INFO, msg: str = ""):
     for line in msg.splitlines():
         logger.log(level, line)
+
+
+class AutoValidateDescriptor:
+    def __init__(self, name: str, func_set: Callable = None, err: BaseException = None):
+        self.name = name
+        self.func_set = func_set
+        self.err = err
+
+    def __get__(self, instance, owner):
+        return instance.__dict__[self.name]
+
+    def __set__(self, instance, value):
+        if self.func_set and not self.func_set(instance, value):
+            if self.err:
+                raise self.err
+            else:
+                raise ValueError(f"{self.name} is not valid.")
+
+        instance.__dict__[self.name] = value
