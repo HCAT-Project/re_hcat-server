@@ -75,7 +75,6 @@ class ServerManager:
         if isinstance(t, threading.Thread):
             t.join(timeout=timeout)
 
-
     def close(self):
         """
         Close the server.

@@ -93,7 +93,9 @@ def decorator_with_parameters(func):
     def wrapper(*args, **kwargs):
         def wrapper2(func_):
             return func(func_, *args, **kwargs)
+
         return wrapper2
+
     return wrapper
 
 

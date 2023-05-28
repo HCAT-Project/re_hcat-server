@@ -33,8 +33,6 @@ from typing import IO, Union
 from zipfile import ZipExtFile
 
 
-
-
 class ConfigParser:
 
     def __init__(self, config: Union['ConfigParser', dict, PathLike, str, IO, TextIOWrapper, BytesIO, BufferedRandom]):

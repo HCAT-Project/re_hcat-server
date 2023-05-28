@@ -35,8 +35,8 @@ from pathlib import Path
 from typing import Any
 
 import git.exc
-
 from git import Repo
+
 from src.dynamic_class_loader import DynamicObjLoader
 from src.plugin_manager import PluginManager
 from src.server_manager import ServerManager
@@ -112,6 +112,7 @@ def clone_client(repo_url="https://github.com/HCAT-Project/hcat-client.git",
 
     for cmd in cmds:
         run_and_logout(Command(cmd, cmd_header='').cmd_list, cwd=folder)
+
 
 def main():
     start_time = time.time()
