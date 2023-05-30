@@ -29,7 +29,6 @@ re_hcat-server是[HCat](https://hcat.online)的重置版服务器,基于Python�
 
 ```shell
 git clone https://github.com/HCAT-Project/re_hcat-server.git
-pip install -r requirements.txt
 ```
 
 ## 客户端
@@ -48,7 +47,7 @@ pip install -r requirements.txt
 | 不启用客户端   | null   |          |
 
 # 运行
-
+__请使用`Python 3.10`及以上版本运行!__
 ```shell
 python start.py
 ```
