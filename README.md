@@ -53,7 +53,7 @@ The following table shows the version number and corresponding branch of the cli
 | Disable client | null   |                  |
 
 # Running
-
+__Please run with `Python 3.10` and above! __
 ```shell
 python start.py
 ```
