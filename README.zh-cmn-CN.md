@@ -47,7 +47,7 @@ git clone https://github.com/HCAT-Project/re_hcat-server.git
 | 不启用客户端   | null   |          |
 
 # 运行
-__请使用`Python 3.10`及以上版本运行!__
+**请使用`Python 3.10`及以上版本运行!**
 ```shell
 python start.py
 ```
