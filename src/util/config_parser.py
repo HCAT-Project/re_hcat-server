@@ -48,6 +48,9 @@ class ConfigParser:
         else:
             raise TypeError('config type error')
 
+    def __repr__(self):
+        return f'ConfigParser({self.config})'
+
     def __contains__(self, item):
         return self.get_from_pointer(item) is not None
 
