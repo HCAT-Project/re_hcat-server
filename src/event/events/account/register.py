@@ -28,6 +28,7 @@ import re
 
 from src.containers import ReturnData, User
 from src.event.base_event import BaseEvent
+from src.util.config_parser import ConfigParser
 from src.util.regex import name_regex
 
 
@@ -50,15 +51,28 @@ class Register(BaseEvent):
             return ReturnData(ReturnData.ERROR, _('Password is too short.'))
 
         with self.server.open_user(user_id) as u:
-            user = User(user_id, password, username)
+            crypto_default = {"crypto": {
+                "password": {
+                    "method": "scrypt",
+                    "kwargs": {
+                        "salt_len": 16,
+                        "n": 16384,
+                        "r": 8,
+                        "p": 1,
+                        "maxmem": 0
+                    }
+                }
+            }}
+            user = User(user_id, password, username,
+                        ConfigParser(self.server.config.get_from_pointer('/crypto/password', crypto_default)))
             user.language = self.lang
             u.value = user
             user.add_fri_msg2todos(self.server, '0sAccount', _('Account_BOT'), _('Account_BOT'),
-                                   _('Welcome to HCAT!<br>'
+                                   _('Welcome to HCAT!\\n'
                                      'The first thing you need to do is use `/email bind [email]` to '
-                                     'bind your email.<br>'
-                                     'Then you can use `/email code [code]` to verify your email.<br>'
-                                     'After that, you can use `/email unbind` to unbind your email if you want.<br>'
+                                     'bind your email.\\n'
+                                     'Then you can use `/email code [code]` to verify your email.\\n'
+                                     'After that, you can use `/email unbind` to unbind your email if you want.\\n'
                                      'Have fun!'))
 
             return ReturnData(ReturnData.OK)

@@ -27,6 +27,7 @@
 """
 import base64
 import hashlib
+import inspect
 import io
 import secrets
 import string
@@ -35,6 +36,7 @@ from pathlib import Path
 from typing import Union, IO, Generator, Any
 
 import pyaes
+import pysnooper
 
 from src.util.bytes import chunk_bytes
 
@@ -88,6 +90,58 @@ class AesCrypto:
         for i in range(int(len(data_bytes) / 16)):
             rt_bytes += self.aes.decrypt(data_bytes[16 * i:16 * (i + 1)])
         return rt_bytes.rstrip(b'\x00').decode('utf8')
+
+
+
+def password_hash(password, method="scrypt", salt_length=16, **kwargs):
+    """
+    Hash the password with the given method.
+    :param password: The password to be hashed.
+    :param method: The method of hashing to use.See https://docs.python.org/zh-cn/3.10/library/hashlib.html.
+    :param salt_length: The length of the salt to be used.
+    :param kwargs: The parameters of the hasher.
+    :return:
+    """
+    # generate the salt
+    salt = secrets.token_bytes(salt_length)
+
+    # get the hasher
+    hasher = getattr(hashlib, method)
+
+    # hash the password
+    hash_ = hasher(password.encode('utf-8'), salt=salt, **kwargs).hex()
+
+    # get the parameters of the hasher
+    #   The purpose of this paragraph is to ensure that the data is stored in the correct order and that the parameters
+    #   are not duplicated. Where, in 'filter', 'lambda x: x not in ['salt', 'password']` is used to exclude duplicate
+    #   arguments. `kwargs.get(i, parameters[i].default)` is to ensure that the default value is used instead of
+    #   reporting an error if the parameter cannot be found.
+    parameters = inspect.signature(hasher).parameters
+    sorted_parameters = sorted(filter(lambda x: x not in ['salt', 'password'], parameters.keys()))
+    data_list = [str(kwargs.get(i, parameters[i].default)) for i in sorted_parameters]
+
+    # return the hash
+    return f'{method}${salt.hex()}${"$".join(data_list)}${hash_}'
+
+
+
+def check_password_hash(password, hash_):
+    # unpack the hash to pure_hash and parameters
+    method, salt, *params, hash__ = hash_.split('$')
+
+    # get the hasher
+    hasher = getattr(hashlib, method)
+
+    # get the parameters of the hasher
+    p = inspect.signature(hasher).parameters
+    sp = sorted(filter(lambda x: x not in ['salt', 'password'], map(lambda x: x[0], p.items())))
+    kwarg = {k: int(v) for k, v in zip(sp, params)}
+
+    # hash the password
+    h = hasher(password.encode('utf-8'), salt=bytes.fromhex(salt), **kwarg).hex()
+
+    # return the result
+    return h == hash__
 
 
 def salted_sha256(data, salt, additional_string=None):

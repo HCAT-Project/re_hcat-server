@@ -38,5 +38,18 @@
         "enable-cors": true
       }
     }
+  },
+  "crypto": {
+    "password": {
+      "method": "scrypt",
+      "kwargs": {
+        "salt_length": 16,
+        "n": 16384,
+        "r": 8,
+        "p": 1,
+        "maxmem": 0,
+        "dklen": 64
+      }
+    }
   }
 }

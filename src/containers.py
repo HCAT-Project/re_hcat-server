@@ -35,6 +35,7 @@ from flask import jsonify, make_response, Response
 
 import src.util.crypto
 import src.util.text
+from src.util.config_parser import ConfigParser
 from src.util.jelly import Jelly
 
 
@@ -165,7 +166,7 @@ class User(Jelly):
     In this way, we have successfully created a new user and performed various operations on it, such as adding to-do items, changing passwords, verifying passwords and tokens, adding friends, etc.
     """
 
-    def __init__(self, user_id: str, password: str, user_name: str):
+    def __init__(self, user_id: str, password: str, user_name: str, password_hash_config: ConfigParser):
         """
         Creates a new user object.
         :param user_id: The ID of the user.
@@ -173,11 +174,13 @@ class User(Jelly):
         :param user_name: The name of the user.
         """
         super().__init__()
-        self.hash_password = None
+        self.hash_password: str = str()
         self.salt = None
         self.user_id = user_id
         self.user_name = user_name
-        self.change_password(password)
+        print(password_hash_config)
+        self.change_password(password=password, method=password_hash_config.get('password_hash', 'scrypt'),
+                             **password_hash_config['kwargs'])
 
     def _var_init(self):
         self.todo_list = []
@@ -188,13 +191,14 @@ class User(Jelly):
         self.email = ''
         self.language = 'en_US'
 
-    def change_password(self, password: str):
+    def change_password(self, password: str, method='scrypt', **kwargs):
         """
         Changes the user's password and generates a new salted hash.
+        :param method: The method of hashing to use.See https://docs.python.org/zh-cn/3.10/library/hashlib.html.
         :param password: The new password to set.
         """
-        self.salt = src.util.crypto.get_random_token(16)
-        self.hash_password = src.util.crypto.salted_sha256(password, self.salt, self.user_id)
+
+        self.hash_password = src.util.crypto.password_hash(password=password, method=method, **kwargs)
 
     def auth(self, password: str) -> bool:
         """
@@ -202,13 +206,16 @@ class User(Jelly):
         :param password: The password to check.
         :return: True if the password is correct, False otherwise.
         """
-        if src.util.crypto.salted_sha256(password, self.salt, self.user_id) == self.hash_password:
-            return True
-        elif src.util.crypto.salted_sha1(password, self.salt, self.user_id) == self.hash_password:
-            # old password hash
-            return True
+        if self.hash_password.find('$') != -1:
+            return src.util.crypto.check_password_hash(password=password, hash_=self.hash_password)
         else:
-            return False
+            # sha256 and sha1
+            if len(self.hash_password) == 64:
+                return src.util.crypto.salted_sha256(password, self.salt, self.user_id) == self.hash_password
+            elif len(self.hash_password) == 40:
+                return src.util.crypto.salted_sha1(password, self.salt, self.user_id) == self.hash_password
+            else:
+                return False
 
     def is_in_group(self, server, group_id: str) -> bool:
         """
@@ -225,9 +232,6 @@ class User(Jelly):
         if group_id in self.groups_dict and self.user_id in group.member_dict:
             return True
 
-        # todo: fix the case that
-        #  user in group member list but group not in user group list
-        #  or group in user group list but user not in group member list.
 
         return False
 
