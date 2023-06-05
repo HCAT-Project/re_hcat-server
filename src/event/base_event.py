@@ -128,7 +128,7 @@ class BaseEventOfSVACRecvMsg(BaseEvent, metaclass=abc.ABCMeta):
         @cmd(head='help')
         def help_(_):
             _ = self.gettext_func
-            self.send_msg(_('Commands') + ':' + '\n/'.join(self.cmds.keys()))
+            self.send_msg(_('Commands') + ':' + '\\n/'.join(self.cmds.keys()))
 
     def send_msg(self, msg: str):
         with self.server.open_user(self.user_id) as u:
