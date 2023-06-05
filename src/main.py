@@ -103,10 +103,17 @@ def clone_client(repo_url="https://github.com/HCAT-Project/hcat-client.git",
 
     else:
         repo = Repo.clone_from(repo_url, folder)
+    # stash
+    repo.git.stash()
     try:
         repo.git.checkout('-b', branch, f'origin/{branch}')
     except git.exc.GitCommandError:
         repo.git.checkout(branch)
+    # stash pop
+    try:
+        repo.git.stash('pop')
+    except git.exc.GitCommandError:
+        ...
 
     repo.remote().pull()
 
