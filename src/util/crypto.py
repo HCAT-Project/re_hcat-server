@@ -29,6 +29,7 @@ import base64
 import hashlib
 import inspect
 import io
+import pathlib
 import secrets
 import string
 from os import PathLike
@@ -36,8 +37,8 @@ from pathlib import Path
 from typing import Union, IO, Generator, Any
 
 import pyaes
-import pysnooper
 
+from src.dynamic_class_loader import DynamicObjLoader
 from src.util.bytes import chunk_bytes
 
 
@@ -92,6 +93,17 @@ class AesCrypto:
         return rt_bytes.rstrip(b'\x00').decode('utf8')
 
 
+def _get_hasher(method="sha256"):
+    if hasattr(hashlib, method):
+        hasher = getattr(hashlib, method)
+    else:
+        try:
+            hasher = hashlib.new(method)
+        except ValueError:
+            hasher = DynamicObjLoader().load_obj(pathlib.Path.cwd().joinpath(method.split('.')[:-1]),
+                                                 method.split('.')[-1])
+    return hasher
+
 
 def password_hash(password, method="scrypt", salt_length=16, **kwargs):
     """
@@ -106,7 +118,7 @@ def password_hash(password, method="scrypt", salt_length=16, **kwargs):
     salt = secrets.token_bytes(salt_length)
 
     # get the hasher
-    hasher = getattr(hashlib, method)
+    hasher = _get_hasher(method)
 
     # hash the password
     hash_ = hasher(password.encode('utf-8'), salt=salt, **kwargs).hex()
@@ -124,13 +136,12 @@ def password_hash(password, method="scrypt", salt_length=16, **kwargs):
     return f'{method}${salt.hex()}${"$".join(data_list)}${hash_}'
 
 
-
 def check_password_hash(password, hash_):
     # unpack the hash to pure_hash and parameters
     method, salt, *params, hash__ = hash_.split('$')
 
     # get the hasher
-    hasher = getattr(hashlib, method)
+    hasher = _get_hasher(method)
 
     # get the parameters of the hasher
     p = inspect.signature(hasher).parameters
