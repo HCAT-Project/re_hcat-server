@@ -38,7 +38,7 @@ from RPDB.database import FRPDB
 import src.util.crypto
 import src.util.text
 from src.containers import User, ReturnData
-from src.dynamic_class_loader import DynamicObjLoader
+from src.dynamic_obj_loader import DynamicObjLoader
 from src.event.event_manager import EventManager
 from src.event.recv_event import RecvEvent
 from src.util.config_parser import ConfigParser

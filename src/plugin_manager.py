@@ -31,7 +31,7 @@ import zipfile
 from pathlib import Path
 from typing import Union
 
-from src.dynamic_class_loader import DynamicObjLoader
+from src.dynamic_obj_loader import DynamicObjLoader
 from src.util.config_parser import ConfigParser
 
 

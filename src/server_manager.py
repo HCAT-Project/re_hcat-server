@@ -31,7 +31,7 @@ import threading
 import time
 
 from src.containers import Request, ReturnData
-from src.dynamic_class_loader import DynamicObjLoader
+from src.dynamic_obj_loader import DynamicObjLoader
 from src.plugin_manager import PluginManager
 from src.server import Server
 from src.util.config_parser import ConfigParser

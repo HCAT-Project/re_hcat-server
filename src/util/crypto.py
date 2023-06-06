@@ -38,7 +38,7 @@ from typing import Union, IO, Generator, Any
 
 import pyaes
 
-from src.dynamic_class_loader import DynamicObjLoader
+from src.dynamic_obj_loader import DynamicObjLoader
 from src.util.bytes import chunk_bytes
 
 

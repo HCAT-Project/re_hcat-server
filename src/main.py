@@ -37,7 +37,7 @@ from typing import Any
 import git.exc
 from git import Repo
 
-from src.dynamic_class_loader import DynamicObjLoader
+from src.dynamic_obj_loader import DynamicObjLoader
 from src.plugin_manager import PluginManager
 from src.server_manager import ServerManager
 from src.util import multi_line_log

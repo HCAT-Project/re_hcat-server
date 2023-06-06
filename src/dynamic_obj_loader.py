@@ -17,7 +17,7 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
-@File       : dynamic_class_loader.py
+@File       : dynamic_obj_loader.py
 
 @Author     : hsn
 
