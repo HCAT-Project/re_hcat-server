@@ -42,6 +42,7 @@ import json
 import logging
 import os
 
+import src.util.functools
 from src import util
 from src.containers import Request
 from src.containers import ReturnData, User
@@ -118,7 +119,7 @@ class BaseEventOfSVACRecvMsg(BaseEvent, metaclass=abc.ABCMeta):
         super().__init__(*args)
         self.cmds = {}
 
-        @util.decorator_with_parameters
+        @src.util.functools.decorator_with_parameters
         def cmd(func, head):
             self.cmds[head] = func
             return func

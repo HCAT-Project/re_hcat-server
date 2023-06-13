@@ -27,10 +27,11 @@
 """
 import threading
 
+import src.util.functools
 from src import util
 
 
-@util.decorator_with_parameters
+@src.util.functools.decorator_with_parameters
 def run_by_multi_thread(func, enable=True):
     if enable:
         thread = threading.Thread(target=func)

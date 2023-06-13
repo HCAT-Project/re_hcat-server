@@ -89,16 +89,6 @@ def send_email(mail_host, mail_user, mail_password, receiver_address, subject=''
     smtp_obj.sendmail(mail_user, receivers, message.as_string())
 
 
-def decorator_with_parameters(func):
-    def wrapper(*args, **kwargs):
-        def wrapper2(func_):
-            return func(func_, *args, **kwargs)
-
-        return wrapper2
-
-    return wrapper
-
-
 def multi_line_log(logger: logging.Logger = logging.getLogger(), level: int = logging.INFO, msg: str = ""):
     for line in msg.splitlines():
         logger.log(level, line)
