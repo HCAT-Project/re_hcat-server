@@ -26,8 +26,7 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import logging
 
-from flask import make_response
-
+from src.containers import ReturnData
 from src.event.base_event import BaseEvent
 
 
@@ -35,15 +34,14 @@ class RecvEvent(BaseEvent):
     auth = False
 
     def _run(self):
-
         event_class = self.server.dol.load_obj_from_group(path=self.path, group='req_events')
 
         if event_class is None:
-            return make_response('No Found', 404)
+            return ReturnData(ReturnData.NULL, 'No Found.')
 
         try:
             return self.e_mgr.create_event(event_class, self.req, self.path)
 
         except Exception as err:
             logging.exception(err)
-            return make_response('Internal Server Error', 500)
+            return ReturnData(ReturnData.NULL, 'Internal Server Error.')
