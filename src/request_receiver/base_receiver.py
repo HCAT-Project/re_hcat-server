@@ -58,7 +58,7 @@ class BaseReceiver(metaclass=abc.ABCMeta):
     def _start(self):
         ...
 
-    def create_req(self, req=None):
+    def create_req(self, req=None) -> ReturnData:
         self.lock.acquire()
         rt = ReturnData(ReturnData.ERROR)
         try:
