@@ -23,10 +23,11 @@
 
 @Date       : 4/9/23 9:22 AM
 
-@Version    : 1.0.1
+@Version    : 1.1.0
 """
 import copy
 import json
+import re
 from io import TextIOWrapper, BytesIO, BufferedRandom
 from os import PathLike
 from typing import IO, Union
@@ -40,13 +41,19 @@ class ConfigParser:
             self.config: dict = config
         elif isinstance(config, (str, PathLike)):
             with open(config, 'r') as f:
-                self.config: dict = json.load(f)
+                self.config: dict = json.loads(self._del_comments(f.read()))
         elif isinstance(config, (IO, TextIOWrapper, BytesIO, BufferedRandom, ZipExtFile)):
             self.config: dict = json.load(config)
         elif isinstance(config, ConfigParser):
             self.config = config.config
         else:
             raise TypeError('config type error')
+
+    @staticmethod
+    def _del_comments(json_raw: str):
+        json_str = re.sub(re.compile('(//[\\s\\S]*?\n)'), '', json_raw)
+        json_str = re.sub(re.compile('(/\*\*\*[\\s\\S]*?/)'), '', json_str)
+        return json_str
 
     def __repr__(self):
         return f'ConfigParser({self.config})'
