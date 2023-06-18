@@ -100,8 +100,9 @@ def _get_hasher(method="sha256"):
         try:
             hasher = hashlib.new(method)
         except ValueError:
-            hasher = DynamicObjLoader().load_obj(pathlib.Path.cwd().joinpath(method.split('.')[:-1]),
-                                                 method.split('.')[-1])
+            hasher = DynamicObjLoader().load_obj(
+                pathlib.Path.cwd().joinpath('/'.join(method.split('.')[:-1])).as_posix(),
+                method.split('.')[-1])
     return hasher
 
 
