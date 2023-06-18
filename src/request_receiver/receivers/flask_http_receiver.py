@@ -35,6 +35,7 @@ from gevent import pywsgi
 from src.containers import Request, ReturnData
 from src.request_receiver.base_receiver import BaseReceiver
 from src.util import request_parse
+from src.util.i18n import gettext_func as _
 
 
 class FlaskHttpReceiver(BaseReceiver):
@@ -81,10 +82,19 @@ class FlaskHttpReceiver(BaseReceiver):
 
             return rt_resp
 
-        server = pywsgi.WSGIServer((self.host, self.port), self.app)
+        # ssl
+        ssl_kwargs = {}
+        if self.global_config.get_from_pointer('/network/ssl/enable', False):
+            ssl_cert = self.global_config.get_from_pointer('/network/ssl/cert')
+            ssl_key = self.global_config.get_from_pointer('/network/ssl/key')
+            ssl_kwargs = {'keyfile': ssl_key, 'certfile': ssl_cert}
+            self.logger.debug(_('FlaskHttpReceiver started with SSL.'))
+
+        server = pywsgi.WSGIServer((self.host, self.port), self.app, **ssl_kwargs)
         self.wsgi_server = server
+
         try:
             server.serve_forever()
         except KeyboardInterrupt:
             server.close()
-            logging.info("FlaskHttpReceiver stopped")
+            logging.info(_("FlaskHttpReceiver stopped."))
