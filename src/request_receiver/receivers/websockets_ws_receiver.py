@@ -27,6 +27,7 @@
 """
 import asyncio
 import json
+import uuid
 
 import schedule
 import websockets
@@ -36,37 +37,62 @@ from src.request_receiver.base_receiver import BaseReceiver
 
 
 class WebsocketsWsReceiver(BaseReceiver):
-    connectors = []
+    connectors = {}
 
     async def send_todo_list(self):
-        for connector in self.connectors:
+        """
+        Send todo_list to all connectors
+        :return:
+        """
+        # send todo_list
+        for connector in self.connectors.values():
             auth_data, websocket = connector
+
             req = Request(path="account/get_todo_list", form={}, files=None, cookies={"auth_data": auth_data})
-            rt = self.create_req(req)
-            if rt.json_data.get('data',None):
+            rt: ReturnData = self.create_req(req)
+
+            # return todo_list if data is not 'None'
+            if rt.json_data.get('data', None):
                 await websocket.send(json.dumps({"ver": 1, "type": "todo_list", "data": rt.json_data}))
 
     def _start(self):
+        """
+        The main function of WS receiver
+        :return:
+        """
         schedule.every(1).seconds.do(lambda: asyncio.run(self.send_todo_list()))
 
         async def handler(websocket):
-            while True:
-                message = await websocket.recv()
-                try:
-                    msg_json = json.loads(message)
-                except json.JSONDecodeError:
-                    websocket.send(ReturnData(ReturnData.ERROR).json_data)
-                    return
-                path: str = msg_json.get("path", "")
-                form = msg_json.get("form", {})
-                cookies = msg_json.get("cookies", {})
-                req = Request(path=path, form=form, files=None, cookies=cookies)
-                rt = self.create_req(req)
-                if path.startswith('account/login'):
-                    auth_data = rt.json_data.get('_cookies', {}).get("auth_data", {}).get("value", None)
-                    if auth_data is not None:
-                        self.connectors.append((auth_data, websocket))
-                await websocket.send(json.dumps(rt.json_data))
+            _id = uuid.uuid1()
+            try:
+                while message := await websocket.recv():
+                    # try to parse json
+                    try:
+                        msg_json: dict = json.loads(message)
+                    except json.JSONDecodeError:
+                        websocket.send(ReturnData(ReturnData.ERROR).json_data)
+                        return
+
+                    # get the path, form, cookies
+                    path: str = msg_json.get("path", "")
+                    form: dict = msg_json.get("form", {})
+                    cookies: dict = msg_json.get("cookies", {})
+
+                    # create request
+                    req = Request(path=path, form=form, files=None, cookies=cookies)
+                    rt: ReturnData = self.create_req(req)
+
+                    # if the path is account/login, save the auth_data
+                    if path.startswith('account/login') \
+                            and (auth_data := rt.json_data.get('_cookies', {}).get("auth_data", {}).get("value", None)):
+                        self.connectors[_id] = (auth_data, websocket)
+
+                    # send the return data
+                    await websocket.send(json.dumps(rt.json_data))
+            except websockets.ConnectionClosed:
+                # remove the connector
+                if _id in self.connectors:
+                    self.connectors.pop(_id)
 
         async def main():
             async with websockets.serve(handler, "127.0.0.1", 8001):
