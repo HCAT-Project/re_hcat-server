@@ -23,9 +23,10 @@
 
 @Date       : 4/14/23 7:40 PM
 
-@Version    : 1.0.1
+@Version    : 1.1.0
 """
 import abc
+import logging
 import random
 import threading
 
@@ -40,9 +41,10 @@ class BaseReceiver(metaclass=abc.ABCMeta):
         self.global_config = config if config is not None else ConfigParser({})
         self.receiver_config = ConfigParser(self.global_config.get_from_pointer(
             f'/network/receivers/{self.__class__.__name__}', {}))
-        self.host = self.global_config.get_from_pointer(f"/network/receivers/{type(self).__name__}/host", "127.0.0.1")
-        self.port = self.global_config.get_from_pointer(f"/network/receivers/{type(self).__name__}/port",
-                                                        random.randint(10000, 65535))
+        self.host: str = self.receiver_config.get_from_pointer("host", "127.0.0.1")
+        self.port: int = self.receiver_config.get_from_pointer("port", random.randint(10000, 65535))
+        self.enable: bool = self.receiver_config.get_from_pointer("enable", False)
+        self.logger: logging.Logger = logging.getLogger(type(self).__name__)
 
     def pause(self):
         self.lock.acquire()
