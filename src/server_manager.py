@@ -151,8 +151,11 @@ class ServerManager:
         """
         for i in self.dol.load_objs_from_group("receiver"):
             receiver = i(self.request, self.config)
-            receiver.start()
-            self.receivers[i.__name__] = receiver
+            if receiver.enable:
+                receiver.start()
+                logging.getLogger('server_manager').debug(
+                    _('Receiver "{}" loaded. Listening on {}:{}').format(i.__name__, receiver.host, receiver.port))
+                self.receivers[i.__name__] = receiver
 
     def _load_auxiliary_events(self, s: Server):
         """
