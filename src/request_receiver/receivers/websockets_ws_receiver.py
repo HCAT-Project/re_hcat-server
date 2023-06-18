@@ -95,7 +95,7 @@ class WebsocketsWsReceiver(BaseReceiver):
                     self.connectors.pop(_id)
 
         async def main():
-            async with websockets.serve(handler, "127.0.0.1", 8001):
+            async with websockets.serve(handler, self.host, self.port):
                 await asyncio.Future()  # run forever
 
         asyncio.run(main())
