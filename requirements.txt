@@ -6,3 +6,4 @@ RP-DataBase
 flask-cors
 schedule
 gitpython
+websockets
