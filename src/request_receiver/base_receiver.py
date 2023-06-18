@@ -37,10 +37,12 @@ class BaseReceiver(metaclass=abc.ABCMeta):
     def __init__(self, callback=None, config: ConfigParser = None):
         self.callback = callback
         self.lock = threading.Lock()
-        self.config = config if config is not None else ConfigParser({})
-        self.host = self.config.get_from_pointer(f"/network/receivers/{type(self).__name__}/host", "127.0.0.1")
-        self.port = self.config.get_from_pointer(f"/network/receivers/{type(self).__name__}/port",
-                                                 random.randint(10000, 65535))
+        self.global_config = config if config is not None else ConfigParser({})
+        self.receiver_config = ConfigParser(self.global_config.get_from_pointer(
+            f'/network/receivers/{self.__class__.__name__}', {}))
+        self.host = self.global_config.get_from_pointer(f"/network/receivers/{type(self).__name__}/host", "127.0.0.1")
+        self.port = self.global_config.get_from_pointer(f"/network/receivers/{type(self).__name__}/port",
+                                                        random.randint(10000, 65535))
 
     def pause(self):
         self.lock.acquire()
