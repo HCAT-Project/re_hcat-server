@@ -7,3 +7,4 @@ flask-cors
 schedule
 gitpython
 websockets
+pymongo
