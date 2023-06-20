@@ -170,21 +170,21 @@ def main():
     except KeyError:
         pass
 
-    dcl = DynamicObjLoader()
+    dol = DynamicObjLoader()
 
-    dcl.add_path_to_group("receiver", Path.cwd() / 'src/request_receiver/receivers')
-    dcl.add_path_to_group("auxiliary_events", Path.cwd() / 'src/event/auxiliary_events')
-    dcl.add_path_to_group("req_events", Path.cwd() / 'src/event/events')
-    dcl.add_path_to_group("db_adapters",Path.cwd() / 'src/db_adapter/adapters')
+    dol.add_path_to_group("receiver", Path.cwd() / 'src/request_receiver/receivers')
+    dol.add_path_to_group("auxiliary_events", Path.cwd() / 'src/event/auxiliary_events')
+    dol.add_path_to_group("req_events", Path.cwd() / 'src/event/events')
+    dol.add_path_to_group("db_adapters",Path.cwd() / 'src/db_adapter/adapters')
 
-    p_mgr = PluginManager(config=config, dcl=dcl)
+    p_mgr = PluginManager(config=config, dcl=dol)
     # init and start server
     server_kwargs = (lambda **kwargs: kwargs)(
         debug=arg['debug'],
         config=config,
         name=arg['name']
     )
-    server_manager = ServerManager(server_kwargs=server_kwargs, dol=dcl, config=ConfigParser(config), plugin_mgr=p_mgr)
+    server_manager = ServerManager(server_kwargs=server_kwargs, dol=dol, config=ConfigParser(config), plugin_mgr=p_mgr)
     server_manager.start()
     server_manager.load_receivers()
     total_time = time.time() - start_time
