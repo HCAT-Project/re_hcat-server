@@ -175,6 +175,7 @@ def main():
     dcl.add_path_to_group("receiver", Path.cwd() / 'src/request_receiver/receivers')
     dcl.add_path_to_group("auxiliary_events", Path.cwd() / 'src/event/auxiliary_events')
     dcl.add_path_to_group("req_events", Path.cwd() / 'src/event/events')
+    dcl.add_path_to_group("db_adapters",Path.cwd() / 'src/db_adapter/adapters')
 
     p_mgr = PluginManager(config=config, dcl=dcl)
     # init and start server
