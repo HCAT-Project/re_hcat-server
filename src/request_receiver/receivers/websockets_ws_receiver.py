@@ -66,17 +66,15 @@ class WebsocketsWsReceiver(BaseReceiver):
             _id = uuid.uuid1()
             try:
                 while message := await websocket.recv():
-                    # try to parse json
-                    try:
-                        msg_json: dict = json.loads(message)
-                    except json.JSONDecodeError:
-                        websocket.send(ReturnData(ReturnData.ERROR).json_data)
-                        return
+                    msg_json: dict = json.loads(message)
 
                     # get the path, form, cookies
                     path: str = msg_json.get("path", "")
                     form: dict = msg_json.get("form", {})
                     cookies: dict = msg_json.get("cookies", {})
+
+                    if c := self.connectors.get(_id, None):
+                        cookies['auth_data'], _ = c
 
                     # create request
                     req = Request(path=path, form=form, files=None, cookies=cookies)
@@ -90,6 +88,10 @@ class WebsocketsWsReceiver(BaseReceiver):
                     # send the return data
                     await websocket.send(json.dumps(rt.json_data))
             except websockets.ConnectionClosed:
+                pass
+            except json.JSONDecodeError:
+                websocket.send(ReturnData(ReturnData.ERROR).json_data)
+            finally:
                 # remove the connector
                 if _id in self.connectors:
                     self.connectors.pop(_id)
