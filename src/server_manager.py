@@ -23,7 +23,7 @@
 
 @Date       : 4/14/23 3:47 PM
 
-@Version    : 1.0.0
+@Version    : 1.0.1
 """
 import logging
 import subprocess
@@ -43,7 +43,8 @@ class ServerManager:
     Main class of server.
     """
 
-    def __init__(self, server_kwargs: dict = None, dol: DynamicObjLoader = None, config: ConfigParser = None,
+    def __init__(self, server_kwargs: dict = None, dol: DynamicObjLoader = None,
+                 config: ConfigParser | dict | str = None,
                  plugin_mgr: PluginManager = None):
         """
 
@@ -53,11 +54,13 @@ class ServerManager:
         """
         # Init the variables
         self.config = ConfigParser(config) if config is not None else ConfigParser({})
-        self.server = {}
 
         self.dol = DynamicObjLoader() if dol is None else dol
         self.plugin_mgr = PluginManager() if plugin_mgr is None else plugin_mgr
+
+        self.server = {}
         self.receivers = {}
+
         self.server_kwargs = server_kwargs
 
         # Load update service
@@ -118,10 +121,6 @@ class ServerManager:
         # Init the server.
         s = Server(**server_kwargs)
 
-        # Load auxiliary events.
-        logging.info(_('Loading auxiliary events...'))
-        self._load_auxiliary_events(s)
-
         # Load plugins
         logging.info(_('Loading plugins...'))
         for plugin_info, plugin_work_folder in self.plugin_mgr.load_plugins():
@@ -153,21 +152,10 @@ class ServerManager:
             receiver = i(self.request, self.config)
             if receiver.enable:
                 receiver.start()
+
                 logging.getLogger('server_manager').debug(
                     _('Receiver "{}" loaded. Listening on {}:{}').format(i.__name__, receiver.host, receiver.port))
                 self.receivers[i.__name__] = receiver
-
-    def _load_auxiliary_events(self, s: Server):
-        """
-        Load auxiliary events.
-        :param s: The server.
-        :return:
-        """
-        for class_ in self.dol.load_objs_from_group('auxiliary_events'):
-            # logout
-            logging.debug(_('Auxiliary event "{}" loaded.').format(class_.__name__))
-
-            s.e_mgr.add_auxiliary_event(event=class_)
 
     def _update_thread(self):
         """
