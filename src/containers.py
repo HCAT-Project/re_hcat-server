@@ -232,7 +232,6 @@ class User(Jelly):
         if group_id in self.groups_dict and self.user_id in group.member_dict:
             return True
 
-
         return False
 
     def add_user_event(self, ec: EventContainer):

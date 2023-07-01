@@ -7,7 +7,7 @@
 
 @Date       : 2023/3/1 下午8:35
 
-@Version    : 1.0.0
+@Version    : 1.0.1
 """
 
 #  Copyright (C) 2023. HCAT-Project-Team
@@ -21,27 +21,20 @@
 #  GNU Affero General Public License for more details.
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
-import datetime
+
 import logging
-import os.path
 import subprocess
 import sys
+
 if __name__ == '__main__':
     # try to run thr `main` func
     try:
         from src.util.i18n import gettext_func as _
         from src.main import main
         from src.util.config_parser import ConfigParser
-        main()
-    except ModuleNotFoundError as err:
-        # install the requirements when `main` func throw 'ModuleNotFoundError'
-        subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-r', 'requirements.txt'])
-
-        from src.main import main
 
         main()
     except ImportError:
-
         # update the requirements when `main` func throw 'ImportError'
         subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-r', 'requirements.txt', '--upgrade'])
 
@@ -50,7 +43,6 @@ if __name__ == '__main__':
 
         main()
     except BaseException as err:
-
         # log the unknown error
         logging.critical(_('The function "main" could not be loaded, please check if the file is complete.'))
         logging.exception(err)

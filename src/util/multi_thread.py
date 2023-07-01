@@ -28,7 +28,6 @@
 import threading
 
 import src.util.functools
-from src import util
 
 
 @src.util.functools.decorator_with_parameters

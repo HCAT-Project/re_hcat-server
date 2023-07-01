@@ -17,16 +17,17 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
-@File       : flask_http_receiver.py
+@File       : websockets_ws_receiver.py
 
 @Author     : hsn
 
-@Date       : 4/15/23 12:01 PM
+@Date       : 6/15/23 12:01 PM
 
-@Version    : 1.0.0
+@Version    : 1.1.0
 """
 import asyncio
 import json
+import ssl
 import uuid
 
 import schedule
@@ -34,6 +35,7 @@ import websockets
 
 from src.containers import Request, ReturnData
 from src.request_receiver.base_receiver import BaseReceiver
+from src.util.i18n import gettext_func as _
 
 
 class WebsocketsWsReceiver(BaseReceiver):
@@ -62,21 +64,22 @@ class WebsocketsWsReceiver(BaseReceiver):
         """
         schedule.every(1).seconds.do(lambda: asyncio.run(self.send_todo_list()))
 
+        self.start_ws_server(self.init_handler())
+
+    def init_handler(self):
         async def handler(websocket):
             _id = uuid.uuid1()
             try:
                 while message := await websocket.recv():
-                    # try to parse json
-                    try:
-                        msg_json: dict = json.loads(message)
-                    except json.JSONDecodeError:
-                        websocket.send(ReturnData(ReturnData.ERROR).json_data)
-                        return
+                    msg_json: dict = json.loads(message)
 
                     # get the path, form, cookies
                     path: str = msg_json.get("path", "")
                     form: dict = msg_json.get("form", {})
                     cookies: dict = msg_json.get("cookies", {})
+
+                    if c := self.connectors.get(_id, None):
+                        cookies['auth_data'], _ = c
 
                     # create request
                     req = Request(path=path, form=form, files=None, cookies=cookies)
@@ -90,12 +93,29 @@ class WebsocketsWsReceiver(BaseReceiver):
                     # send the return data
                     await websocket.send(json.dumps(rt.json_data))
             except websockets.ConnectionClosed:
+                pass
+            except json.JSONDecodeError:
+                websocket.send(ReturnData(ReturnData.ERROR).json_data)
+            finally:
                 # remove the connector
                 if _id in self.connectors:
                     self.connectors.pop(_id)
 
+        return handler
+
+    def start_ws_server(self, handler):
         async def main():
-            async with websockets.serve(handler, self.host, self.port):
+            ssl_kwarg = {}
+
+            if self.global_config['/network/ssl/enabled']:
+                ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+                ssl_cert = self.global_config['/network/ssl/cert']
+                ssl_key = self.global_config['/network/ssl/key']
+
+                ssl_context.load_cert_chain(ssl_cert, keyfile=ssl_key)
+                ssl_kwarg = {'ssl': ssl_context}
+                self.logger.debug(_('WebsocketsWsReceiver started with SSL.'))
+            async with websockets.serve(handler, self.host, self.port, **ssl_kwarg):
                 await asyncio.Future()  # run forever
 
         asyncio.run(main())
