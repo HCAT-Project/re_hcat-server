@@ -23,7 +23,7 @@
 
 @Date       : 4/15/23 2:32 PM
 
-@Version    : 1.0.0
+@Version    : 1.1.0
 """
 import inspect
 import shutil
@@ -36,13 +36,29 @@ from src.util.config_parser import ConfigParser
 
 
 class PluginManager:
-    def __init__(self, config: ConfigParser = None, dcl: DynamicObjLoader = None):
+    """
+    Plugin manager.
+    """
+
+    def __init__(self, config: ConfigParser = None, dol: DynamicObjLoader = None):
+        """
+
+        :param config: Global config
+        :param dol: The dynamic object loader.
+        """
         self.config: ConfigParser = config if config is not None else ConfigParser({})
-        self.dcl: DynamicObjLoader = dcl if dcl is not None else DynamicObjLoader()
+        self.dcl: DynamicObjLoader = dol if dol is not None else DynamicObjLoader()
+
         self.plugin_folder: Path = Path(self.config.get_from_pointer('/plugin/folder', 'plugins'))
+
         self.plugins = {}
 
     def load_plugin(self, path: Union[Path, str]):
+        """
+        Load plugin from path.
+        :param path: The path of plugin.
+        :return:
+        """
         plugin_path = self._get_plugin_path(path)
 
         if plugin_path.is_dir():
@@ -53,7 +69,7 @@ class PluginManager:
 
                 plugin_info = ConfigParser(f)
 
-            plugin_name = plugin_info.get_from_pointer('/name', None)
+            plugin_name: str = plugin_info.get_from_pointer('/name', None)
             plugin_main: str = plugin_info.get_from_pointer('/main', 'main.py')
 
             # copy config to temp folder
@@ -62,9 +78,8 @@ class PluginManager:
                 shutil.copytree(plugin_path, plugin_work_folder)
 
         elif plugin_path.suffix in ['.pyz', '.zip']:
-            with zipfile.ZipFile(plugin_path, 'r') as z:
-                with z.open('plugin.json', 'r') as f:
-                    plugin_info = ConfigParser(f)
+            with zipfile.ZipFile(plugin_path, 'r') as z, z.open('plugin.json', 'r') as f:
+                plugin_info = ConfigParser(f)
                 plugin_name = plugin_info.get_from_pointer('/name', None)
                 plugin_main: str = plugin_info.get_from_pointer('/main', 'main.py')
 
@@ -84,8 +99,7 @@ class PluginManager:
                 return None
 
         for i in [plugin_main, 'main', 'Main', '__main__', '__Main__']:
-            main_func = _try_to_load(plugin_main_path, i)
-            if main_func is not None:
+            if not (main_func := _try_to_load(plugin_main_path, i)):
                 break
         else:
             raise ImportError(f'No main function found in {plugin_main}')
@@ -109,10 +123,12 @@ class PluginManager:
                 plugin_path = (self.plugin_folder / path).with_suffix('.zip')
             else:
                 raise FileNotFoundError(f'Plugin {path} not found.')
+
         elif isinstance(path, Path):
             plugin_path = path
         else:
             raise TypeError(f'path must be str or Path, not {type(path)}')
+
         if not Path(path).exists():
             raise FileNotFoundError(f'Plugin {path} not found.')
         return plugin_path
