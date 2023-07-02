@@ -26,7 +26,9 @@ import abc
 import copy
 import typing
 from contextlib import contextmanager
-from typing import Mapping, Any, List
+from typing import Mapping, Any, Iterable
+
+from src.util.config_parser import ConfigParser
 
 
 class Item:
@@ -50,17 +52,22 @@ class Item:
         self.value[key] = value
 
 
-class BaseDBA(metaclass=abc.ABCMeta):
+class BaseCA(metaclass=abc.ABCMeta):
     """
     DateBase adapter base class.
     """
+
+    def __init__(self, global_config: ConfigParser, config: ConfigParser, collection: str):
+        self.global_config = global_config
+        self.config = config
+        self.collection = collection
 
     @abc.abstractmethod
     def find(self,
              filter_: Mapping[str, Any],
              masking: Mapping[str, Any] = None,
              limit: int = None,
-             sort_key: str = None) -> List[Item]:
+             sort_key: str = None) -> Iterable[Item]:
         """
         Get values from database.
         :param filter_:
@@ -83,7 +90,7 @@ class BaseDBA(metaclass=abc.ABCMeta):
         :param sort_key:
         :return:
         """
-        if v_p := self.find(filter_=filter_, masking=masking, limit=1, sort_key=sort_key):
+        if v_p := list(self.find(filter_=filter_, masking=masking, limit=1, sort_key=sort_key)):
             v = v_p[0]
             return v
         else:
@@ -144,6 +151,9 @@ class BaseDBA(metaclass=abc.ABCMeta):
         """
 
         i = self.find_one(filter_=filter_)
+        if i is None:
+            i = Item(id_=None, document=filter_)
+            self.insert(i)
         old_v = copy.deepcopy(i.value)
         yield i
         if i.value is None:
@@ -151,3 +161,21 @@ class BaseDBA(metaclass=abc.ABCMeta):
         else:
             set_list = filter(lambda k, v: v != old_v.get(k), i.value.items())
             self.update_one(filter_=old_v, update=dict(set_list))
+
+
+class BaseDBA(metaclass=abc.ABCMeta):
+    def __init__(self, config: ConfigParser):
+        self.global_config = config
+        self.config = ConfigParser(config.get_from_pointer(f'/db/adapters/{self.__class__.__name__}'))
+
+    @abc.abstractmethod
+    def get_collection(self, collection: str) -> BaseCA:
+        """
+        Get a collection from database.
+        :param collection:
+        :return:
+        """
+        pass
+
+    def __getitem__(self, item) -> BaseCA:
+        return self.get_collection(item)
