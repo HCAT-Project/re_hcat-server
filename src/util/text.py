@@ -39,6 +39,23 @@ def under_score_to_pascal_case(name) -> str:
     return ''.join([x.capitalize() for x in name.split('_')])
 
 
+def pascal_case_to_under_score(name) -> str:
+    """
+    Converts a string from PascalCase to under_score.
+    :param name: The string to convert.
+    :return: The converted string.
+    """
+
+    def temp():
+        for i, t in enumerate(name):
+            if t.isupper() and i != 0:
+                yield from "_" + t.lower()
+            else:
+                yield t.lower()
+
+    return ''.join(temp())
+
+
 def msg_process(msg: Any) -> dict:
     """
     Processes a message, escaping text messages and raising an error if the message chain is empty.
@@ -96,3 +113,5 @@ def _check_msg_type(msg_):
     for i in msg_['msg_chain']:
         if i not in ['text', 'img', 'file', 'sticker', 'at', 'reply', 'voice']:
             raise ValueError("Illegal type in message chain.")
+
+
