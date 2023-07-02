@@ -23,22 +23,31 @@
 @Version    : 1.0.0
 """
 import abc
+import copy
 import typing
 from contextlib import contextmanager
-
-from src.util.functools import mulitdispatchmethod
+from typing import Mapping, Any, List
 
 
 class Item:
-    def __init__(self, key, value):
+    def __init__(self, id_, document: Mapping[str, Any]):
         self.init_finish = False
-        self.__key = key
-        self.value = value
+        self.__id = id_
+        self.value = document
         self.init_finish = True
 
     @property
-    def key(self):
-        return self.__key
+    def id(self):
+        return self.__id
+
+    def get(self, key: str, default: Any = None):
+        return self.value.get(key, default)
+
+    def __getitem__(self, item):
+        return self.value[item]
+
+    def __setitem__(self, key, value):
+        self.value[key] = value
 
 
 class BaseDBA(metaclass=abc.ABCMeta):
@@ -47,54 +56,98 @@ class BaseDBA(metaclass=abc.ABCMeta):
     """
 
     @abc.abstractmethod
-    def get(self, key):
+    def find(self,
+             filter_: Mapping[str, Any],
+             masking: Mapping[str, Any] = None,
+             limit: int = None,
+             sort_key: str = None) -> List[Item]:
+        """
+        Get values from database.
+        :param filter_:
+        :param masking:
+        :param limit:
+        :param sort_key:
+        :return:
+        """
+
+        pass
+
+    def find_one(self,
+                 filter_: Mapping[str, Any],
+                 masking: Mapping[str, Any] = None,
+                 sort_key: str = None) -> (Item | None):
         """
         Get a value from database.
+        :param filter_:
+        :param masking:
+        :param sort_key:
+        :return:
+        """
+        if v_p := self.find(filter_=filter_, masking=masking, limit=1, sort_key=sort_key):
+            v = v_p[0]
+            return v
+        else:
+            return None
+
+    @abc.abstractmethod
+    def insert(self, item: Item) -> bool:
+        """
+        Insert a value to database.
+        :param item:
+        :return:
         """
         pass
 
     @abc.abstractmethod
-    @mulitdispatchmethod
-    def set(self, key, value) -> bool:
+    def update_one(self, filter_: Mapping[str, Any],
+                   update: Mapping[str, Any]):
         """
-        Default func of `set`.
-        Recommend to use `@src.util.functools.mulitdispatchmethod` to init and use `set.register` to register a new type.
-        You can also use as type error handler.
+        Update a value from database.
+        :param filter_:
+        :param update:
+        :return:
         """
         pass
 
-    @set.register(Item)
-    def _(self, item: Item) -> bool:
-        """
-        Set a Item to database.
-        This func is an example.
-        """
-        return self.set(item.key, item.value)
+    def update_many(self,
+                    filter_: Mapping[str, Any],
+                    update: Mapping[str, Any]):
+        while self.find_one(filter_=filter_):
+            self.update_one(filter_=filter_, update=update)
 
     @abc.abstractmethod
-    def rem(self, key) -> bool:
+    def delete_one(self, filter_: Mapping[str, Any]):
         """
-        Remove a value from database.
+        Delete a value from database.
+        :param filter_:
+        :return:
+        """
+        pass
+
+    def delete_many(self, filter_: Mapping[str, Any]):
+        while self.find_one(filter_=filter_):
+            self.delete_one(filter_=filter_)
+
+    @abc.abstractmethod
+    def save(self, item: Item) -> bool:
+        """
+        Save a value to database.
+        :param item:
+        :return:
         """
         pass
 
     @contextmanager
-    def enter(self, key) -> typing.Generator[Item, None, None]:
+    def enter_one(self, filter_: Mapping[str, Any]) -> typing.Generator[Item, None, None]:
         """
         Enter a value from database.
-        Example:
-            @contextmanager
-            def enter(self, key):
-                r = 0
-                i = Item(0, r)
-                yield i
-                r = i.value
-                print(r)
         """
 
-        i = Item(key, self.get(key))
+        i = self.find_one(filter_=filter_)
+        old_v = copy.deepcopy(i.value)
         yield i
         if i.value is None:
-            self.rem(i.key)
+            self.delete_one(filter_=old_v)
         else:
-            self.set(i)
+            set_list = filter(lambda k, v: v != old_v.get(k), i.value.items())
+            self.update_one(filter_=old_v, update=dict(set_list))
