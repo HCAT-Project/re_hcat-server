@@ -25,6 +25,7 @@
 from typing import Mapping, Any, Iterable
 
 from pymongo import MongoClient
+from pymongo.collection import Collection
 from pymongo.database import Database
 
 from src.db_adapter.base_dba import BaseCA, BaseDBA, Item
@@ -35,7 +36,7 @@ class MongoCA(BaseCA):
 
     def __init__(self, global_config: ConfigParser, config: ConfigParser, collection: str, db: Database):
         super().__init__(global_config=global_config, config=config, collection=collection)
-        self._collection = db[collection]
+        self._collection: Collection = db[collection]
 
     def update_one(self, filter_: Mapping[str, Any], update: Mapping[str, Any]):
         self._collection.update_one(filter_, update)
@@ -46,18 +47,24 @@ class MongoCA(BaseCA):
     def save(self, item: Item) -> bool:
         return self._collection.save(item.value)
 
-    def find(self, filter_: Mapping[str, Any], masking: Mapping[str, Any] = None, limit: int = None,
+    def find(self, filter_: Mapping[str, Any] = None, masking: Mapping[str, Any] = None, limit: int = 0,
              sort_key: str = None) -> Iterable[Item]:
-        return self._collection.find(filter_, masking, limit, sort_key)
+        rt = self._collection.find(filter_ if filter_ else {}, masking).limit(limit)
+        if sort_key is not None:
+            rt = rt.sort(sort_key)
+        return rt
 
-    def insert(self, item: Item) -> bool:
-        return self._collection.insert(item.value)
+    def insert_one(self, item: Item | Mapping[str, Any]):
+        v = item.value if isinstance(item, Item) else item
+        self._collection.insert_one(v)
 
     def find_one(self,
-                 filter_: Mapping[str, Any],
-                 masking: Mapping[str, Any] = None,
-                 sort_key: str = None) -> (Item | None):
-        return self._collection.find_one(filter_, masking, sort_key)
+                 filter_: Mapping[str, Any] = None,
+                 masking: Mapping[str, Any] = None) -> (Item | None):
+        i = self._collection.find_one(filter_, masking)
+        if i is None:
+            return Item( None)
+        return Item( i)
 
 
 class Mongo(BaseDBA):

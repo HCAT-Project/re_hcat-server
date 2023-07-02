@@ -26,6 +26,7 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from src.containers import ReturnData, User
 from src.event.base_event import BaseEvent
+from src.util.jelly import agar
 
 
 class ChangePassword(BaseEvent):

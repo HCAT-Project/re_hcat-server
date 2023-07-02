@@ -52,6 +52,7 @@ class DynamicObjLoader:
             # get the class of the event
             obj_ = getattr(module_, obj_name)
 
+
         except ImportError:
             return None
 

@@ -33,9 +33,8 @@ class GetTodoList(BaseEvent):
 
     def _run(self):
         # add activity
-        self.server.activity_dict_lock.acquire()
+
         self.server.activity_dict[self.user_id] = 30
-        self.server.activity_dict_lock.release()
 
         # set status and return the user's todolist
         with self.server.open_user(self.user_id) as u:
@@ -43,8 +42,8 @@ class GetTodoList(BaseEvent):
             user.status = 'online'
             rt_todo_list = []
             for i in user.todo_list:
-                if self.server.db_event.exists(i):
-                    rt_todo_list.append(self.server.db_event.get(i))
+                if (e := self.server.db_event.find_one({'rid': i},masking={'_id':0})) is not None:
+                    rt_todo_list.append(e.value)
             rt = ReturnData(ReturnData.OK).add('data', rt_todo_list)
             user.todo_list = []
             return rt

@@ -71,7 +71,6 @@ def msg_process(msg: Any) -> dict:
             msg_ = {'msg_chain': [{'type': 'text', 'msg': msg_}]}
     if len(msg_['msg_chain']) == 0:
         raise ValueError("Message chain is empty.")
-
     # Check if the type is legal
     _check_msg_type(msg_)
 
@@ -111,7 +110,7 @@ def _check_msg_reply(msg_):
 
 def _check_msg_type(msg_):
     for i in msg_['msg_chain']:
-        if i not in ['text', 'img', 'file', 'sticker', 'at', 'reply', 'voice']:
+        if i['type'] not in ['text', 'img', 'file', 'sticker', 'at', 'reply', 'voice']:
             raise ValueError("Illegal type in message chain.")
 
 

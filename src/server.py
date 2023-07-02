@@ -9,7 +9,7 @@
 
 @Version    : 2.5.2
 """
-
+import contextlib
 #  Copyright (C) 2023. HCAT-Project-Team
 #  _
 #  This program is free software: you can redistribute it and/or modify
@@ -30,19 +30,22 @@ import os.path
 import platform
 import sys
 import time
+from typing import Any, Mapping
 
 import schedule
-from RPDB.database import FRPDB
 
 import src.util.crypto
 import src.util.text
 from src.containers import User, ReturnData, Request
+from src.db_adapter.base_dba import BaseDBA
 from src.dynamic_obj_loader import DynamicObjLoader
 from src.event.event_manager import EventManager
 from src.event.recv_event import RecvEvent
 from src.util.config_parser import ConfigParser
 from src.util.file_manager import FileManager
 from src.util.i18n import gettext_func as _
+from src.util.jelly import dehydrate, agar
+from src.util.text import pascal_case_to_under_score
 
 ''' markdown
 > I believe that communication is our freedom and should not be controlled by any country, regime, or corporation.
@@ -104,12 +107,16 @@ class Server:
         # Keep track of active users
         self.activity_dict = {}
 
+        # Get DBA
+        dba_name = pascal_case_to_under_score(self.config.get_from_pointer('/db/use', 'Mongo'))
+        self.dba: BaseDBA = self.dol.load_obj_from_group(dba_name, group='db_adapters')(config=self.config)
+
         # Initialize databases
-        self.db_account = FRPDB(os.path.join(os.getcwd(), 'data', 'account'))
-        self.db_event = FRPDB(os.path.join(os.getcwd(), 'data', 'event'))
-        self.db_group = FRPDB(os.path.join(os.getcwd(), 'data', 'group'))
-        self.db_email = FRPDB(os.path.join(os.getcwd(), 'data', 'email'))
-        self.db_file_info = FRPDB(os.path.join(os.getcwd(), 'data', 'file_info'))
+        self.db_account = self.dba['account']
+        self.db_event = self.dba['event']
+        self.db_group = self.dba['group']
+        self.db_email = self.dba['email']
+        self.db_file_info = self.dba['file_info']
 
         # Initialize file manager
         self.upload_folder = FileManager(self.config.get_from_pointer('/network/upload/upload_folder', 'static/files'),
@@ -153,17 +160,14 @@ class Server:
         del_e_count = 0
         del_sid_count = 0
 
-        for i in list(self.db_event.keys):
-            with self.db_event.enter(i) as v:
-                assert isinstance(v.value, dict)
-                e: dict = v.value
-                if e and time.time() - e['time'] > self.event_timeout:
-                    v.value = None
-                    del_e_count += 1
+        for i in self.db_event.find():
+            if i and time.time() - i['time'] > self.event_timeout:
+                self.db_event.delete_one({'_id': i['_id']})
+                del_e_count += 1
 
         for k, v in list(self.event_sid_table.items()):
             try:
-                allow_del = v not in self.db_event.keys or time.time() - self.get_user_event(v)[
+                allow_del = self.db_event.find_one({'rid': v}) or time.time() - self.get_user_event(v)[
                     'time'] > self.short_id_timeout
             except KeyError:
                 allow_del = True
@@ -234,22 +238,36 @@ class Server:
         """
         # save data and exit
         self.logger.info(_('Saving data...'))
-        self.db_event.close()
-        self.db_email.close()
-        self.db_group.close()
-        self.db_account.close()
 
         self.running = False
 
         self.logger.info(_('Server closed.'))
 
+    @contextlib.contextmanager
     def open_user(self, user_id: str):
         """
         Get the user object.
         :param user_id: The id of user.
         :return:
         """
-        return self.db_account.enter(user_id)
+        with self.db_account.enter_one({'user_id': user_id}) as i:
+            class I:
+                def __init__(self, key, value):
+                    self.value = value
+                    self.__key = key
+
+                @property
+                def key(self):
+                    return self.__key
+            if i.value is not None:
+                user: User = agar(i.value)
+                i_u = I(user.user_id, user)
+            else:
+                i_u = I(None,None)
+            yield i_u
+            if i_u.value is not None:
+                i.value = dehydrate(i_u.value)
+
 
     def is_user_exist(self, user_id: str):
         """
@@ -260,7 +278,7 @@ class Server:
         with self.open_user(user_id) as u:
             return u.value is not None
 
-    def get_user_event(self, event_id: str) -> dict:
+    def get_user_event(self, event_id: str) -> Mapping[str, Any]:
         """
         Get the event data.
         :param event_id:
@@ -271,8 +289,7 @@ class Server:
         if eid in self.event_sid_table:
             eid = self.event_sid_table[eid]
 
-        with self.db_event.enter(eid) as e:
-            return e.value
+        return self.db_event.find_one({'rid': eid}).value
 
     def is_user_event_exist(self, event_id: str) -> bool:
         """

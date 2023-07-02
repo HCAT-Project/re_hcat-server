@@ -32,24 +32,18 @@ from src.util.config_parser import ConfigParser
 
 
 class Item:
-    def __init__(self, id_, document: Mapping[str, Any]):
+    def __init__(self, document: Mapping[str, Any] | None):
         self.init_finish = False
-        self.__id = id_
         self.value = document
         self.init_finish = True
 
-    @property
-    def id(self):
-        return self.__id
+    def __getattr__(self, item):
+        return self.value.__getattribute__(item)
 
-    def get(self, key: str, default: Any = None):
-        return self.value.get(key, default)
-
-    def __getitem__(self, item):
-        return self.value[item]
-
-    def __setitem__(self, key, value):
-        self.value[key] = value
+    def __deepcopy__(self, memo=None):
+        if memo is None:
+            memo = {}
+        return copy.deepcopy(self.value, memo)
 
 
 class BaseCA(metaclass=abc.ABCMeta):
@@ -64,7 +58,7 @@ class BaseCA(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def find(self,
-             filter_: Mapping[str, Any],
+             filter_: Mapping[str, Any] = None,
              masking: Mapping[str, Any] = None,
              limit: int = None,
              sort_key: str = None) -> Iterable[Item]:
@@ -80,14 +74,12 @@ class BaseCA(metaclass=abc.ABCMeta):
         pass
 
     def find_one(self,
-                 filter_: Mapping[str, Any],
-                 masking: Mapping[str, Any] = None,
-                 sort_key: str = None) -> (Item | None):
+                 filter_: Mapping[str, Any] = None,
+                 masking: Mapping[str, Any] = None) -> (Item | None):
         """
         Get a value from database.
         :param filter_:
         :param masking:
-        :param sort_key:
         :return:
         """
         if v_p := list(self.find(filter_=filter_, masking=masking, limit=1, sort_key=sort_key)):
@@ -97,7 +89,7 @@ class BaseCA(metaclass=abc.ABCMeta):
             return None
 
     @abc.abstractmethod
-    def insert(self, item: Item) -> bool:
+    def insert_one(self, item: Item | Mapping[str, Any]):
         """
         Insert a value to database.
         :param item:
@@ -145,22 +137,29 @@ class BaseCA(metaclass=abc.ABCMeta):
         pass
 
     @contextmanager
-    def enter_one(self, filter_: Mapping[str, Any]) -> typing.Generator[Item, None, None]:
+    def enter_one(self, filter_: Mapping[str, Any] | None) -> typing.Generator[Item, None, None]:
         """
         Enter a value from database.
         """
 
         i = self.find_one(filter_=filter_)
-        if i is None:
-            i = Item(id_=None, document=filter_)
-            self.insert(i)
-        old_v = copy.deepcopy(i.value)
-        yield i
-        if i.value is None:
-            self.delete_one(filter_=old_v)
+
+        if i.value is not None:
+            old_v = copy.deepcopy(i.value)
+
+            yield i
+            if i.value is None:
+                self.delete_one(filter_=old_v)
+            else:
+
+                set_list = filter(lambda x: x[1] != old_v.get(x[0]), i.value.items())
+                if upd := dict(set_list):
+                    self.update_one(filter_=old_v, update={'$set': upd})
         else:
-            set_list = filter(lambda k, v: v != old_v.get(k), i.value.items())
-            self.update_one(filter_=old_v, update=dict(set_list))
+            i = Item( None)
+            yield i
+            if i.value is not None:
+                self.insert_one(item=i)
 
 
 class BaseDBA(metaclass=abc.ABCMeta):

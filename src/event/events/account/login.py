@@ -38,10 +38,10 @@ class Login(BaseEvent):
     def _run(self, user_id, password):
         _ = self.gettext_func
         if not self.server.is_user_exist(user_id):
-            return ReturnData(ReturnData.NULL, _('User does not exist.')).jsonify()
-        self.server.activity_dict_lock.acquire()
+            return ReturnData(ReturnData.NULL, _('User does not exist.'))
+
         self.server.activity_dict[user_id] = 30
-        self.server.activity_dict_lock.release()
+
         with self.server.open_user(user_id) as u:
             user: User = u.value
             if user.auth(password):
@@ -62,9 +62,10 @@ class Login(BaseEvent):
                 # set a @Yummy_Cookies_S
                 # XD
                 if self.server.config['sys']['domain'] is not None:
-                    resp.set_cookie('auth_data', aes.encrypt(auth_data), domain=self.server.config['sys']['domain'])
+                    resp.set_cookie('auth_data', aes.encrypt(auth_data), samesite='Strict',
+                                    domain=self.server.config['sys']['domain'])
                 else:
-                    resp.set_cookie('auth_data', aes.encrypt(auth_data))
+                    resp.set_cookie('auth_data', aes.encrypt(auth_data), samesite='Strict')
 
                 # check if @0sAccount in friend_list
                 user.add_user_to_friend_list('0sAccount', _('Account_BOT'))

@@ -37,7 +37,7 @@ class AgreeFriendRequest(BaseEvent):
         _ = self.gettext_func
         agree_time = time.time()
 
-        with self.server.db_event.enter(rid) as v:
+        with self.server.db_event.enter_one({'rid': rid}) as v:
             if v.value is None:
                 return ReturnData(ReturnData.NULL, _('This event does not exist.'))
             event: dict = v.value

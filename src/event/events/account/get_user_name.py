@@ -59,4 +59,4 @@ class GetUserName(BaseEvent):
                     rt.add('nick', nick)
                 return rt
         else:
-            return ReturnData(ReturnData.NULL, _('User does not exist.')).jsonify()
+            return ReturnData(ReturnData.NULL, _('User does not exist.'))

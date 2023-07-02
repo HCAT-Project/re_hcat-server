@@ -35,14 +35,15 @@ from flask import jsonify, make_response, Response
 
 import src.util.crypto
 import src.util.text
+from src.db_adapter.base_dba import BaseDBA, BaseCA
 from src.util.config_parser import ConfigParser
 from src.util.jelly import Jelly
 
 
 class EventContainer:
-    def __init__(self, data_base: RPDB):
+    def __init__(self, data_base: BaseCA):
         # initialize a new event container
-        self.data_base = data_base
+        self.data_base= data_base
         # generate an uuid for this event container
         self.rid = str(uuid1())
         # create an empty dictionary to store the event data
@@ -56,8 +57,8 @@ class EventContainer:
 
     def write_in(self) -> None:
         # write the event data to the database
-        with self.data_base.enter(self.rid) as v:
-            v.value = self.json
+        self.data_base.insert_one(self.json)
+
 
     def add(self, key: str, value: Any) -> 'EventContainer':
         # add a new key-value pair to the event data and return the container object
@@ -113,6 +114,7 @@ class ReturnData:
         return jsonify(self.json_data)
 
     def flask_respify(self) -> Response:
+
         resp = make_response(jsonify(self.json_data), 200)
         if self.json_data.get('_cookies', False):
             for k, v in self.json_data['_cookies'].items():
@@ -178,7 +180,6 @@ class User(Jelly):
         self.salt = None
         self.user_id = user_id
         self.user_name = user_name
-        print(password_hash_config)
         self.change_password(password=password, method=password_hash_config.get('password_hash', 'scrypt'),
                              **password_hash_config['kwargs'])
 

@@ -9,6 +9,7 @@
 
 @Version    : 2.0.0
 """
+from typing import Mapping, Any
 
 
 # Copyright 2023. hsn
@@ -56,3 +57,16 @@ class Jelly:
         self._var_init()
         for k, v in state.items():
             setattr(self, k, v)
+
+
+def dehydrate(class_: Jelly):
+    return {'_obj_type': f'{class_.__module__}.{class_.__class__.__name__}', **class_.__getstate__()}
+
+
+def agar(dict_: Mapping[str, Any]):
+    module_name, class_name = dict_['_obj_type'].rsplit('.', 1)
+    module = __import__(module_name, fromlist=[class_name])
+    class_ = getattr(module, class_name)
+    obj = class_.__new__(class_)
+    obj.__setstate__(dict_)
+    return obj
