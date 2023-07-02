@@ -99,12 +99,13 @@ class PluginManager:
                 return None
 
         for i in [plugin_main, 'main', 'Main', '__main__', '__Main__']:
-            if not (main_func := _try_to_load(plugin_main_path, i)):
+            if (main_func := _try_to_load(plugin_main_path, i)) is not None:
                 break
         else:
             raise ImportError(f'No main function found in {plugin_main}')
 
         args = {"dcl": self.dcl, "config": self.config, "work_folder": plugin_work_folder}
+
         params = [i for i in inspect.signature(main_func).parameters]
 
         main_func(**{i: args[i] for i in params if i in args})
