@@ -22,25 +22,46 @@
 
 @Version    : 1.0.0
 """
+from typing import Mapping, Any, Iterable
 
 from pymongo import MongoClient
+from pymongo.database import Database
 
-from src.db_adapter.base_dba import BaseDBA
+from src.db_adapter.base_dba import BaseCA, BaseDBA, Item
+from src.util.config_parser import ConfigParser
+
+
+class MongoCA(BaseCA):
+
+    def __init__(self, global_config: ConfigParser, config: ConfigParser, collection: str, db: Database):
+        super().__init__(global_config=global_config, config=config, collection=collection)
+        self._collection = db[collection]
+
+    def update_one(self, filter_: Mapping[str, Any], update: Mapping[str, Any]):
+        self._collection.update_one(filter_, update)
+
+    def delete_one(self, filter_: Mapping[str, Any]):
+        self._collection.delete_one(filter_)
+
+    def save(self, item: Item) -> bool:
+        return self._collection.save(item.value)
+
+    def find(self, filter_: Mapping[str, Any], masking: Mapping[str, Any] = None, limit: int = None,
+             sort_key: str = None) -> Iterable[Item]:
+        return self._collection.find(filter_, masking, limit, sort_key)
+
+    def insert(self, item: Item) -> bool:
+        return self._collection.insert(item.value)
+
+    def find_one(self,
+                 filter_: Mapping[str, Any],
+                 masking: Mapping[str, Any] = None,
+                 sort_key: str = None) -> (Item | None):
+        return self._collection.find_one(filter_, masking, sort_key)
 
 
 class Mongo(BaseDBA):
-    def __init__(self,config):
 
-
-    def get(self, key):
-        pass
-
-    def set(self, key, value) -> bool:
-        pass
-
-    def rem(self, key) -> bool:
-        pass
-
-
-if __name__=='__main__':
-    mgct=MongoClient(host='127.0.0.1')
+    def get_collection(self, collection: str) -> BaseCA:
+        db = MongoClient(host=self.config['host'], port=self.config['port'])[self.config['db']]
+        return MongoCA(global_config=self.global_config, config=self.config, collection=collection, db=db)
