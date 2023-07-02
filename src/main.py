@@ -175,9 +175,9 @@ def main():
     dol.add_path_to_group("receiver", Path.cwd() / 'src/request_receiver/receivers')
     dol.add_path_to_group("auxiliary_events", Path.cwd() / 'src/event/auxiliary_events')
     dol.add_path_to_group("req_events", Path.cwd() / 'src/event/events')
-    dol.add_path_to_group("db_adapters",Path.cwd() / 'src/db_adapter/adapters')
+    dol.add_path_to_group("db_adapters", Path.cwd() / 'src/db_adapter/adapters')
 
-    p_mgr = PluginManager(config=config, dcl=dol)
+    p_mgr = PluginManager(config=config, dol=dol)
     # init and start server
     server_kwargs = (lambda **kwargs: kwargs)(
         debug=arg['debug'],
