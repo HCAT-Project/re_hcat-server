@@ -69,8 +69,7 @@ class BaseEvent(metaclass=abc.ABCMeta):
 
         # get lang
         if self.user_id is not None:
-            with self.server.open_user(self.user_id) as u:
-                user: User = u.value
+            with self.server.update_user_data(self.user_id) as user:
                 if user is not None:
                     self.lang = user.language
 
@@ -132,8 +131,7 @@ class BaseEventOfSVACRecvMsg(BaseEvent, metaclass=abc.ABCMeta):
             self.send_msg(_('Commands') + ':' + '\\n/'.join(self.cmds.keys()))
 
     def send_msg(self, msg: str):
-        with self.server.open_user(self.user_id) as u:
-            user: User = u.value
+        with self.server.update_user_data(self.user_id) as user:
             user.add_fri_msg2todos(self.server, self.bot_id, self.bot_name, self.bot_name,
                                    msg)
 

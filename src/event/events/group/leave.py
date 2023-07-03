@@ -33,8 +33,7 @@ class Leave(BaseEvent):
 
     def _run(self, group_id):
         _ = self.gettext_func
-        with self.server.db_group.enter(group_id) as g:
-            group: Group = g.value
+        with self.server.update_group_data(group_id) as group:
             if group is None:
                 return ReturnData(ReturnData.NULL, _('Group does not exist.'))
 
@@ -48,7 +47,6 @@ class Leave(BaseEvent):
                 group.admin_list.remove(self.user_id)
 
             group.member_dict.pop(self.user_id)
-            with self.server.open_user(self.user_id) as u:
-                user: User = u.value
+            with self.server.update_user_data(self.user_id) as user:
                 user.groups_dict.pop(group_id)
             return ReturnData(ReturnData.OK)

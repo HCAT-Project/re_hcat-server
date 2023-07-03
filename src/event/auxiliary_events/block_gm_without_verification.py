@@ -22,7 +22,7 @@
 @Date    : 2023/3/3 下午6:27
 """
 
-from src.containers import ReturnData, User
+from src.containers import ReturnData
 from src.event.base_event import BaseEvent
 from src.event.events.chat.send_group_msg import SendGroupMsg
 
@@ -32,8 +32,6 @@ class BlockGmWithoutVerification(BaseEvent):
     main_event = SendGroupMsg
 
     def _run(self, friend_id, msg):
-        with self.server.open_user(self.user_id) as u:
-            user: User = u.value
-
+        user = self.server.get_user(self.user_id)
         if (user.email is None) and self.server.config.get_from_pointer('/email/enable-email-verification'):
             return True, ReturnData(ReturnData.ERROR, 'Please verify your email first.')

@@ -76,8 +76,7 @@ class EventManager:
                 auth_data_json = json.loads(auth_data_decrypto)
 
                 # auth the token
-                with self.server.open_user(auth_data_json['user_id']) as v:
-                    user: User = v.value
+                with self.server.update_user_data(auth_data_json['user_id']) as user:
                     auth_success = user.auth_token(auth_data_json['token'])
             except json.JSONDecodeError as err:
                 self.logger.debug(err)

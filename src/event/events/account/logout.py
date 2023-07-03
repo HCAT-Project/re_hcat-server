@@ -44,8 +44,7 @@ class Logout(BaseEvent):
     auth = True
 
     def _run(self):
-        with self.server.open_user(self.user_id) as u:
-            user: User = u.value
+        with self.server.update_user_data(self.user_id) as user:
             user.status = 'offline'
             user.token = src.util.crypto.get_random_token(256)
         return ReturnData(ReturnData.OK)

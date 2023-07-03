@@ -35,14 +35,12 @@ class GetName(BaseEvent):
         _ = self.gettext_func
         if not self.server.db_group.exists(group_id):
             return ReturnData(ReturnData.NULL, _('Group does not exist.'))
-        with self.server.db_group.enter(group_id) as g:
-            group: Group = g.value
+        with self.server.update_group_data(group_id) as group:
             group_name = group.name
         remark = group_name
 
         if self.user_id is not None:
-            with self.server.open_user(self.user_id) as u:
-                user: User = u.value
+            with self.server.update_user_data(self.user_id) as user:
                 if group_id in user.groups_dict:
                     remark = user.groups_dict[group_id]['remark']
 

@@ -33,8 +33,7 @@ class ChangeRemark(BaseEvent):
 
     def _run(self, group_id, remark):
         _ = self.gettext_func
-        with self.server.open_user(self.user_id) as u:
-            user: User = u.value
+        with self.server.update_user_data(self.user_id) as user:
             if group_id not in user.groups_dict:
                 return ReturnData(ReturnData.ERROR, _('You are not in the group.'))
             user.groups_dict[group_id]['remark'] = remark

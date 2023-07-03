@@ -35,8 +35,7 @@ class SetFriendNick(BaseEvent):
 
     def _run(self, friend_id, nick):
         _ = self.gettext_func
-        with self.server.open_user(self.user_id) as u:
-            user: User = u.value
+        with self.server.update_user_data(self.user_id) as user:
             if friend_id not in user.friend_dict:
                 return ReturnData(ReturnData.NULL, _('The person is not your friend.'))
             user.friend_dict[friend_id]['nick'] = nick

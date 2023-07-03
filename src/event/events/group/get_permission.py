@@ -33,8 +33,7 @@ class GetPermission(BaseEvent):
 
     def _run(self, group_id):
         _ = self.gettext_func
-        with self.server.db_group.enter(group_id) as g:
-            group: Group = g.value
+        with self.server.update_group_data(group_id) as group:
             if group is None:
                 return ReturnData(ReturnData.NULL, _('Group does not exist.'))
 

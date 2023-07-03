@@ -35,8 +35,7 @@ class Ban(BaseEvent):
 
     def _run(self, group_id, member_id, ban_time):
         _ = self.gettext_func
-        with self.server.db_group.enter(group_id) as g:
-            group: Group = g.value
+        with self.server.update_group_data(group_id) as group:
             if group is None:
                 return ReturnData(ReturnData.NULL, _('Group does not exist.'))
 
@@ -61,8 +60,7 @@ class Ban(BaseEvent):
                 add('ban_time', ban_time)  # second
             ec.write_in()
 
-        with self.server.open_user(member_id) as u:
-            user: User = u.value
+        with self.server.update_user_data(member_id) as user:
             user.add_user_event(ec)
 
         return ReturnData(ReturnData.OK, '')

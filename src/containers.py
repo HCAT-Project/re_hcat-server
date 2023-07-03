@@ -370,8 +370,7 @@ class Group(Jelly):
         # Iterate over all members except for the specified user
         for member_id in filter(lambda j: j != user_id, self.member_dict.keys()):
             # Get the User object for the member
-            with server.open_user(member_id) as u:
-                user: User = u.value
+            with server.update_user_data(member_id) as user:
                 # Add the event to the user's todo_list
                 user.add_user_event(ec)
 

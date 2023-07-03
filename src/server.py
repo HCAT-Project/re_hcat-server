@@ -36,7 +36,7 @@ import schedule
 
 import src.util.crypto
 import src.util.text
-from src.containers import User, ReturnData, Request
+from src.containers import User, ReturnData, Request, Group
 from src.db_adapter.base_dba import BaseDBA
 from src.dynamic_obj_loader import DynamicObjLoader
 from src.event.event_manager import EventManager
@@ -150,8 +150,7 @@ class Server:
             self.activity_dict[k] = v - 1
             if v <= 0:
                 self.activity_dict.pop(k)
-                with self.open_user(k) as u:
-                    user: User = u.value
+                with self.update_user_data(k) as user:
                     user.status = 'offline'
 
     def _schedule_cleaner(self):
@@ -244,30 +243,43 @@ class Server:
         self.logger.info(_('Server closed.'))
 
     @contextlib.contextmanager
-    def open_user(self, user_id: str):
+    def update_user_data(self, user_id: str):
         """
         Get the user object.
         :param user_id: The id of user.
         :return:
         """
         with self.db_account.enter_one({'user_id': user_id}) as i:
-            class I:
-                def __init__(self, key, value):
-                    self.value = value
-                    self.__key = key
+            user: User = agar(i.value)
+            yield user
+            i.value = dehydrate(user)
 
-                @property
-                def key(self):
-                    return self.__key
-            if i.value is not None:
-                user: User = agar(i.value)
-                i_u = I(user.user_id, user)
-            else:
-                i_u = I(None,None)
-            yield i_u
-            if i_u.value is not None:
-                i.value = dehydrate(i_u.value)
+    def new_user(self, user: User):
+        self.db_account.insert_one(dehydrate(user))
 
+    def get_user(self, user_id: str) -> User:
+        user_json = self.db_account.find_one({'user_id': user_id}).value
+        return agar(user_json)
+
+    def new_group(self, group: Group):
+        self.db_group.insert_one(dehydrate(group))
+
+    def get_group(self, group_id: str) -> Group:
+        group_json = self.db_group.find_one({'id': group_id}).value
+
+        return agar(group_json)
+
+    @contextlib.contextmanager
+    def update_group_data(self, group_id: str):
+        """
+        Get the user object.
+        :param group_id: The id of group.
+        :return:
+        """
+        with self.db_group.enter_one({'id': group_id}) as i:
+            group: Group = agar(i.value)
+            yield group
+            i.value = dehydrate(group)
 
     def is_user_exist(self, user_id: str):
         """
@@ -275,8 +287,7 @@ class Server:
         :param user_id: The id of user.
         :return:
         """
-        with self.open_user(user_id) as u:
-            return u.value is not None
+        return self.get_user(user_id) is not None
 
     def get_user_event(self, event_id: str) -> Mapping[str, Any]:
         """

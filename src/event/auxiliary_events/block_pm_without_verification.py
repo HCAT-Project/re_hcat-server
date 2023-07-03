@@ -22,7 +22,7 @@
 @Date    : 2023/3/3 下午6:27
 """
 
-from src.containers import ReturnData, User
+from src.containers import ReturnData
 from src.event.base_event import BaseEvent
 from src.event.events.chat.send_friend_msg import SendFriendMsg
 
@@ -33,12 +33,12 @@ class BlockPmWithoutVerification(BaseEvent):
 
     def _run(self, friend_id, msg):
 
-        with self.server.open_user(self.user_id) as u:
-            user: User = u.value
+        user = self.server.get_user(self.user_id)
 
         # check if the msg is service Account
         if friend_id[0] in [str(i) for i in range(10)] and friend_id[1] == 's':
             return False
+
         elif (user.email is None) and self.server.config.get_from_pointer(
                 '/email/enable-email-verification'):
             return True, ReturnData(ReturnData.ERROR, 'Please verify your email first.')

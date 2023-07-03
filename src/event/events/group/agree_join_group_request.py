@@ -43,18 +43,15 @@ class AgreeJoinGroupRequest(BaseEvent):
             req_user_id = event['user_id']
             group_id = event['group_id']
 
-        with self.server.open_user(req_user_id) as u:
-            user: User = u.value
+        with self.server.update_user_data(req_user_id) as user:
             req_user_name = user.user_id
 
-        with self.server.db_group.enter(group_id) as g:
-            group: Group = g.value
+        with self.server.update_group_data(group_id) as group:
             group_name = group.name
             if self.user_id not in list(group.admin_list) + [group.owner]:
                 return ReturnData(ReturnData.ERROR, _('You don\'t have permission.'))
             group.member_dict[req_user_id] = {'nick': req_user_name}
 
-        with self.server.open_user(req_user_id) as u:
-            user: User = u.value
+        with self.server.update_user_data(req_user_id) as user:
             user.groups_dict[group_id] = {'remark': group_name, 'time': time.time()}
             return ReturnData(ReturnData.OK)

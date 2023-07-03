@@ -38,8 +38,7 @@ class SendGroupMsg(BaseEvent):
     def _run(self, group_id, msg):
         _ = self.gettext_func
         msg_ = copy.copy(msg)
-        with self.server.open_user(self.user_id) as u:
-            user: User = u.value
+        with self.server.update_user_data(self.user_id) as user:
             if group_id not in user.groups_dict:
                 return ReturnData(ReturnData.NULL, _('You are not in the group.'))
             name = user.user_name
@@ -49,8 +48,7 @@ class SendGroupMsg(BaseEvent):
         except ValueError:
             return ReturnData(ReturnData.ERROR, _('Illegal messages.'))
 
-        with self.server.db_group.enter(group_id) as g:
-            group: Group = g.value
+        with self.server.update_group_data(group_id) as group:
             if self.user_id in group.ban_dict:
                 if group.ban_dict[self.user_id]['time'] < time.time():
                     del group.ban_dict[self.user_id]

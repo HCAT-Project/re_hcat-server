@@ -24,7 +24,7 @@
 #  _
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
-from src.containers import Group, ReturnData
+from src.containers import ReturnData
 from src.event.base_event import BaseEvent
 
 
@@ -33,8 +33,7 @@ class GetMembers(BaseEvent):
 
     def _run(self, group_id):
         _ = self.gettext_func
-        with self.server.db_group.enter(group_id) as g:
-            group: Group = g.value
+        with self.server.update_group_data(group_id) as group:
             if group is None:
                 return ReturnData(ReturnData.NULL, _('Group does not exist.'))
             if self.user_id in group.member_dict:

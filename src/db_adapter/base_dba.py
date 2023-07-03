@@ -25,25 +25,17 @@
 import abc
 import copy
 import typing
+from collections import UserDict
 from contextlib import contextmanager
 from typing import Mapping, Any, Iterable
 
 from src.util.config_parser import ConfigParser
 
 
-class Item:
+class Item(UserDict):
     def __init__(self, document: Mapping[str, Any] | None):
-        self.init_finish = False
-        self.value = document
-        self.init_finish = True
-
-    def __getattr__(self, item):
-        return self.value.__getattribute__(item)
-
-    def __deepcopy__(self, memo=None):
-        if memo is None:
-            memo = {}
-        return copy.deepcopy(self.value, memo)
+        super().__init__(document)
+        self.value = self
 
 
 class BaseCA(metaclass=abc.ABCMeta):
@@ -156,7 +148,7 @@ class BaseCA(metaclass=abc.ABCMeta):
                 if upd := dict(set_list):
                     self.update_one(filter_=old_v, update={'$set': upd})
         else:
-            i = Item( None)
+            i = Item(None)
             yield i
             if i.value is not None:
                 self.insert_one(item=i)

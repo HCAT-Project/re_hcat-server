@@ -24,7 +24,7 @@
 #  _
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
-from src.containers import User, ReturnData
+from src.containers import ReturnData
 from src.event.base_event import BaseEvent
 
 
@@ -32,14 +32,12 @@ class GetGroups(BaseEvent):
     auth = True
 
     def _run(self):
-        with self.server.open_user(self.user_id) as u:
-            user: User = u.value
-            return ReturnData(ReturnData.OK).add('data',
-                                                 {i: {
-                                                     'remark': user.groups_dict[i]['remark'],
-                                                     'group_name': self.server.db_group.get(i).name,
-                                                     'nick': self.server.db_group.get(i).member_dict[self.user_id][
-                                                         'nick']
+        user = self.server.get_user(self.user_id)
 
-                                                 }
-                                                     for i in list(user.groups_dict)})
+        return ReturnData(ReturnData.OK) \
+            .add('data',
+                 {i: {
+                     'remark': user.groups_dict[i]['remark'],
+                     'group_name': self.server.get_group(i).name,
+                     'nick': self.server.get_group(i).member_dict[self.user_id]['nick']
+                 } for i in list(user.groups_dict)})

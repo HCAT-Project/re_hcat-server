@@ -33,8 +33,7 @@ class GetAdmins(BaseEvent):
 
     def _run(self, group_id):
         _ = self.gettext_func
-        with self.server.db_group.enter(group_id) as g:
-            group: Group = g.value
+        with self.server.update_group_data(group_id) as group:
             if self.user_id in group.member_dict:
                 return ReturnData(ReturnData.OK).add('data', list(group.admin_list))
             else:

@@ -37,8 +37,7 @@ class ChangeUserNick(BaseEvent):
         _ = self.gettext_func
         _user_id = self.user_id if member_id is None else member_id
 
-        with self.server.db_group.enter(group_id) as g:
-            group: Group = g.value
+        with self.server.update_group_data(group_id) as group:
             if member_id is not None and self.user_id not in list(group.admin_list) + [group.owner]:
                 return ReturnData(ReturnData.ERROR, _('You don\'t have permission.'))
 

@@ -37,6 +37,5 @@ class Status(BaseEvent):
             return ReturnData(ReturnData.OK).add('status', 'online')
         if not self.server.is_user_exist(user_id):
             return ReturnData(ReturnData.NULL, _('User does not exist.'))
-        with self.server.open_user(user_id) as u:
-            user: User = u.value
+        with self.server.update_user_data(user_id) as user:
             return ReturnData(ReturnData.OK).add('status', str(user.status))

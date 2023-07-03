@@ -51,16 +51,14 @@ class JoinGroup(BaseEvent):
             add('group_id', group_id). \
             add('time', time.time())
 
-        with self.server.open_user(self.user_id) as u:
-            user: User = u.value
+        with self.server.update_user_data(self.user_id) as user:
             user_name = user.user_name
             if group_id in user.groups_dict:
                 return ReturnData(ReturnData.ERROR, _('You\'re already in the group.'))
 
         try:
             join_success = False
-            with self.server.db_group.enter(group_id) as g:
-                group: Group = g.value
+            with self.server.update_group_data(group_id) as group:
                 group_name = group.name
                 verif_method = group.group_settings['verification_method']
                 answer = group.group_settings['answer']
@@ -80,8 +78,7 @@ class JoinGroup(BaseEvent):
                         return ReturnData(ReturnData.ERROR, _('Wrong answer.'))
         finally:  # "finally" has a higher priority than return, so this statement will be executed no matter what.
             if join_success:
-                with self.server.open_user(self.user_id) as u:
-                    user: User = u.value
+                with self.server.update_user_data(self.user_id) as user:
                     user.groups_dict[group_id] = {'remark': group_name, 'time': time.time()}
                     user.add_user_event(agreed_ec)
 
@@ -91,7 +88,6 @@ class JoinGroup(BaseEvent):
         elif verif_method == 'ac':
             for admin_id in admin_list:
                 # add to admin todo_list
-                with self.server.open_user(admin_id) as u:
-                    user: User = u.value
+                with self.server.update_user_data(admin_id) as user:
                     user.add_user_event(ec)
             return ReturnData(ReturnData.OK, _('Awaiting administrator review.'))

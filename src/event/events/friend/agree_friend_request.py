@@ -45,12 +45,10 @@ class AgreeFriendRequest(BaseEvent):
         if event['req_user_id'] != self.user_id:
             return ReturnData(ReturnData.ERROR, _('The person did not send you a friend request.'))
 
-        with self.server.open_user(event['user_id']) as u:
-            user: User = u.value
+        with self.server.update_user_data(event['user_id']) as user:
             fri_user_name = user.user_name
 
-        with self.server.open_user(self.user_id) as u:
-            user: User = u.value
+        with self.server.update_user_data(self.user_id) as user:
             if event['user_id'] in user.friend_dict:
                 return ReturnData(ReturnData.ERROR, _('You are already friends with each other.'))
             user.friend_dict[event['user_id']] = {'nick': fri_user_name, 'time': agree_time}
@@ -64,8 +62,7 @@ class AgreeFriendRequest(BaseEvent):
             add('time', time.time())
         ec.write_in()
 
-        with self.server.open_user(event['user_id']) as u:
-            user: User = u.value
+        with self.server.update_user_data(event['user_id']) as user:
             user.friend_dict[self.user_id] = {'nick': user_name, 'time': agree_time}
             user.add_user_event(ec)
         return ReturnData(ReturnData.OK)

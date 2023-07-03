@@ -41,8 +41,7 @@ class AddFriend(BaseEvent):
         if user_id == self.user_id:
             return ReturnData(ReturnData.ERROR, _('You cannot add yourself as a friend.'))
 
-        with self.server.open_user(self.user_id) as u:
-            user: User = u.value
+        with self.server.update_user_data(self.user_id) as user:
             if user_id in user.friend_dict:
                 return ReturnData(ReturnData.ERROR, _('You are already friends with each other.'))
 
@@ -56,8 +55,7 @@ class AddFriend(BaseEvent):
             add('time', time.time())
         ec.write_in()
 
-        with self.server.open_user(user_id) as u:
-            user: User = u.value
+        with self.server.update_user_data(user_id) as user:
 
             user.add_user_event(ec)
             return ReturnData(ReturnData.OK)

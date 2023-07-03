@@ -24,7 +24,7 @@
 #  _
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
-from src.containers import User, ReturnData, Group
+from src.containers import ReturnData
 from src.event.base_event import BaseEvent
 
 
@@ -33,11 +33,9 @@ class GetSetting(BaseEvent):
 
     def _run(self, group_id):
         _ = self.gettext_func
-        with self.server.open_user(self.user_id) as u:
-            user: User = u.value
+        with self.server.update_user_data(self.user_id) as user:
             if group_id not in user.groups_dict:
                 return ReturnData(ReturnData.NULL, _('You are not in the group.'))
 
-        with self.server.db_group.enter(group_id) as g:
-            group: Group = g.value
-            return ReturnData(ReturnData.OK).add('data', group.group_settings)
+        group = self.server.get_group(group_id)
+        return ReturnData(ReturnData.OK).add('data', group.group_settings)

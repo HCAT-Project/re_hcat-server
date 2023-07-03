@@ -50,8 +50,7 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
 
             if cmd[0] == 'bind':
                 if self.server.config['email']['enable-email-verification']:
-                    with self.server.open_user(self.user_id) as u:
-                        user: User = u.value
+                    with self.server.update_user_data(self.user_id) as user:
 
                     if user.email is not None:
                         self.send_msg(_('You have already bound an email.'))
@@ -65,8 +64,7 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
                         self.send_msg(_('This email has been bound by another user.'))
                         return
 
-                    with self.server.open_user(self.user_id) as u:
-                        user: User = u.value
+                    with self.server.update_user_data(self.user_id) as user:
 
                         ec = EventContainer(self.server.db_event)
                         ec.add('user_id', self.user_id)
@@ -95,14 +93,12 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
 
             elif cmd[0] == 'unbind':
                 if self.server.config['email']['enable-email-verification']:
-                    with self.server.open_user(self.user_id) as u:
-                        user: User = u.value
+                    with self.server.update_user_data(self.user_id) as user:
                     if user.email is not None:
                         self.send_msg(_('You have not bound an email.'))
                         return
 
-                    with self.server.open_user(self.user_id) as u:
-                        user: User = u.value
+                    with self.server.update_user_data(self.user_id) as user:
                         unbinding_email = user.email
                         user.email = None
 
@@ -116,8 +112,7 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
             elif cmd[0] == 'code':
                 if self.server.is_user_event_exist(str(cmd[1]).lower()):
                     e = self.server.get_user_event(str(cmd[1]).lower())
-                    with self.server.open_user(e['user_id']) as u:
-                        user: User = u.value
+                    with self.server.update_user_data(e['user_id']) as user:
                         user.email = e['email']
 
                     with self.server.db_email.enter(e['email']) as v:
@@ -139,8 +134,7 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
                 return
             if cmd[0] == 'set':
                 if cmd[1] in os.listdir('locale'):
-                    with self.server.open_user(self.user_id) as u:
-                        user: User = u.value
+                    with self.server.update_user_data(self.user_id) as user:
                         user.language = cmd[1]
                     self.lang = cmd[1]
                     l10n = gettext.translation("all", localedir="locale", languages=[cmd[1]])

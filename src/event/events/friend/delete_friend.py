@@ -35,8 +35,7 @@ class DeleteFriend(BaseEvent):
 
     def _run(self, friend_id):
         _ = self.gettext_func
-        with self.server.open_user(self.user_id) as u:
-            user: User = u.value
+        with self.server.update_user_data(self.user_id) as user:
             if friend_id not in user.friend_dict:
                 return ReturnData(ReturnData.NULL, _('The person is not your friend.'))
 
@@ -50,8 +49,7 @@ class DeleteFriend(BaseEvent):
             add('time', time.time())
         ec.write_in()
 
-        with self.server.open_user(friend_id) as u:
-            user: User = u.value
+        with self.server.update_user_data(friend_id) as user:
             user.friend_dict.pop(self.user_id)
             user.add_user_event(ec)
             return ReturnData(ReturnData.OK)

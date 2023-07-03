@@ -42,8 +42,7 @@ class Login(BaseEvent):
 
         self.server.activity_dict[user_id] = 30
 
-        with self.server.open_user(user_id) as u:
-            user: User = u.value
+        with self.server.update_user_data(user_id) as user:
             if user.auth(password):
                 user.status = 'online'
                 # generate token

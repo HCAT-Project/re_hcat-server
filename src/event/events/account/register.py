@@ -50,7 +50,7 @@ class Register(BaseEvent):
         if len(password) < 6:
             return ReturnData(ReturnData.ERROR, _('Password is too short.'))
 
-        with self.server.open_user(user_id) as u:
+        with self.server.update_user_data(user_id) as u:
             crypto_default = {"crypto": {
                 "password": {
                     "method": "scrypt",

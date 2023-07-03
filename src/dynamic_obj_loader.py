@@ -26,6 +26,7 @@
 @Version    : 1.0.1
 """
 import importlib
+import logging
 from pathlib import Path, PosixPath
 from typing import Union
 
@@ -45,15 +46,16 @@ class DynamicObjLoader:
             obj_name = src.util.text.under_score_to_pascal_case(Path(path).stem)
 
         try:
-            m_name = f'{path.replace("/", ".").rstrip(".py")}'
+            m_name = f'{path.replace("/", ".").replace(".py", "")}'
+
             # get the module
             module_ = importlib.import_module(m_name)
 
             # get the class of the event
             obj_ = getattr(module_, obj_name)
 
+        except ImportError as err:
 
-        except ImportError:
             return None
 
         return obj_
@@ -77,9 +79,12 @@ class DynamicObjLoader:
     def load_obj_from_group(self, path: Union[str, Path], obj_name: str = None, group: str = "default"):
         for i in self.group_dict.get(group, []):
             module_path = Path(i) / path
+
             if module_path.with_suffix(".py").exists():
+
                 if isinstance(module_path, PosixPath):
                     module_path = module_path.resolve()
+
                 return self.load_obj(module_path.relative_to(Path.cwd()).as_posix(), obj_name=obj_name)
         return None
 

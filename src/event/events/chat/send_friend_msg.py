@@ -43,8 +43,7 @@ class SendFriendMsg(BaseEvent):
         if len(friend_id) <= 1:
             return ReturnData(ReturnData.NULL, _('The person is not your friend.'))
 
-        with self.server.open_user(self.user_id) as u:
-            user: User = u.value
+        with self.server.update_user_data(self.user_id) as user:
             if friend_id not in user.friend_dict:
                 return ReturnData(ReturnData.NULL, _('The person is not your friend.'))
 
@@ -54,12 +53,10 @@ class SendFriendMsg(BaseEvent):
             logging.exception(err)
             return ReturnData(ReturnData.ERROR, _('Illegal messages.'))
 
-        with self.server.open_user(self.user_id) as u:
-            user: User = u.value
+        with self.server.update_user_data(self.user_id) as user:
             name = user.user_name
 
-        with self.server.open_user(friend_id) as u:
-            user: User = u.value
+        with self.server.update_user_data(friend_id) as user:
             nick = user.friend_dict[self.user_id]['nick']
             ec = EventContainer(self.server.db_event)
             ec. \

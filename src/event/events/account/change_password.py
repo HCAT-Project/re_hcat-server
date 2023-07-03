@@ -38,7 +38,6 @@ class ChangePassword(BaseEvent):
         if len(password) < 6:
             return ReturnData(ReturnData.ERROR, _('Password is too short.'))
         # get user and change password
-        with self.server.open_user(self.user_id) as u:
-            user: User = u.value
+        with self.server.update_user_data(self.user_id) as user:
             user.change_password(password)
             return ReturnData(ReturnData.OK)

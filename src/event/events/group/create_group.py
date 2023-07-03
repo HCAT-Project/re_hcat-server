@@ -28,7 +28,7 @@ import time
 
 import src.util.crypto
 import src.util.text
-from src.containers import Group, User, ReturnData
+from src.containers import Group, ReturnData
 from src.event.base_event import BaseEvent
 
 
@@ -39,11 +39,10 @@ class CreateGroup(BaseEvent):
         group_name_ = group_name
         while True:
             group_id = '0g' + src.util.crypto.get_random_token(5, upper=False)
-            if not self.server.db_group.exists(group_id):
+            if not self.server.db_group.find_one(group_id):
                 break
         group = Group(group_id)
-        with self.server.open_user(self.user_id) as u:
-            user: User = u.value
+        with self.server.update_user_data(self.user_id) as user:
             user.groups_dict[group_id] = {'remark': group_name_, 'time': time.time()}
             user_name = user.user_name
 
@@ -53,6 +52,5 @@ class CreateGroup(BaseEvent):
         group.member_dict[self.user_id] = {'nick': user_name,
                                            'time': time.time()}
         group.owner = self.user_id
-        with self.server.db_group.enter(group_id) as g:
-            g.value = group
+        self.server.new_group(group)
         return ReturnData(ReturnData.OK, '').add('group_id', group_id)

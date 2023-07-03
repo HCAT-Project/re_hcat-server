@@ -34,7 +34,6 @@ class Rename(BaseEvent):
     auth = True
 
     def _run(self, name):
-        with self.server.open_user(self.user_id) as u:
-            user: User = u.value
+        with self.server.update_user_data(self.user_id) as user:
             user.user_name = name
             return ReturnData(ReturnData.OK)

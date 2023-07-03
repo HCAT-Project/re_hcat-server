@@ -33,9 +33,9 @@ class GetVerificationMethod(BaseEvent):
 
     def _run(self, group_id):
         _ = self.gettext_func
-        if not self.server.db_group.exists(group_id):
+        if not self.server.db_group.find_one({'group_id': group_id}):
             return ReturnData(ReturnData.NULL, _('Group does not exist.'))
-        with self.server.db_group.enter(group_id) as g:
+        with self.server.db_group.enter_one(group_id) as g:
             group: Group = g.value
             return ReturnData(ReturnData.OK). \
                 add('data',

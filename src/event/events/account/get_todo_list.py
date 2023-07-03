@@ -37,8 +37,7 @@ class GetTodoList(BaseEvent):
         self.server.activity_dict[self.user_id] = 30
 
         # set status and return the user's todolist
-        with self.server.open_user(self.user_id) as u:
-            user: User = u.value
+        with self.server.update_user_data(self.user_id) as user:
             user.status = 'online'
             rt_todo_list = []
             for i in user.todo_list:

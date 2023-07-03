@@ -32,6 +32,5 @@ class GetFriendList(BaseEvent):
     auth = True
 
     def _run(self):
-        with self.server.open_user(self.user_id) as u:
-            user: User = u.value
+        with self.server.update_user_data(self.user_id) as user:
             return ReturnData(ReturnData.OK).add('data', [i for i in user.friend_dict])

@@ -35,8 +35,7 @@ class Kick(BaseEvent):
 
     def _run(self, group_id, member_id):
         _ = self.gettext_func
-        with self.server.db_group.enter(group_id) as g:
-            group: Group = g.value
+        with self.server.update_group_data(group_id) as group:
             if self.user_id == member_id:
                 return ReturnData(ReturnData.ERROR, _('Can\'t kick yourself out.'))
             if group is None:
@@ -62,8 +61,7 @@ class Kick(BaseEvent):
             ec.write_in()
             group.broadcast(self.server, '', ec)
 
-        with self.server.open_user(member_id) as u:
-            user: User = u.value
+        with self.server.update_user_data(member_id) as user:
             user.groups_dict.pop(group_id)
 
         return ReturnData(ReturnData.OK)
