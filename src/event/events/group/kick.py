@@ -59,7 +59,7 @@ class Kick(BaseEvent):
                 add('time', time.time()). \
                 add('member_id', member_id)
             ec.write_in()
-            group.broadcast(self.server, '', ec)
+            group.broadcast(server=self.server,user_id= '',ec= ec)
 
         with self.server.update_user_data(member_id) as user:
             user.groups_dict.pop(group_id)

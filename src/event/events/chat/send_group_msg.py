@@ -66,6 +66,6 @@ class SendGroupMsg(BaseEvent):
                 add('msg', msg_). \
                 add('time', time.time())
 
-            group.broadcast(self.server, self.user_id, ec)
+            group.broadcast(server=self.server, user_id=self.user_id, ec=ec)
             ec.write_in()
         return ReturnData(ReturnData.OK)
