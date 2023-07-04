@@ -9,6 +9,7 @@
 
 @Version    : 2.0.0
 """
+from collections.abc import MutableSet, Hashable
 from typing import Mapping, Any
 
 
@@ -25,6 +26,8 @@ from typing import Mapping, Any
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+
 class Jelly:
     """
     A class for pickling and unpickling instances of itself
@@ -49,7 +52,9 @@ class Jelly:
         """
         state = {k: getattr(self, k) for k in self._get_instance_variables()}
         # set => list
-        sg = map(lambda x: (x[0], list(x[1]) if isinstance(x[1], set) else x[1]), state.items())
+        sg = map(lambda x: (x[0], {"_obj_type": ".UserSet", "data": list(x[1])} if isinstance(x[1], (set,UserSet)) else x[1]),
+                 state.items())
+
         return dict(sg)
 
     def __setstate__(self, state):
@@ -57,8 +62,56 @@ class Jelly:
         Set the state of the object after unpickling
         """
         self._var_init()
+
         for k, v in state.items():
+            if isinstance(v, dict) and "_obj_type" in v:
+                v = agar(v)
+
             setattr(self, k, v)
+
+
+class UserSet(Hashable, MutableSet, Jelly):
+    """
+    A set of users.
+
+    From: https://stackoverflow.com/a/58348971/21099289 Thank you so much!!!
+    """
+    __hash__ = MutableSet._hash
+
+    class DataDescriptor:
+        def __init__(self, name):
+            self.name = name
+
+        def __get__(self, instance, owner):
+            return instance.__dict__[self.name]
+
+        def __set__(self, instance, value):
+            print(3)
+            instance.__dict__[self.name] = set(value)
+
+    data = DataDescriptor('data')
+
+    def __init__(self, iterable=()):
+        super().__init__()
+        self.data = iterable
+
+    def __contains__(self, value):
+        return value in self.data
+
+    def __iter__(self):
+        return iter(self.data)
+
+    def __len__(self):
+        return len(self.data)
+
+    def __repr__(self):
+        return repr(self.data)
+
+    def add(self, item):
+        self.data.add(item)
+
+    def discard(self, item):
+        self.data.discard(item)
 
 
 def dehydrate(class_: Jelly):
@@ -66,9 +119,14 @@ def dehydrate(class_: Jelly):
 
 
 def agar(dict_: Mapping[str, Any]):
-    module_name, class_name = dict_['_obj_type'].rsplit('.', 1)
-    module = __import__(module_name, fromlist=[class_name])
-    class_ = getattr(module, class_name)
+    if (name := dict_['_obj_type'].rsplit('.', 1))[0]:
+        module_name, class_name = name
+        module = __import__(module_name, fromlist=[class_name])
+        class_ = getattr(module, class_name)
+    else:
+        class_name = name[1]
+        class_ = globals()[class_name]
+
     obj = class_.__new__(class_)
     obj.__setstate__(dict_)
     return obj
