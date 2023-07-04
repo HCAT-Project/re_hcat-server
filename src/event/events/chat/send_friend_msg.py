@@ -66,6 +66,7 @@ class SendFriendMsg(BaseEvent):
                 add('friend_id', self.user_id). \
                 add('friend_nick', nick). \
                 add('friend_name', name). \
+                add('receiver', friend_id). \
                 add('msg', msg_). \
                 add('_WARNING', 'user_id is deprecated!!!'). \
                 add('time', time.time())
