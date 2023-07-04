@@ -189,6 +189,7 @@ class User(Jelly):
         self.email = ''
         self.language = 'en_US'
         self.avatar = ''
+        self.bio = 'NULL'
 
     def change_password(self, password: str, method='scrypt', **kwargs):
         """
