@@ -56,8 +56,7 @@ class FlaskHttpReceiver(BaseReceiver):
             @self.app.route('/<path:path>', methods=['GET'])
             def send_static(path=None):
                 static_folder = self.receiver_config.get_from_pointer('static-folder', 'static')
-
-                if path is None:
+                if path is None or (not (Path.cwd() / static_folder / path).exists()):
                     path = 'index.html'
 
                 return send_from_directory(Path.cwd() / static_folder, path)
