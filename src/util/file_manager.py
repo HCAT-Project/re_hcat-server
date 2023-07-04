@@ -44,6 +44,12 @@ class FileManager:
 
         return path if path.exists() else None
 
+    def read_file(self, sha1: str):
+        try:
+            return self.get_file_path(sha1).open('rb')
+        except FileNotFoundError:
+            raise FileNotFoundError(f"File {sha1} not found")
+
     def save_file(self, file: IO[bytes], timeout=7 * 24 * 60) -> str:
 
         hash_ = file_hash(file)
@@ -52,12 +58,12 @@ class FileManager:
         with open(Path(self.path) / hash_, 'wb') as f:
             while chunk := file.read(1024):
                 f.write(chunk)
-        with self.info_db.enter(hash_) as info:
+        with self.info_db.enter_one(hash_) as info:
             info.value = {'size': file.tell(), 'timeout': time.time() + timeout, 'ref': 0}
         return hash_
 
     def add_ref(self, sha1: str):
-        with self.info_db.enter(sha1) as info:
+        with self.info_db.enter_one(sha1) as info:
             if not isinstance(info.value, dict):
                 raise TypeError("info.value should be a dictionary")
             info.value['ref'] += 1
@@ -66,7 +72,7 @@ class FileManager:
         i = 0
         for key in self.get_all_keys():
 
-            with self.info_db.enter(key) as info:
+            with self.info_db.enter_one(key) as info:
                 if info.value is None:
                     Path(key).unlink()
                     continue
