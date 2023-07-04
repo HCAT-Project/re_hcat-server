@@ -1,15 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
-"""
-@File       : server.py
 
-@Author     : hsn
-
-@Date       : 2023/3/1 下午8:35
-
-@Version    : 2.5.2
-"""
-import contextlib
 #  Copyright (C) 2023. HCAT-Project-Team
 #  _
 #  This program is free software: you can redistribute it and/or modify
@@ -24,6 +15,18 @@ import contextlib
 #  _
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+"""
+@File       : server.py
+
+@Author     : hsn
+
+@Date       : 2023/3/1 下午8:35
+
+@Version    : 2.5.2
+"""
+
+import contextlib
 import copy
 import logging
 import os.path
@@ -42,6 +45,7 @@ from src.dynamic_obj_loader import DynamicObjLoader
 from src.event.event_manager import EventManager
 from src.event.recv_event import RecvEvent
 from src.util.config_parser import ConfigParser
+from src.util.crypto import get_random_token
 from src.util.file_manager import FileManager
 from src.util.i18n import gettext_func as _
 from src.util.jelly import dehydrate, agar
@@ -149,9 +153,14 @@ class Server:
         for k, v in list(self.activity_dict.items()):
             self.activity_dict[k] = v - 1
             if v <= 0:
+                with self.update_user_data(k) as user:
+                    user.status = 'temporarily away'
+            elif v <= -180:
                 self.activity_dict.pop(k)
                 with self.update_user_data(k) as user:
                     user.status = 'offline'
+                    user.token = get_random_token(128)
+
 
     def _schedule_cleaner(self):
         # Remove expired events from the event database
