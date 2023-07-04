@@ -35,7 +35,10 @@ from src.util.config_parser import ConfigParser
 class Item(UserDict):
     def __init__(self, document: Mapping[str, Any] | None):
         super().__init__(document)
-        self.value = self
+        self.value = self.data
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}({super().__repr__()})'
 
 
 class BaseCA(metaclass=abc.ABCMeta):
