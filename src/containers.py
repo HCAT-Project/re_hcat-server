@@ -30,12 +30,11 @@ from datetime import timedelta, datetime
 from typing import Any
 from uuid import uuid1
 
-from RPDB.database import RPDB
 from flask import jsonify, make_response, Response
 
 import src.util.crypto
 import src.util.text
-from src.db_adapter.base_dba import BaseDBA, BaseCA
+from src.db_adapter.base_dba import BaseCA
 from src.util.config_parser import ConfigParser
 from src.util.jelly import Jelly
 
@@ -43,7 +42,7 @@ from src.util.jelly import Jelly
 class EventContainer:
     def __init__(self, data_base: BaseCA):
         # initialize a new event container
-        self.data_base= data_base
+        self.data_base = data_base
         # generate an uuid for this event container
         self.rid = str(uuid1())
         # create an empty dictionary to store the event data
@@ -58,7 +57,6 @@ class EventContainer:
     def write_in(self) -> None:
         # write the event data to the database
         self.data_base.insert_one(self.json)
-
 
     def add(self, key: str, value: Any) -> 'EventContainer':
         # add a new key-value pair to the event data and return the container object
@@ -114,7 +112,6 @@ class ReturnData:
         return jsonify(self.json_data)
 
     def flask_respify(self) -> Response:
-
         resp = make_response(jsonify(self.json_data), 200)
         if self.json_data.get('_cookies', False):
             for k, v in self.json_data['_cookies'].items():
@@ -359,7 +356,7 @@ class Group(Jelly):
             'answer': ''
         }
 
-    def broadcast(self, server, user_id: str, ec: EventContainer):
+    def broadcast(self, ec: EventContainer, server, *, user_id: str):
         """
         Send an event to all group members except for the specified user.
 
