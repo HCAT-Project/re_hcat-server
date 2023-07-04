@@ -1,6 +1,7 @@
 {
   "sys": {
-    "domain": null,
+    // Please set the domain name to localhost if you are using a local server.
+    "domain": "localhost",
     // Warning: This feature has not been tested.,
     "auto-update": false,
     "event-timeout": 604800,
