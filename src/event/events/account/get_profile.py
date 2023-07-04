@@ -37,7 +37,8 @@ class GetProfile(BaseEvent):
             .add('avatar', user.avatar) \
             .add('name', user.user_name) \
             .add('id', user.user_id) \
-            .add('bio', user.bio)
+            .add('bio', user.bio) \
+            .add('status', user.status)
 
         if self.user_id is not None:
             rt.add('is_friend', is_fri := self.server.get_user(self.user_id).is_friend(user_id))
