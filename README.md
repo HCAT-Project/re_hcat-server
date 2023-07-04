@@ -3,11 +3,12 @@ English | [中文(普通话-大陆)](README.zh-cmn-CN.md)
 # Table of Contents
 
 <!-- TOC -->
+
 * [Table of Contents](#table-of-contents)
 * [Introduction](#introduction)
 * [Installation](#installation)
-  * [Server](#server)
-  * [Client](#client)
+    * [Server](#server)
+    * [Client](#client)
 * [Running](#running)
 * [Features Implemented](#features-implemented)
 * [To-Do List](#to-do-list)
@@ -15,6 +16,7 @@ English | [中文(普通话-大陆)](README.zh-cmn-CN.md)
 * [Maintainers](#maintainers)
 * [License](#license)
 * [Disclaimer](#disclaimer)
+
 <!-- TOC -->
 
 # Introduction
@@ -39,7 +41,7 @@ pip install -r requirements.txt
 ## Client
 
 If you have downloaded and configured git correctly, the client will be automatically cloned from the GitHub repository
-when the server starts. And it will be available at [http://127.0.0.1:8080/](http://127.0.0.1:8080/index.html).
+when the server starts. And it will be available at [http://localhost:8080/](http://localhost:8080/).
 
 Of course, you can disable or change the client version by modifying the `/client/client-branch` setting in the
 configuration file.
@@ -53,10 +55,16 @@ The following table shows the version number and corresponding branch of the cli
 | Disable client | null   |                  |
 
 # Running
+
 **Please run with `Python 3.10` and above!**
+
 ```shell
 python start.py
 ```
+
+In addition, I strongly recommend using a server such as nginx to reverse proxy api and distribute static resources!
+
+Also, use port 443(https,wss) or 80(http,ws) for external open ports if possible.
 
 # Features Implemented
 
@@ -68,7 +76,6 @@ python start.py
 
 # To-Do List
 
-- Improve permission management system.
 - Add user personalization settings.
 - Server master-slave.
 - Multi-device collaboration.
