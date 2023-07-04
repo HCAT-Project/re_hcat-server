@@ -265,8 +265,10 @@ class Server:
         self.db_group.insert_one(dehydrate(group))
 
     def get_group(self, group_id: str) -> Group:
-        group_json = self.db_group.find_one({'id': group_id}).value
 
+        group_json = self.db_group.find_one({'id': group_id}).value
+        if group_json is None:
+            raise KeyError('Group not found.')
         return agar(group_json)
 
     @contextlib.contextmanager
