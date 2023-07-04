@@ -188,6 +188,7 @@ class User(Jelly):
         self.groups_dict = {}
         self.email = ''
         self.language = 'en_US'
+        self.avatar = ''
 
     def change_password(self, password: str, method='scrypt', **kwargs):
         """
@@ -214,6 +215,13 @@ class User(Jelly):
                 return src.util.crypto.salted_sha1(password, self.salt, self.user_id) == self.hash_password
             else:
                 return False
+
+    def is_in_contact(self, friend_id: str) -> bool:
+        if friend_id in self.friend_dict:
+            return True
+
+    def get_friend(self, friend_id) -> dict:
+        return self.friend_dict.get(friend_id, default=None)
 
     def is_in_group(self, server, group_id: str) -> bool:
         """
