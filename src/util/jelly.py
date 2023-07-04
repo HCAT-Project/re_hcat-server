@@ -86,7 +86,6 @@ class UserSet(Hashable, MutableSet, Jelly):
             return instance.__dict__[self.name]
 
         def __set__(self, instance, value):
-            print(3)
             instance.__dict__[self.name] = set(value)
 
     data = DataDescriptor('data')
