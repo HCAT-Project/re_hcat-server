@@ -55,16 +55,20 @@ class MongoCA(BaseCA):
         return rt
 
     def insert_one(self, item: Item | Mapping[str, Any]):
-        v = item.value if isinstance(item, Item) else item
+        v = item
+        while isinstance(item, Item):
+            v = item.value
+
         self._collection.insert_one(v)
 
     def find_one(self,
                  filter_: Mapping[str, Any] = None,
                  masking: Mapping[str, Any] = None) -> (Item | None):
         i = self._collection.find_one(filter_, masking)
+
         if i is None:
-            return Item( None)
-        return Item( i)
+            return Item(None)
+        return Item(i)
 
 
 class Mongo(BaseDBA):

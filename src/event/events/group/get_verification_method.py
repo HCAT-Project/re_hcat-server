@@ -33,11 +33,13 @@ class GetVerificationMethod(BaseEvent):
 
     def _run(self, group_id):
         _ = self.gettext_func
-        if not self.server.db_group.find_one({'group_id': group_id}):
+        try:
+            self.server.get_group(group_id)
+        except KeyError:
             return ReturnData(ReturnData.NULL, _('Group does not exist.'))
-        with self.server.db_group.enter_one(group_id) as g:
-            group: Group = g.value
-            return ReturnData(ReturnData.OK). \
-                add('data',
-                    {'verification_method': group.group_settings['verification_method'],
-                     'question': group.group_settings['question']})
+
+        group: Group = self.server.get_group(group_id)
+        return ReturnData(ReturnData.OK). \
+            add('data',
+                {'verification_method': group.group_settings['verification_method'],
+                 'question': group.group_settings['question']})
