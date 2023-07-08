@@ -161,7 +161,6 @@ class Server:
                     user.status = 'offline'
                     user.token = get_random_token(128)
 
-
     def _schedule_cleaner(self):
         # Remove expired events from the event database
 
@@ -298,7 +297,10 @@ class Server:
         :param user_id: The id of user.
         :return:
         """
-        return self.get_user(user_id) is not None
+        try:
+            return self.get_user(user_id) is not None
+        except KeyError:
+            return False
 
     def get_user_event(self, event_id: str) -> Mapping[str, Any]:
         """

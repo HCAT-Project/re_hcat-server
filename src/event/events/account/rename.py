@@ -26,7 +26,7 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-from src.containers import User, ReturnData
+from src.containers import ReturnData
 from src.event.base_event import BaseEvent
 
 
