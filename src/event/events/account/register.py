@@ -50,29 +50,29 @@ class Register(BaseEvent):
         if len(password) < 6:
             return ReturnData(ReturnData.ERROR, _('Password is too short.'))
 
-        with self.server.update_user_data(user_id) as u:
-            crypto_default = {"crypto": {
-                "password": {
-                    "method": "scrypt",
-                    "kwargs": {
-                        "salt_len": 16,
-                        "n": 16384,
-                        "r": 8,
-                        "p": 1,
-                        "maxmem": 0
-                    }
-                }
-            }}
-            user = User(user_id, password, username,
-                        ConfigParser(self.server.config.get_from_pointer('/crypto/password', crypto_default)))
-            user.language = self.lang
-            u.value = user
-            user.add_fri_msg2todos(self.server, '0sAccount', _('Account_BOT'), _('Account_BOT'),
-                                   _('Welcome to HCAT!\\n'
-                                     'The first thing you need to do is use `/email bind [email]` to '
-                                     'bind your email.\\n'
-                                     'Then you can use `/email code [code]` to verify your email.\\n'
-                                     'After that, you can use `/email unbind` to unbind your email if you want.\\n'
-                                     'Have fun!'))
 
-            return ReturnData(ReturnData.OK)
+        crypto_default = {"crypto": {
+            "password": {
+                "method": "scrypt",
+                "kwargs": {
+                    "salt_len": 16,
+                    "n": 16384,
+                    "r": 8,
+                    "p": 1,
+                    "maxmem": 0
+                }
+            }
+        }}
+        user = User(user_id, password, username,
+                    ConfigParser(self.server.config.get_from_pointer('/crypto/password', crypto_default)))
+        user.language = self.lang
+
+        user.add_fri_msg2todos(self.server, '0sAccount', _('Account_BOT'), _('Account_BOT'),
+                               _('Welcome to HCAT!\\n'
+                                 'The first thing you need to do is use `/email bind [email]` to '
+                                 'bind your email.\\n'
+                                 'Then you can use `/email code [code]` to verify your email.\\n'
+                                 'After that, you can use `/email unbind` to unbind your email if you want.\\n'
+                                 'Have fun!'))
+        self.server.new_user(user)
+        return ReturnData(ReturnData.OK)
