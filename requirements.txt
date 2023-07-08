@@ -2,9 +2,9 @@ Flask
 Werkzeug
 pyaes
 gevent
-RP-DataBase
 flask-cors
 schedule
 gitpython
 websockets
 pymongo
+pillow
