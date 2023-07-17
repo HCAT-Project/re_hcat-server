@@ -27,7 +27,7 @@
 import time
 import uuid
 from datetime import timedelta, datetime
-from typing import Any
+from typing import Any, Dict
 from uuid import uuid1
 
 from flask import jsonify, make_response, Response
@@ -46,7 +46,7 @@ class EventContainer:
         # generate an uuid for this event container
         self.rid = str(uuid1())
         # create an empty dictionary to store the event data
-        self.json = {}
+        self.json: Dict[str, str | int | float | dict] = {}
         # initialize the container with the rid and current time
         self.add('rid', self.rid).add('time', time.time())
 
@@ -82,7 +82,7 @@ class ReturnData:
     def __init__(self, status: int = OK, msg: str = ''):
         # initialize a new ReturnData object with a status and message
         status_text = self.status_text_list[status]
-        self.json_data = {'status': status_text, 'message': msg}
+        self.json_data: Dict[str, Any] = {'status': status_text, 'message': msg, '_cookies': {}}
 
     def add(self, key: str, value: Any) -> 'ReturnData':
         # add a new key-value pair to the response data and return the object
@@ -101,8 +101,7 @@ class ReturnData:
                    secure: bool = False,
                    httponly: bool = False,
                    samesite: str | None = None):
-        if '_cookies' not in self.json_data:
-            self.json_data['_cookies'] = {}
+
         self.json_data['_cookies'][key] = {'value': value, 'max_age': max_age, 'expires': expires, 'path': path,
                                            'domain': domain, 'secure': secure, 'httponly': httponly,
                                            'samesite': samesite}
@@ -220,6 +219,7 @@ class User(Jelly):
     def is_in_contact(self, friend_id: str) -> bool:
         if friend_id in self.friend_dict:
             return True
+        return False
 
     def get_friend(self, friend_id) -> dict:
         return self.friend_dict.get(friend_id, default=None)
@@ -400,7 +400,7 @@ class Group(Jelly):
 
 
 class Request:
-    def __init__(self, path: str = '/', form: dict = None, files=None, cookies: dict = None):
+    def __init__(self, path: str = '/', form=None, files=None, cookies=None):
         super().__init__()
         if files is None:
             files = {}

@@ -29,7 +29,7 @@ import inspect
 import shutil
 import zipfile
 from pathlib import Path
-from typing import Union
+from typing import Union, Dict
 
 from src.dynamic_obj_loader import DynamicObjLoader
 from src.util.config_parser import ConfigParser
@@ -40,18 +40,18 @@ class PluginManager:
     Plugin manager.
     """
 
-    def __init__(self, config: ConfigParser = None, dol: DynamicObjLoader = None):
+    def __init__(self, config: ConfigParser, dol: DynamicObjLoader):
         """
 
         :param config: Global config
         :param dol: The dynamic object loader.
         """
-        self.config: ConfigParser = config if config is not None else ConfigParser({})
-        self.dcl: DynamicObjLoader = dol if dol is not None else DynamicObjLoader()
+        self.config: ConfigParser = config
+        self.dcl: DynamicObjLoader = dol
 
         self.plugin_folder: Path = Path(self.config.get_from_pointer('/plugin/folder', 'plugins'))
 
-        self.plugins = {}
+        self.plugins: Dict[str, ConfigParser] = {}
 
     def load_plugin(self, path: Union[Path, str]):
         """

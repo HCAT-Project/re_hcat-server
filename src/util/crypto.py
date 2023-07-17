@@ -220,15 +220,13 @@ def read_file_chunks(
         yield chunk
 
 
-def file_hash(file: Union[str, PathLike, IO[bytes]] = None, hasher=None):
+def file_hash(file: Union[str, PathLike, IO[bytes]], hasher=None):
     """
     Computes the hash of a file.
     :param file: The file to be hashed.
     :param hasher: The hasher to use. Defaults to SHA1.
     :return: the hash of the file as a hexadecimal string.
     """
-    if file is None:
-        raise ValueError("File cannot be None")
     h = hasher() if hasher is not None else hashlib.sha1(usedforsecurity=False)
     for chunk in read_file_chunks(file):
         h.update(chunk)

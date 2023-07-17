@@ -39,10 +39,10 @@ class DynamicObjLoader:
         self.group_dict = {}
 
     @staticmethod
-    def load_obj(path: str | PosixPath, obj_name: str = None):
+    def load_obj(path: str | PosixPath, obj_name: str = ""):
         if isinstance(path, Path):
             path = str(path)
-        if obj_name is None:
+        if obj_name=="":
             obj_name = src.util.text.under_score_to_pascal_case(Path(path).stem)
 
         try:
@@ -54,7 +54,7 @@ class DynamicObjLoader:
             # get the class of the event
             obj_ = getattr(module_, obj_name)
 
-        except ImportError as err:
+        except ImportError:
 
             return None
 
@@ -76,7 +76,7 @@ class DynamicObjLoader:
         for i in self.group_dict.get(group, []):
             yield from self.load_objs(i)
 
-    def load_obj_from_group(self, path: Union[str, Path], obj_name: str = None, group: str = "default"):
+    def load_obj_from_group(self, path: Union[str, Path], obj_name: str = "", group: str = "default"):
         for i in self.group_dict.get(group, []):
             module_path = Path(i) / path
 
@@ -88,13 +88,13 @@ class DynamicObjLoader:
                 return self.load_obj(module_path.relative_to(Path.cwd()).as_posix(), obj_name=obj_name)
         return None
 
-    def add_path_to_group(self, group: str = "default", path: Union[str, Path] = None):
+    def add_path_to_group(self, group: str = "default", path: Union[str, Path] = ""):
         path_ = path if isinstance(path, str) else path.as_posix()
         existing = self.group_dict.get(group, [])
         existing.append(path_)
         self.group_dict[group] = existing
 
-    def del_path_from_group(self, group: str = "default", path: Union[str, Path] = None):
+    def del_path_from_group(self, group: str = "default", path: Union[str, Path] = ""):
         path_ = path if isinstance(path, str) else path.as_posix()
         existing = self.group_dict.get(group, [])
         existing.remove(path_)

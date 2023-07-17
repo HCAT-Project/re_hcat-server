@@ -42,7 +42,7 @@ class GetTodoList(BaseEvent):
             rt_todo_list = []
             for i in user.todo_list:
                 if (e := self.server.db_event.find_one({'rid': i},masking={'_id':0})) is not None:
-                    rt_todo_list.append(e.value)
+                    rt_todo_list.append(e.data)
             rt = ReturnData(ReturnData.OK).add('data', rt_todo_list)
             user.todo_list = []
             return rt

@@ -28,35 +28,39 @@
 import copy
 import json
 import re
+from collections import UserDict
 from io import TextIOWrapper, BytesIO, BufferedRandom
 from os import PathLike
 from typing import IO, Union
-from zipfile import ZipExtFile
+from zipfile import ZipFile
 
 
-class ConfigParser:
+class ConfigParser(UserDict):
 
-    def __init__(self, config: Union['ConfigParser', dict, PathLike, str, IO, TextIOWrapper, BytesIO, BufferedRandom]):
+    def __init__(self,
+                 config: Union[
+                     'ConfigParser', dict, PathLike, str, IO, TextIOWrapper, BytesIO, BufferedRandom] = 'config.json'):
         if isinstance(config, dict):
-            self.config: dict = config
+            data: dict = config
         elif isinstance(config, (str, PathLike)):
             with open(config, 'r') as f:
-                self.config: dict = json.loads(self._del_comments(f.read()))
-        elif isinstance(config, (IO, TextIOWrapper, BytesIO, BufferedRandom, ZipExtFile)):
-            self.config: dict = json.load(config)
+                data: dict = json.loads(self._del_comments(f.read()))
+        elif isinstance(config, (IO, TextIOWrapper, BytesIO, BufferedRandom, ZipFile)):
+            data: dict = json.load(config)
         elif isinstance(config, ConfigParser):
-            self.config = config.config
+            data = config.data
         else:
             raise TypeError('config type error')
+        super().__init__(data)
 
     @staticmethod
     def _del_comments(json_raw: str):
-        json_str = re.sub(re.compile('(//[\\s\\S]*?\n)'), '', json_raw)
-        json_str = re.sub(re.compile('(/\*\*\*[\\s\\S]*?/)'), '', json_str)
+        json_str = re.sub(re.compile(r'//.*\n'), '', json_raw)
+        json_str = re.sub(re.compile(r'/\*[^.]*\*/'), '', json_str)
         return json_str
 
     def __repr__(self):
-        return f'ConfigParser({self.config})'
+        return f'ConfigParser({self.data})'
 
     def __contains__(self, item):
         return self.get_from_pointer(item) is not None
@@ -64,7 +68,7 @@ class ConfigParser:
     def get_from_pointer(self, pointer: Union[str, int], default=None):
         json_path = str(pointer).split('/')
         json_path = list(filter(lambda x: bool(x), json_path))
-        config = copy.deepcopy(self.config)
+        config = copy.deepcopy(self.data)
 
         for i in json_path:
 
@@ -86,9 +90,10 @@ class ConfigParser:
         return self.get_from_pointer(item)
 
     def __getattr__(self, item):
-        return self.config.__getattribute__(item)
+        i = self.data[item]
+        return ConfigParser(i) if isinstance(i, dict) else i
 
     def __deepcopy__(self, memo=None):
         if memo is None:
             memo = {}
-        return ConfigParser(copy.deepcopy(self.config, memo))
+        return ConfigParser(copy.deepcopy(self.data, memo))

@@ -59,30 +59,30 @@ class FileManager:
             while chunk := file.read(1024):
                 f.write(chunk)
         with self.info_db.enter_one(hash_) as info:
-            info.value = {'size': file.tell(), 'timeout': time.time() + timeout, 'ref': 0}
+            info.data = {'size': file.tell(), 'timeout': time.time() + timeout, 'ref': 0}
         return hash_
 
     def add_ref(self, sha1: str):
         with self.info_db.enter_one(sha1) as info:
-            if not isinstance(info.value, dict):
-                raise TypeError("info.value should be a dictionary")
-            info.value['ref'] += 1
+            if not isinstance(info.data, dict):
+                raise TypeError("info.data should be a dictionary")
+            info.data['ref'] += 1
 
     def clear_timeout(self) -> int:
         i = 0
         for key in self.get_all_keys():
 
             with self.info_db.enter_one(key) as info:
-                if info.value is None:
+                if info.data is None:
                     Path(key).unlink()
                     continue
 
-                if not isinstance(info.value, dict):
-                    raise TypeError("info.value should be a dictionary")
+                if not isinstance(info.data, dict):
+                    raise TypeError("info.data should be a dictionary")
 
-                if info.value.get('timeout', 0) < time.time() and info.value['ref'] == 0:
+                if info.data.get('timeout', 0) < time.time() and info.data['ref'] == 0:
                     Path(key).unlink()
-                    info.value = None
+                    info.data = None
                     i += 1
         return i
 

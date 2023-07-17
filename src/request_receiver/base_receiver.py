@@ -35,7 +35,7 @@ from src.util.config_parser import ConfigParser
 
 
 class BaseReceiver(metaclass=abc.ABCMeta):
-    def __init__(self, callback=None, config: ConfigParser = None):
+    def __init__(self, callback=None, config = None):
         self.callback = callback
         self.lock = threading.Lock()
         self.global_config = config if config is not None else ConfigParser({})

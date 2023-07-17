@@ -35,7 +35,6 @@ from src.util.config_parser import ConfigParser
 class Item(UserDict):
     def __init__(self, document: Mapping[str, Any] | None):
         super().__init__(document)
-        self.value = self.data
 
     def __repr__(self):
         return f'{self.__class__.__name__}({super().__repr__()})'
@@ -53,10 +52,10 @@ class BaseCA(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def find(self,
-             filter_: Mapping[str, Any] = None,
-             masking: Mapping[str, Any] = None,
-             limit: int = None,
-             sort_key: str = None) -> Iterable[Item]:
+             filter_: Mapping[str, Any],
+             masking: Mapping[str, Any],
+             limit: int = 0,
+             sort_key: str = "") -> Iterable[Item]:
         """
         Get values from database.
         :param filter_:
@@ -69,15 +68,17 @@ class BaseCA(metaclass=abc.ABCMeta):
         pass
 
     def find_one(self,
-                 filter_: Mapping[str, Any] = None,
-                 masking: Mapping[str, Any] = None) -> (Item | None):
+                 filter_: Mapping[str, Any],
+                 masking=None) -> (Item | None):
         """
         Get a value from database.
         :param filter_:
         :param masking:
         :return:
         """
-        if v_p := list(self.find(filter_=filter_, masking=masking, limit=1, sort_key=sort_key)):
+        if masking is None:
+            masking = {}
+        if v_p := list(self.find(filter_=filter_, masking=masking, limit=1)):
             v = v_p[0]
             return v
         else:
@@ -132,28 +133,28 @@ class BaseCA(metaclass=abc.ABCMeta):
         pass
 
     @contextmanager
-    def enter_one(self, filter_: Mapping[str, Any] | None) -> typing.Generator[Item, None, None]:
+    def enter_one(self, filter_: Mapping[str, Any]) -> typing.Generator[Item, None, None]:
         """
         Enter a value from database.
         """
 
         i = self.find_one(filter_=filter_)
 
-        if i.value is not None:
-            old_v = copy.deepcopy(i.value)
+        if i:
+            old_v = copy.deepcopy(i.data)
 
             yield i
-            if i.value is None:
+            if i.data is None:
                 self.delete_one(filter_=old_v)
             else:
 
-                set_list = filter(lambda x: x[1] != old_v.get(x[0]), i.value.items())
+                set_list = filter(lambda x: x[1] != old_v.get(x[0]), i.data.items())
                 if upd := dict(set_list):
                     self.update_one(filter_=old_v, update={'$set': upd})
         else:
-            i = Item(None)
+            i = Item({})
             yield i
-            if i.value is not None:
+            if not bool(i):
                 self.insert_one(item=i)
 
 

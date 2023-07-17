@@ -39,7 +39,7 @@ class AgreeJoinGroupRequest(BaseEvent):
             return ReturnData(ReturnData.NULL, _('Event does not exist.'))
 
         with self.server.db_event.enter(rid) as e:
-            event: dict = e.value
+            event: dict = e.data
             req_user_id = event['user_id']
             group_id = event['group_id']
 

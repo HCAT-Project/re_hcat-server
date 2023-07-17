@@ -29,10 +29,10 @@ from types import FunctionType
 
 class Command:
     def __init__(self,
-                 cmd_str: str = None,
+                 cmd_str: str | None = None,
                  sep: str = ' ',
                  control_characters: str = '"＂“”',
-                 escape_func: tuple[FunctionType, FunctionType] = None,
+                 escape_func: tuple[FunctionType, FunctionType] | None = None,
                  max_len: int = 256,
                  cmd_header: str = '/'):
         """
@@ -52,7 +52,7 @@ class Command:
         # Set the escape and unescape functions, if provided.
         self.escape_func, self.unescape_func = escape_func if escape_func is not None else (None, None)
         self.sep = sep
-        self.cmd_list = []
+        self.cmd_list: list = []
 
         # Load the command string, if provided.
         if cmd_str is not None:
@@ -110,7 +110,7 @@ class Command:
         self.cmd_list = ([self.unescape_func(i) for i in cmd_list]) if (self.unescape_func is not None) else cmd_list
         return True
 
-    def pop(self, __index=0) -> str:
+    def pop(self, __index: int = 0) -> str:
         """
         Pop and return an item from the command list.
 
@@ -118,7 +118,7 @@ class Command:
         :return: The popped item.
         """
         if len(self.cmd_list) > 0:
-            return self.cmd_list.pop(__index=__index)
+            return self.cmd_list.pop(__index)
         else:
             return ''
 

@@ -33,7 +33,7 @@ import os.path
 import platform
 import sys
 import time
-from typing import Any, Mapping
+from typing import Any, Mapping, Dict
 
 import schedule
 
@@ -64,7 +64,7 @@ class Server:
     ver = '2.5.2'
 
     def __init__(self, debug: bool = False,
-                 name=__name__, config=None, dol: DynamicObjLoader = None):
+                 name=__name__, config=None, dol=None):
         """
         Initialize the server.
         :param debug:
@@ -109,7 +109,7 @@ class Server:
         self.short_id_timeout = self.config.get_from_pointer('/sys/sid-timeout', 5 * 60)  # 5 minutes
 
         # Keep track of active users
-        self.activity_dict = {}
+        self.activity_dict: Dict[str, int] = {}
 
         # Get DBA
         dba_name = pascal_case_to_under_score(self.config.get_from_pointer('/db/use', 'Mongo'))
@@ -127,7 +127,7 @@ class Server:
                                          self.db_file_info)
 
         # Initialize sid table
-        self.event_sid_table = {}
+        self.event_sid_table: Dict[str, str] = {}
 
     def request_handler(self, req: Request):
         """
@@ -258,26 +258,27 @@ class Server:
         :return:
         """
         with self.db_account.enter_one({'user_id': user_id}) as i:
-            user: User = agar(i.value)
+            user: User = agar(i.data)
             yield user
-            i.value = dehydrate(user)
+            i.data = dehydrate(user)
 
     def new_user(self, user: User):
         self.db_account.insert_one(dehydrate(user))
 
     def get_user(self, user_id: str) -> User:
-        user_json = self.db_account.find_one({'user_id': user_id}).value
-        return agar(user_json)
+        if d := self.db_account.find_one({'user_id': user_id}):
+            return agar(d.data)
+        else:
+            raise KeyError('User not found.')
 
     def new_group(self, group: Group):
         self.db_group.insert_one(dehydrate(group))
 
     def get_group(self, group_id: str) -> Group:
-
-        group_json = self.db_group.find_one({'id': group_id}).value
-        if group_json is None:
+        if d := self.db_group.find_one({'id': group_id}):
+            return agar(d.data)
+        else:
             raise KeyError('Group not found.')
-        return agar(group_json)
 
     @contextlib.contextmanager
     def update_group_data(self, group_id: str):
@@ -287,9 +288,9 @@ class Server:
         :return:
         """
         with self.db_group.enter_one({'id': group_id}) as i:
-            group: Group = agar(i.value)
+            group: Group = agar(i.data)
             yield group
-            i.value = dehydrate(group)
+            i.data = dehydrate(group)
 
     def is_user_exist(self, user_id: str):
         """
@@ -298,9 +299,11 @@ class Server:
         :return:
         """
         try:
-            return self.get_user(user_id) is not None
+            self.get_user(user_id)
         except KeyError:
             return False
+        else:
+            return True
 
     def get_user_event(self, event_id: str) -> Mapping[str, Any]:
         """
@@ -312,9 +315,10 @@ class Server:
 
         if eid in self.event_sid_table:
             eid = self.event_sid_table[eid]
-
-        return self.db_event.find_one({'rid': eid}).value
-
+        if d:=self.db_event.find_one({'rid': eid}):
+            return d.data
+        else:
+            raise KeyError('Event not found.')
     def is_user_event_exist(self, event_id: str) -> bool:
         """
         Check if the event exists.

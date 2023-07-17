@@ -29,6 +29,7 @@ import asyncio
 import json
 import ssl
 import uuid
+from typing import Dict
 
 import schedule
 import websockets
@@ -39,7 +40,7 @@ from src.util.i18n import gettext_func as _
 
 
 class WebsocketsWsReceiver(BaseReceiver):
-    connectors = {}
+    connectors: Dict[uuid.UUID, tuple] = {}
 
     async def send_todo_list(self):
         """

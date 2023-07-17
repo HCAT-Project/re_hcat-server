@@ -38,9 +38,9 @@ class AgreeFriendRequest(BaseEvent):
         agree_time = time.time()
 
         with self.server.db_event.enter_one({'rid': rid}) as v:
-            if v.value is None:
+            if v.data is None:
                 return ReturnData(ReturnData.NULL, _('This event does not exist.'))
-            event: dict = v.value
+            event: dict = v.data
 
         if event['req_user_id'] != self.user_id:
             return ReturnData(ReturnData.ERROR, _('The person did not send you a friend request.'))

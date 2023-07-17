@@ -37,8 +37,8 @@ from src.util.regex import regex_email
 
 
 class RecvMsg(BaseEventOfSVACRecvMsg):
-    bot_id = '0sAccount'
-    bot_name = 'Account_BOT'
+    bot_id:str = '0sAccount'
+    bot_name:str = 'Account_BOT'
 
     def _reg_cmds(self):
         _ = self.gettext_func
@@ -51,28 +51,27 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
             if cmd[0] == 'bind':
                 if self.server.config['email']['enable-email-verification']:
                     with self.server.update_user_data(self.user_id) as user:
+                        if user.email is not None:
+                            self.send_msg(_('You have already bound an email.'))
+                            return
 
-                    if user.email is not None:
-                        self.send_msg(_('You have already bound an email.'))
-                        return
+                        if re.fullmatch(regex_email, cmd[1]) is None:
+                            self.send_msg(_('Invalid email address.'))
+                            return
 
-                    if re.fullmatch(regex_email, cmd[1]) is None:
-                        self.send_msg(_('Invalid email address.'))
-                        return
+                        if self.server.db_email.exists(cmd[1]):
+                            self.send_msg(_('This email has been bound by another user.'))
+                            return
 
-                    if self.server.db_email.exists(cmd[1]):
-                        self.send_msg(_('This email has been bound by another user.'))
-                        return
+                        with self.server.update_user_data(self.user_id) as user:
 
-                    with self.server.update_user_data(self.user_id) as user:
-
-                        ec = EventContainer(self.server.db_event)
-                        ec.add('user_id', self.user_id)
-                        ec.add('email', cmd[1])
-                        ec.add('event_type', 'email')
-                        ec.write_in()
-                        sid = ec.get_sid(self.server.event_sid_table)
-                        user.add_user_event(ec)
+                            ec = EventContainer(self.server.db_event)
+                            ec.add('user_id', self.user_id)
+                            ec.add('email', cmd[1])
+                            ec.add('event_type', 'email')
+                            ec.write_in()
+                            sid = ec.get_sid(self.server.event_sid_table)
+                            user.add_user_event(ec)
 
                     if self.server.debug:
                         logging.getLogger('debug').debug(str(sid))
@@ -93,7 +92,7 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
 
             elif cmd[0] == 'unbind':
                 if self.server.config['email']['enable-email-verification']:
-                    with self.server.update_user_data(self.user_id) as user:
+                    user= self.server.update_user_data(self.user_id)
                     if user.email is not None:
                         self.send_msg(_('You have not bound an email.'))
                         return
@@ -102,8 +101,8 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
                         unbinding_email = user.email
                         user.email = None
 
-                    with self.server.db_email.enter(unbinding_email) as v:
-                        v.value = None
+                    with self.server.db_email.enter_one(unbinding_email) as v:
+                        v.data = None
 
                     self.send_msg(_('Email unbinding successful.'))
                 else:
@@ -115,12 +114,12 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
                     with self.server.update_user_data(e['user_id']) as user:
                         user.email = e['email']
 
-                    with self.server.db_email.enter(e['email']) as v:
-                        e_mail: dict = v.value
+                    with self.server.db_email.enter_one(e['email']) as v:
+                        e_mail: dict = v.data
                         if not isinstance(e_mail, dict):
                             e_mail = {}
                         e_mail['user_id'] = self.user_id
-                        v.value = e_mail
+                        v.data = e_mail
 
                     self.send_msg(_('Email binding successful.'))
                 else:

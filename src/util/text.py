@@ -112,5 +112,3 @@ def _check_msg_type(msg_):
     for i in msg_['msg_chain']:
         if i['type'] not in ['text', 'img', 'file', 'sticker', 'at', 'reply', 'voice']:
             raise ValueError("Illegal type in message chain.")
-
-

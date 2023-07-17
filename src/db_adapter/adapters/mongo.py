@@ -45,25 +45,25 @@ class MongoCA(BaseCA):
         self._collection.delete_one(filter_)
 
     def save(self, item: Item) -> bool:
-        return self._collection.save(item.value)
+        return self._collection.save(item.data)
 
-    def find(self, filter_: Mapping[str, Any] = None, masking: Mapping[str, Any] = None, limit: int = 0,
-             sort_key: str = None) -> Iterable[Item]:
+    def find(self, filter_: Mapping[str, Any], masking=None, limit: int = 0,
+             sort_key: str = "") -> Iterable[Item]:
         rt = self._collection.find(filter_ if filter_ else {}, masking).limit(limit)
-        if sort_key is not None:
+        if sort_key:
             rt = rt.sort(sort_key)
         return rt
 
     def insert_one(self, item: Item | Mapping[str, Any]):
         v = item
         while isinstance(item, Item):
-            v = item.value
+            v = item.data
 
         self._collection.insert_one(v)
 
     def find_one(self,
-                 filter_: Mapping[str, Any] = None,
-                 masking: Mapping[str, Any] = None) -> (Item | None):
+                 filter_: Mapping[str, Any],
+                 masking=None) -> (Item | None):
         i = self._collection.find_one(filter_, masking)
 
         if i is None:
@@ -74,5 +74,6 @@ class MongoCA(BaseCA):
 class Mongo(BaseDBA):
 
     def get_collection(self, collection: str) -> BaseCA:
-        db = MongoClient(host=self.config['host'], port=self.config['port'])[self.config['db']]
+        db: Database[Mapping[str, Any] | Any] = MongoClient(host=self.config['host'], port=self.config['port'])[
+            self.config['db']]
         return MongoCA(global_config=self.global_config, config=self.config, collection=collection, db=db)

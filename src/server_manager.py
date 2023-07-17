@@ -43,9 +43,9 @@ class ServerManager:
     Main class of server.
     """
 
-    def __init__(self, server_kwargs: dict = None, dol: DynamicObjLoader = None,
-                 config: ConfigParser | dict | str = None,
-                 plugin_mgr: PluginManager = None):
+    def __init__(self, server_kwargs, dol,
+                 config: ConfigParser | dict | str,
+                 plugin_mgr: PluginManager):
         """
 
         :param server_kwargs: The kwargs of server.
@@ -56,7 +56,7 @@ class ServerManager:
         self.config = ConfigParser(config) if config is not None else ConfigParser({})
 
         self.dol = DynamicObjLoader() if dol is None else dol
-        self.plugin_mgr = PluginManager() if plugin_mgr is None else plugin_mgr
+        self.plugin_mgr = PluginManager(config=config,dol=dol) if plugin_mgr is None else plugin_mgr
 
         self.server = {}
         self.receivers = {}
@@ -68,7 +68,7 @@ class ServerManager:
             logging.info(_('Auto update enabled.'))
             threading.Thread(target=self._update_thread).start()
 
-    def join(self, timeout: float = None):
+    def join(self, timeout: float = 0):
         """
         Join the server thread.
         :param timeout: The timeout of join.
@@ -107,7 +107,7 @@ class ServerManager:
                 self.close()
                 break
 
-    def _start_server_core(self, server_kwargs: dict = None):
+    def _start_server_core(self, server_kwargs: dict):
         """
         Start the server core.
         :param server_kwargs: The kwargs of server.
@@ -133,7 +133,7 @@ class ServerManager:
         t.start()
         self.server = {'server': s, 'thread': t}
 
-    def request(self, req: Request = None) -> ReturnData:
+    def request(self, req: Request) -> ReturnData:
         """
         The handler of request.
         :param req: The request.

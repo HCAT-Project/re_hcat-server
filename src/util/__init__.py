@@ -95,7 +95,7 @@ def multi_line_log(logger: logging.Logger = logging.getLogger(), level: int = lo
 
 
 class AutoValidateDescriptor:
-    def __init__(self, name: str, func_set: Callable = None, err: BaseException = None):
+    def __init__(self, name: str, func_set: Callable, err: BaseException = Exception()):
         self.name = name
         self.func_set = func_set
         self.err = err
