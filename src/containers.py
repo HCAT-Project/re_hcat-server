@@ -176,7 +176,7 @@ class User(Jelly):
         self.salt = None
         self.user_id = user_id
         self.user_name = user_name
-        self.change_password(password=password, method=password_hash_config.get('password_hash', 'scrypt'),
+        self.change_password(password=password, method=password_hash_config.get('method', 'scrypt'),
                              **password_hash_config['kwargs'])
 
     def _var_init(self):

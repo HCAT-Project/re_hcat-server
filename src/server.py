@@ -167,7 +167,7 @@ class Server:
         del_e_count = 0
         del_sid_count = 0
 
-        for i in self.db_event.find():
+        for i in self.db_event.find({}):
             if i and time.time() - i['time'] > self.event_timeout:
                 self.db_event.delete_one({'_id': i['_id']})
                 del_e_count += 1
