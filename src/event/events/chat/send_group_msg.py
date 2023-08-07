@@ -28,7 +28,7 @@ import copy
 import time
 
 import src.util.text
-from src.containers import User, ReturnData, EventContainer, Group
+from src.containers import ReturnData, EventContainer
 from src.event.base_event import BaseEvent
 
 
@@ -45,7 +45,7 @@ class SendGroupMsg(BaseEvent):
 
         try:
             msg_ = src.util.text.msg_process(msg_)
-        except ValueError:
+        except (ValueError, TypeError):
             return ReturnData(ReturnData.ERROR, _('Illegal messages.'))
 
         with self.server.update_group_data(group_id) as group:
@@ -68,4 +68,4 @@ class SendGroupMsg(BaseEvent):
 
             group.broadcast(server=self.server, user_id=self.user_id, ec=ec)
             ec.write_in()
-        return ReturnData(ReturnData.OK)
+        return ReturnData(ReturnData.OK).add('rid', ec.rid)

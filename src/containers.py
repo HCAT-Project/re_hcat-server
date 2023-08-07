@@ -365,6 +365,9 @@ class Group(Jelly):
             'answer': ''
         }
 
+    def _var_init(self):
+        self.pin_list = set()
+
     def broadcast(self, ec: EventContainer, server, *, user_id: str):
         """
         Send an event to all group members except for the specified user.

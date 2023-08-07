@@ -292,7 +292,7 @@ class Server:
             yield group
             i.data = dehydrate(group)
 
-    def is_user_exist(self, user_id: str):
+    def is_user_exist(self, user_id: str)->bool:
         """
         Check if the user exists.
         :param user_id: The id of user.
@@ -315,10 +315,11 @@ class Server:
 
         if eid in self.event_sid_table:
             eid = self.event_sid_table[eid]
-        if d:=self.db_event.find_one({'rid': eid}):
+        if d := self.db_event.find_one({'rid': eid}):
             return d.data
         else:
             raise KeyError('Event not found.')
+
     def is_user_event_exist(self, event_id: str) -> bool:
         """
         Check if the event exists.

@@ -29,7 +29,7 @@ import logging
 import time
 
 import src.util.text
-from src.containers import User, ReturnData, EventContainer
+from src.containers import ReturnData, EventContainer
 from src.event.base_event import BaseEvent
 
 
@@ -72,4 +72,4 @@ class SendFriendMsg(BaseEvent):
                 add('time', time.time())
             ec.write_in()
             user.add_user_event(ec)
-            return ReturnData(ReturnData.OK)
+            return ReturnData(ReturnData.OK).add('rid', ec.rid)
