@@ -29,14 +29,13 @@ from src.event.base_event import BaseEvent
 class GetAvatarUrl(BaseEvent):
     auth = True
 
-    def _run(self, user_id_or_hash):
+    def _run(self, user_id=None, hash_=None):
         _ = self.gettext_func
-        hash_ = user_id_or_hash
         # get user data
-        if self.server.is_user_exist(user_id_or_hash):
-            user = self.server.get_user(user_id_or_hash)
+        if self.server.is_user_exist(user_id):
+            user = self.server.get_user(user_id)
             hash_ = user.avatar
         elif not self.server.upload_folder.get_file_path(hash_):
             return ReturnData(ReturnData.ERROR, _('File not found.'))
-        return ReturnData(ReturnData.OK).add('avatar', f'/files/{hash_}')
+        return ReturnData(ReturnData.OK).add('url', f'/files/{hash_}')
     #todo:add default avatar
