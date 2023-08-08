@@ -27,7 +27,7 @@ from src.event.base_event import BaseEvent
 
 
 class GetProfile(BaseEvent):
-    auth = True
+    auth = False
 
     def _run(self, user_id):
         _ = self.gettext_func
