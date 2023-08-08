@@ -50,4 +50,5 @@ class Upload(BaseEvent):
         if file_type == 'profile_photo':
             file_timeout = 300
 
-        self.server.upload_folder.save_file(_file.stream, timeout=file_timeout)
+        _hash = self.server.upload_folder.save_file(_file.stream, timeout=file_timeout)
+        return ReturnData(ReturnData.OK).add('hash', _hash)
