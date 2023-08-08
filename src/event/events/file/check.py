@@ -17,7 +17,7 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
-@File       : check_file_exist.py
+@File       : check.py
 
 @Author     : hsn
 
@@ -33,5 +33,4 @@ class CheckFileExist(BaseEvent):
     auth = False
 
     def _run(self, sha1):
-        return (ReturnData(ReturnData.OK if self.server.check_file_exists(sha1) else ReturnData.NULL)
-                .add('_WARNING', 'This event is deprecated.Please use file/check instead.'))
+        return ReturnData(ReturnData.OK if self.server.check_file_exists(sha1) else ReturnData.NULL)
