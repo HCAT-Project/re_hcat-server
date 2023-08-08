@@ -29,7 +29,7 @@ from src.containers import ReturnData
 from src.event.base_event import BaseEvent
 
 
-class CheckFileExist(BaseEvent):
+class Check(BaseEvent):
     auth = False
 
     def _run(self, sha1):
