@@ -43,6 +43,9 @@ if __name__ == '__main__':
 
         main()
     except BaseException as err:
+        if isinstance(err, SystemExit):
+            # exit with code
+            sys.exit(err.code)
         # log the unknown error
         logging.critical(_('The function "main" could not be loaded, please check if the file is complete.'))
         logging.exception(err)

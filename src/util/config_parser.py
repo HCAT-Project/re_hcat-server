@@ -27,7 +27,6 @@
 """
 import copy
 import json
-import re
 from collections import UserDict
 from io import TextIOWrapper, BytesIO, BufferedRandom
 from os import PathLike
@@ -46,7 +45,7 @@ class ConfigParser(UserDict):
             with open(config, 'r') as f:
                 data: dict = json.loads(self._del_comments(f.read()))
         elif isinstance(config, (IO, TextIOWrapper, BytesIO, BufferedRandom, ZipFile)):
-            data: dict = json.load(config)
+            data: dict = json.loads(self._del_comments(config.read()))
         elif isinstance(config, ConfigParser):
             data = config.data
         else:
@@ -54,10 +53,29 @@ class ConfigParser(UserDict):
         super().__init__(data)
 
     @staticmethod
-    def _del_comments(json_raw: str):
-        json_str = re.sub(re.compile(r'//.*\n'), '', json_raw)
-        json_str = re.sub(re.compile(r'/\*[^.]*\*/'), '', json_str)
-        return json_str
+    def _del_comments(j: str):
+        quote_lock = False
+        comment_lock1 = False
+        comment_lock2 = False
+        all_j = ''
+        for i, s in enumerate(j):
+
+            if s == '"':
+                quote_lock = not quote_lock
+
+            if not quote_lock and s == '/':
+                if j[i + 1] == '/' and not comment_lock2:
+                    comment_lock1 = True
+                elif j[i + 1] == '*' and not comment_lock1:
+                    comment_lock2 = True
+                elif j[i - 1] == '*' and comment_lock2:
+                    comment_lock2 = False
+            if not quote_lock and s == '\n' and comment_lock1:
+                comment_lock1 = False
+            if not comment_lock1 and not comment_lock2:
+                all_j += s
+
+        return all_j
 
     def __repr__(self):
         return f'ConfigParser({self.data})'

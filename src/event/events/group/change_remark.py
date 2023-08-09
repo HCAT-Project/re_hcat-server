@@ -37,3 +37,4 @@ class ChangeRemark(BaseEvent):
             if group_id not in user.groups_dict:
                 return ReturnData(ReturnData.ERROR, _('You are not in the group.'))
             user.groups_dict[group_id]['remark'] = remark
+        return ReturnData(ReturnData.OK, _('Remark changed.'))
