@@ -35,13 +35,12 @@ class AgreeJoinGroupRequest(BaseEvent):
 
     def _run(self, rid):
         _ = self.gettext_func
-        if not self.server.db_event.exists(rid):
+        if not self.server.db_event.find_one({'rid': rid}):
             return ReturnData(ReturnData.NULL, _('Event does not exist.'))
 
-        with self.server.db_event.enter(rid) as e:
-            event: dict = e.data
-            req_user_id = event['user_id']
-            group_id = event['group_id']
+        event: dict = self.server.get_user_event(rid)
+        req_user_id = event['user_id']
+        group_id = event['group_id']
 
         with self.server.update_user_data(req_user_id) as user:
             req_user_name = user.user_id
