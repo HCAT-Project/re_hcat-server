@@ -123,7 +123,6 @@ class BaseEventOfSVACRecvMsg(BaseEvent, metaclass=abc.ABCMeta):
         with self.server.update_user_data(self.user_id) as user:
             user.add_fri_msg2todos(self.server, self.bot_id, self.bot_name, self.bot_name,
                                    msg)
-
     def _run(self, msg: str):
         self._reg_cmds()
         _ = self.gettext_func
