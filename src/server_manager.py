@@ -56,7 +56,7 @@ class ServerManager:
         self.config = ConfigParser(config) if config is not None else ConfigParser({})
 
         self.dol = DynamicObjLoader() if dol is None else dol
-        self.plugin_mgr = PluginManager(config=config,dol=dol) if plugin_mgr is None else plugin_mgr
+        self.plugin_mgr = PluginManager(config=config, dol=dol) if plugin_mgr is None else plugin_mgr
 
         self.server = {}
         self.receivers = {}
