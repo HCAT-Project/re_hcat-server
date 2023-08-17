@@ -38,7 +38,7 @@ class ChangeBio(BaseEvent):
         if not re.match(bio_regex, bio):
             return ReturnData(ReturnData.ERROR,
                               _('Bio does not match {} .').format(bio_regex))
-        if re.match(bio_invalid_regex, bio):
+        if re.findall(bio_invalid_regex, bio):
             return ReturnData(ReturnData.ERROR,
                               _('Bio has invalid characters.'))
         with self.server.update_user_data(self.user_id) as user:
