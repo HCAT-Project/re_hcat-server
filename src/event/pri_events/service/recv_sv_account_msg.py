@@ -27,8 +27,6 @@
 import importlib
 import logging
 
-from flask import make_response
-
 from src.containers import ReturnData
 from src.event.base_event import BaseEvent
 

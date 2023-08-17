@@ -26,7 +26,7 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import time
 
-from src.containers import Group, ReturnData, User, EventContainer
+from src.containers import ReturnData, EventContainer
 from src.event.base_event import BaseEvent
 
 
@@ -59,7 +59,7 @@ class Kick(BaseEvent):
                 add('time', time.time()). \
                 add('member_id', member_id)
             ec.write_in()
-            group.broadcast(server=self.server,user_id= '',ec= ec)
+            group.broadcast(server=self.server, user_id='', ec=ec)
 
         with self.server.update_user_data(member_id) as user:
             user.groups_dict.pop(group_id)

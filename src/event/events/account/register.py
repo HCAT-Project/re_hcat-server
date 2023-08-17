@@ -50,7 +50,6 @@ class Register(BaseEvent):
         if len(password) < 6:
             return ReturnData(ReturnData.ERROR, _('Password is too short.'))
 
-
         crypto_default = {"crypto": {
             "password": {
                 "method": "scrypt",

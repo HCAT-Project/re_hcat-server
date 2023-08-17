@@ -25,11 +25,9 @@
 import copy
 import json
 import logging
-from pathlib import Path
 
 from src.containers import ReturnData
 from src.event.base_event import BaseEvent
-from src.util.regex import gender_regex
 
 
 class UpdateProfile(BaseEvent):

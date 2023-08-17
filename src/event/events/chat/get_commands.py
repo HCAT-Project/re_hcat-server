@@ -25,10 +25,8 @@
 import importlib
 import logging
 
-from src.containers import ReturnData, User, EventContainer
-from src.db_adapter.base_dba import BaseCA
+from src.containers import ReturnData
 from src.event.base_event import BaseEvent, BaseEventOfSVACRecvMsg
-from src.event.recv_event import RecvEvent
 
 
 class GetCommands(BaseEvent):

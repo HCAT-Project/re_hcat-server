@@ -38,4 +38,4 @@ class GetAvatarUrl(BaseEvent):
         elif not self.server.upload_folder.get_file_path(hash_):
             return ReturnData(ReturnData.ERROR, _('File not found.'))
         return ReturnData(ReturnData.OK).add('url', f'/files/{hash_}')
-    #todo:add default avatar
+    # todo:add default avatar

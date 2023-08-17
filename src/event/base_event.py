@@ -34,7 +34,7 @@ import os
 import src.util.functools
 from src import util
 from src.containers import Request
-from src.containers import ReturnData, User
+from src.containers import ReturnData
 from src.event.event_manager import EventManager
 from src.util.command_parser import Command
 
@@ -123,6 +123,7 @@ class BaseEventOfSVACRecvMsg(BaseEvent, metaclass=abc.ABCMeta):
         with self.server.update_user_data(self.user_id) as user:
             user.add_fri_msg2todos(self.server, self.bot_id, self.bot_name, self.bot_name,
                                    msg)
+
     def _run(self, msg: str):
         self._reg_cmds()
         _ = self.gettext_func

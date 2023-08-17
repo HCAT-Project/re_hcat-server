@@ -26,7 +26,7 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import time
 
-from src.containers import ReturnData, User, EventContainer
+from src.containers import ReturnData, EventContainer
 from src.event.base_event import BaseEvent
 
 
