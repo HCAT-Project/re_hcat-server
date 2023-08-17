@@ -22,8 +22,11 @@
 
 @Version    : 1.0.0
 """
+import re
+
 from src.containers import ReturnData
 from src.event.base_event import BaseEvent
+from src.util.regex import bio_regex, bio_invalid_regex
 
 
 class ChangeBio(BaseEvent):
@@ -31,6 +34,13 @@ class ChangeBio(BaseEvent):
 
     def _run(self, bio):
         _ = self.gettext_func
+        # check if is valid
+        if not re.match(bio_regex, bio):
+            return ReturnData(ReturnData.ERROR,
+                              _('Bio does not match {} .').format(bio_regex))
+        if re.match(bio_invalid_regex, bio):
+            return ReturnData(ReturnData.ERROR,
+                              _('Bio has invalid characters.'))
         with self.server.update_user_data(self.user_id) as user:
             user.bio = bio
         return ReturnData(ReturnData.OK)
