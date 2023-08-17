@@ -38,7 +38,8 @@ class GetProfile(BaseEvent):
             'name': user.user_name,
             'id': user.user_id,
             'bio': user.bio,
-            'status': user.status
+            'status': user.status,
+            'gender': user.gender
         }
         if self.user_id is not None:
             is_fri = self.server.get_user(self.user_id).is_in_contact(user_id)
