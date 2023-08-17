@@ -24,7 +24,7 @@
 #  _
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
-from src.containers import Group, User, ReturnData
+from src.containers import ReturnData
 from src.event.base_event import BaseEvent
 
 

@@ -34,7 +34,7 @@ import os
 import src.util.functools
 from src import util
 from src.containers import Request
-from src.containers import ReturnData, User
+from src.containers import ReturnData
 from src.event.event_manager import EventManager
 from src.util.command_parser import Command
 

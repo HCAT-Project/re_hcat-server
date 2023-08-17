@@ -31,14 +31,14 @@ import os
 import re
 
 from src import util
-from src.containers import EventContainer, User
+from src.containers import EventContainer
 from src.event.base_event import BaseEventOfSVACRecvMsg
 from src.util.regex import regex_email
 
 
 class RecvMsg(BaseEventOfSVACRecvMsg):
-    bot_id:str = '0sAccount'
-    bot_name:str = 'Account_BOT'
+    bot_id: str = '0sAccount'
+    bot_name: str = 'Account_BOT'
 
     def _reg_cmds(self):
         _ = self.gettext_func
@@ -92,7 +92,7 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
 
             elif cmd[0] == 'unbind':
                 if self.server.config['email']['enable-email-verification']:
-                    user= self.server.update_user_data(self.user_id)
+                    user = self.server.update_user_data(self.user_id)
                     if user.email is not None:
                         self.send_msg(_('You have not bound an email.'))
                         return

@@ -26,7 +26,6 @@
 @Version    : 1.0.1
 """
 import importlib
-import logging
 from pathlib import Path, PosixPath
 from typing import Union
 
@@ -42,7 +41,7 @@ class DynamicObjLoader:
     def load_obj(path: str | PosixPath, obj_name: str = ""):
         if isinstance(path, Path):
             path = str(path)
-        if obj_name=="":
+        if obj_name == "":
             obj_name = src.util.text.under_score_to_pascal_case(Path(path).stem)
 
         try:
@@ -79,7 +78,6 @@ class DynamicObjLoader:
     def load_obj_from_group(self, path: Union[str, Path], obj_name: str = "", group: str = "default"):
         for i in self.group_dict.get(group, []):
             module_path = Path(i) / path
-
             if module_path.with_suffix(".py").exists():
 
                 if isinstance(module_path, PosixPath):

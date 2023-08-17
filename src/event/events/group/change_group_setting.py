@@ -26,7 +26,7 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import json
 
-from src.containers import Group, ReturnData
+from src.containers import ReturnData
 from src.event.base_event import BaseEvent
 
 

@@ -24,7 +24,6 @@
 @Version    : 1.0.0
 """
 
-
 from send_friend_msg import SendFriendMsg
 from send_group_msg import SendGroupMsg
 

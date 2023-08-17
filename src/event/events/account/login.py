@@ -28,7 +28,7 @@ import json
 
 import src.util.crypto
 import src.util.text
-from src.containers import ReturnData, User
+from src.containers import ReturnData
 from src.event.base_event import BaseEvent
 
 

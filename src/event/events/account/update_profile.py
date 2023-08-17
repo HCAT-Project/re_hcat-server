@@ -14,28 +14,38 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
-@File       : get_avatar_url.py
+@File       : update_profile.py
 
 @Author     : hsn
 
-@Date       : 7/4/23 8:56 PM
+@Date       : 8/17/23 9:41 PM
 
 @Version    : 1.0.0
 """
+import copy
+import json
+import logging
+
 from src.containers import ReturnData
 from src.event.base_event import BaseEvent
 
 
-class GetAvatarUrl(BaseEvent):
+class UpdateProfile(BaseEvent):
     auth = True
 
-    def _run(self, user_id=None, hash_=None):
+    def _run(self, profile: str | dict):
         _ = self.gettext_func
-        # get user data
-        if self.server.is_user_exist(user_id):
-            user = self.server.get_user(user_id)
-            hash_ = user.avatar
-        elif not self.server.upload_folder.get_file_path(hash_):
-            return ReturnData(ReturnData.ERROR, _('File not found.'))
-        return ReturnData(ReturnData.OK).add('url', f'/files/{hash_}')
-    # todo:add default avatar
+        if type(profile) == str:
+            try:
+                profile = json.loads(profile)
+            except json.JSONDecodeError:
+                return ReturnData(ReturnData.ERROR, _('Illegal profile.'))
+        try:
+            for k in profile:
+                ec = self.server.dol.load_obj_from_group(path=f'account/change_{k}', group='req_events')
+                req = copy.deepcopy(self.req)
+                req.form.update(profile)
+                self.e_mgr.create_event(ec, req, self.path)
+        except Exception as err:
+            logging.exception(err)
+            return ReturnData(ReturnData.ERROR, str(err))

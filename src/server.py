@@ -292,7 +292,7 @@ class Server:
             yield group
             i.data = dehydrate(group)
 
-    def is_user_exist(self, user_id: str)->bool:
+    def is_user_exist(self, user_id: str) -> bool:
         """
         Check if the user exists.
         :param user_id: The id of user.
