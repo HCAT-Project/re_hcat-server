@@ -14,33 +14,26 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
-@File       : change_bio.py
+@File       : get_gender.py
 
 @Author     : hsn
 
-@Date       : 7/4/23 9:23 PM
+@Date       : 8/17/23 9:14 PM
 
 @Version    : 1.0.0
 """
-import re
-
 from src.containers import ReturnData
 from src.event.base_event import BaseEvent
-from src.util.regex import bio_regex, bio_invalid_regex
 
 
-class ChangeBio(BaseEvent):
+class GetGender(BaseEvent):
     auth = True
 
-    def _run(self, bio):
+    def _run(self, user_id=None, hash_=None):
         _ = self.gettext_func
-        # check if is valid
-        if not re.match(bio_regex, bio):
-            return ReturnData(ReturnData.ERROR,
-                              _('Bio does not match {} .').format(bio_regex))
-        if re.match(bio_invalid_regex, bio):
-            return ReturnData(ReturnData.ERROR,
-                              _('Bio has invalid characters.'))
-        with self.server.update_user_data(self.user_id) as user:
-            user.bio = bio
-        return ReturnData(ReturnData.OK)
+        # get user data
+        if self.server.is_user_exist(user_id):
+            user = self.server.get_user(user_id)
+            return ReturnData(ReturnData.OK).add('gender', user.gender)
+        elif not self.server.upload_folder.get_file_path(hash_):
+            return ReturnData(ReturnData.ERROR, _('File not found.'))

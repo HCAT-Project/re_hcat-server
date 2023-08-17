@@ -14,33 +14,29 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
-@File       : change_bio.py
+@File       : set_language.py
 
 @Author     : hsn
 
-@Date       : 7/4/23 9:23 PM
+@Date       : 8/17/23 9:18 PM
 
 @Version    : 1.0.0
 """
-import re
+from pathlib import Path
 
 from src.containers import ReturnData
 from src.event.base_event import BaseEvent
-from src.util.regex import bio_regex, bio_invalid_regex
+from src.util.regex import gender_regex
 
 
-class ChangeBio(BaseEvent):
+class SetLanguage(BaseEvent):
     auth = True
 
-    def _run(self, bio):
+    def _run(self, lang: str):
         _ = self.gettext_func
-        # check if is valid
-        if not re.match(bio_regex, bio):
-            return ReturnData(ReturnData.ERROR,
-                              _('Bio does not match {} .').format(bio_regex))
-        if re.match(bio_invalid_regex, bio):
-            return ReturnData(ReturnData.ERROR,
-                              _('Bio has invalid characters.'))
         with self.server.update_user_data(self.user_id) as user:
-            user.bio = bio
+            if not Path('locale', lang).exists():
+                return ReturnData(ReturnData.ERROR,
+                                  _('Language not supported.'))
+            user.language = lang
         return ReturnData(ReturnData.OK)
