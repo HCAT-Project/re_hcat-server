@@ -92,7 +92,7 @@ class WebsocketsWsReceiver(BaseReceiver):
                         self.connectors[_id] = (auth_data, websocket)
 
                     # send the return data
-                    await websocket.send(json.dumps({"ver": 1, "type": "todo_list", "data": rt.json_data}))
+                    await websocket.send(json.dumps({"ver": 1, "type": "response", "data": rt.json_data}))
             except websockets.ConnectionClosed:
                 pass
             except json.JSONDecodeError:
