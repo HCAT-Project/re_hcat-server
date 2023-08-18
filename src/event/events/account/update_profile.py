@@ -46,7 +46,9 @@ class UpdateProfile(BaseEvent):
 
                 req = copy.deepcopy(self.req)
                 req.form.update(profile)
-                self.e_mgr.create_event(ec, req, self.path)
+                rt=self.e_mgr.create_event(ec, req, self.path)
+                if rt.json_data['status'] != ReturnData.OK:
+                    return rt
 
         except Exception as err:
             logging.exception(err)
