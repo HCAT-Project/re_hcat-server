@@ -25,6 +25,7 @@
 
 @Version    : 1.0.0
 """
+import tempfile
 import time
 from pathlib import Path
 from typing import Union, IO
@@ -51,15 +52,21 @@ class FileManager:
             raise FileNotFoundError(f"File {sha1} not found")
 
     def save_file(self, file: IO[bytes], timeout=7 * 24 * 60) -> str:
+        tmp_file = tempfile.TemporaryFile()
+        while chunk := file.read(1024):
+            tmp_file.write(chunk)
 
-        hash_ = file_hash(file)
-        file.seek(0)
+        tmp_file.seek(0)
+        hash_ = file_hash(tmp_file)
 
-        with open(Path(self.path) / hash_, 'wb') as f:
-            while chunk := file.read(1024):
-                f.write(chunk)
+        tmp_file.seek(0)
+        if not (Path(self.path) / hash_).exists():
+            with open(Path(self.path) / hash_, 'wb') as f:
+                while chunk := tmp_file.read(1024):
+                    f.write(chunk)
         with self.info_db.enter_one(hash_) as info:
             info.data = {'size': file.tell(), 'timeout': time.time() + timeout, 'ref': 0}
+
         return hash_
 
     def add_ref(self, sha1: str):
