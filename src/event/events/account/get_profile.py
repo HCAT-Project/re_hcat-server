@@ -33,15 +33,18 @@ class GetProfile(BaseEvent):
         _ = self.gettext_func
         # get user data
         user = self.server.get_user(user_id)
-        rt = ReturnData(ReturnData.OK) \
-            .add('avatar', user.avatar) \
-            .add('name', user.user_name) \
-            .add('id', user.user_id) \
-            .add('bio', user.bio) \
-            .add('status', user.status)
-
+        rt = {
+            'avatar': user.avatar,
+            'name': user.user_name,
+            'id': user.user_id,
+            'bio': user.bio,
+            'status': user.status,
+            'gender': user.gender
+        }
         if self.user_id is not None:
-            rt.add('is_friend', is_fri := self.server.get_user(self.user_id).is_friend(user_id))
+            is_fri = self.server.get_user(self.user_id).is_in_contact(user_id)
+            rt['is_friend'] = is_fri
             if is_fri:
-                rt.add('nick', self.server.get_user(self.user_id).get_friend(user_id)['nick'])
-                rt.add('time', self.server.get_user(self.user_id).get_friend(user_id)['time'])
+                rt['nick'] = self.server.get_user(self.user_id).get_friend(user_id)['nick']
+                rt['time'] = self.server.get_user(self.user_id).get_friend(user_id)['time']
+        return ReturnData(ReturnData.OK).add('data', rt)

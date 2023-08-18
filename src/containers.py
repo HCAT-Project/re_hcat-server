@@ -223,7 +223,7 @@ class User(Jelly):
         return False
 
     def get_friend(self, friend_id) -> dict:
-        return self.friend_dict.get(friend_id, default=None)
+        return self.friend_dict.get(friend_id)
 
     def is_in_group(self, server, group_id: str) -> bool:
         """
