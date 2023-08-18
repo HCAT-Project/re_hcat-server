@@ -54,5 +54,5 @@ class TransferOwnership(BaseEvent):
                 .add('member_id', member_id) \
                 .add('operator_id', self.user_id)
             ec.write_in()
-            group.broadcast(ec=ec, server=self.server)
+            group.broadcast(ec=ec, server=self.server,user_id=self.user_id)
             return ReturnData(ReturnData.OK)
