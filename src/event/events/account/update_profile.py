@@ -43,9 +43,12 @@ class UpdateProfile(BaseEvent):
         try:
             for k in profile:
                 ec = self.server.dol.load_obj_from_group(path=f'account/change_{k}', group='req_events')
+
                 req = copy.deepcopy(self.req)
                 req.form.update(profile)
                 self.e_mgr.create_event(ec, req, self.path)
+
         except Exception as err:
             logging.exception(err)
             return ReturnData(ReturnData.ERROR, str(err))
+        return ReturnData(ReturnData.OK)
