@@ -52,8 +52,8 @@ class BaseCA(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def find(self,
-             filter_: Mapping[str, Any],
-             masking: Mapping[str, Any],
+             filter_: Mapping[str, Any] | None = None,
+             masking: Mapping[str, Any] | None = None,
              limit: int = 0,
              sort_key: str = "") -> Iterable[Item]:
         """
