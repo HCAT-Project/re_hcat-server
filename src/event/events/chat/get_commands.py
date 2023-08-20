@@ -48,4 +48,5 @@ class GetCommands(BaseEvent):
                 logging.exception(e)
             return ReturnData(ReturnData.ERROR, _('Service not found.'))
         e: BaseEventOfSVACRecvMsg = event_class(None, None, None, None)
-        return ReturnData(ReturnData.OK).add('commands', list(e.cmds))
+
+        return ReturnData(ReturnData.OK).add('commands', dict(e.get_cmds()))
