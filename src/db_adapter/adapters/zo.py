@@ -76,7 +76,6 @@ class ZoCA(BaseCA):
         self.db = DB(self.storage)
         self.connection = self.db.open()
         self.conn = self.connection.root()
-        print(self.conn)
 
     def find(self, filter_: Mapping[str, Any] | None = None, masking: Mapping[str, Any] | None = None, limit: int = 0,
              sort_key: str = "") -> \
@@ -111,12 +110,10 @@ class ZoCA(BaseCA):
         v = self.find_one(filter_)
         if v:
             _id = v["_id"]
-            print(update)
             rt = v.data
             rt.update(update.get("$set", {}))
             self.conn[_id] = rt
             transaction.commit()
-            print(self.conn[_id])
         else:
             self.insert_one(update)
 
@@ -143,7 +140,7 @@ class Zo(BaseDBA):
 
     def close(self):
         for i in self.dbs:
-            print(i)
+
             if not transaction.get().isDoomed():
                 transaction.commit()
             self.dbs[i].connection.close()

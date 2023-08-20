@@ -50,7 +50,6 @@ class UpdateProfile(BaseEvent):
                 if rt.json_data['status'] != 'ok':
                     return rt
 
-
         except Exception as err:
             logging.exception(err)
             return ReturnData(ReturnData.ERROR, str(err))

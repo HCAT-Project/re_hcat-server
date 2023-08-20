@@ -258,7 +258,6 @@ class Server:
         :return:
         """
         with self.db_account.enter_one({'user_id': user_id}) as i:
-            print(i)
             user: User = agar(i.data)
             yield user
             i.data = dehydrate(user)
