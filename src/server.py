@@ -245,7 +245,7 @@ class Server:
         """
         # save data and exit
         self.logger.info(_('Saving data...'))
-
+        self.dba.close()
         self.running = False
 
         self.logger.info(_('Server closed.'))
@@ -258,6 +258,7 @@ class Server:
         :return:
         """
         with self.db_account.enter_one({'user_id': user_id}) as i:
+            print(i)
             user: User = agar(i.data)
             yield user
             i.data = dehydrate(user)

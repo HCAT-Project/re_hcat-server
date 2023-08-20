@@ -58,9 +58,12 @@ class BaseEvent(metaclass=abc.ABCMeta):
 
         # get lang
         if self.user_id is not None:
-            with self.server.update_user_data(self.user_id) as user:
-                if user is not None:
-                    self.lang = user.language
+            try:
+                user = self.server.get_user(self.user_id)
+            except KeyError:
+                user = None
+            if user is not None:
+                self.lang = user.language
 
         if 'lang' in req_data and self.lang is None:
             if req_data['lang'] in os.listdir('locale'):
