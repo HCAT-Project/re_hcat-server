@@ -48,5 +48,5 @@ regex_email = r'^[\w.%+-]+@(gmail\.com|yahoo\.com|msn\.com|hotmail\.com|aol\.com
 
 name_regex = r'^[a-zA-Z][a-zA-Z0-9_]{4,15}$'
 gender_regex = r'^[a-zA-Z0-9_]{0,24}$'
-bio_regex = r'^[a-zA-Z0-9_]{0,24}$'
+bio_regex = r'^[a-zA-Z0-9_ ]{0,24}$'
 bio_invalid_regex = r''
