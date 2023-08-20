@@ -172,5 +172,13 @@ class BaseDBA(metaclass=abc.ABCMeta):
         """
         pass
 
+    @abc.abstractmethod
+    def close(self):
+        """
+        Close database.
+        :return:
+        """
+        pass
+
     def __getitem__(self, item) -> BaseCA:
         return self.get_collection(item)

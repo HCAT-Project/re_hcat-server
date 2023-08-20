@@ -67,11 +67,9 @@ class EventManager:
 
             # get auth data
             auth_data = req.cookies['auth_data']
-
             try:
                 # decrypt the auth data
                 auth_data_decrypto = AesCrypto(self.server.key).decrypt(auth_data)
-
                 # parse the auth data
                 auth_data_json = json.loads(auth_data_decrypto)
 
@@ -81,6 +79,7 @@ class EventManager:
             except json.JSONDecodeError as err:
                 self.logger.debug(err)
             except KeyError as err:
+
                 auth_success = False
 
         # check if the auth is successful

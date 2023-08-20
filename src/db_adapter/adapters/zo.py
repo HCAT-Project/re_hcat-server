@@ -58,6 +58,8 @@ from typing import Mapping, Any, Iterable
 from src.db_adapter.base_dba import BaseCA, BaseDBA, Item
 from ZODB import DB
 
+import transaction
+
 
 class ZoCA(BaseCA):
     def __init__(self, global_config: ConfigParser, config: ConfigParser, collection: str):
@@ -67,26 +69,31 @@ class ZoCA(BaseCA):
             path = Path(path_str) / f'{collection}.fs'
             if not path.parent.exists():
                 path.parent.mkdir(parents=True, exist_ok=True)
-            storage = FileStorage(path.as_posix())
+            self.storage = FileStorage(path.as_posix())
         else:
-            storage = None
+            self.storage = None
 
-        db = DB(storage)
-        connection = db.open()
-        self.db = connection.root()
-        print(self.db)
+        self.db = DB(self.storage)
+        self.connection = self.db.open()
+        self.conn = self.connection.root()
+        print(self.conn)
 
     def find(self, filter_: Mapping[str, Any] | None = None, masking: Mapping[str, Any] | None = None, limit: int = 0,
              sort_key: str = "") -> \
             Iterable[Item]:
-        for i in self.db:
+        if filter_ is None:
+            filter_ = {}
+        if masking is None:
+            masking = {}
+        for i, v in self.conn.items():
+
             for f in filter_:
-                if f not in i:
+                if f not in v:
                     break
-                if i[f] != filter_[f]:
+                if v[f] != filter_[f]:
                     break
             else:
-                yield Item(dict(filter(lambda x: masking.get(x[0], False), i.items())))
+                yield Item(dict(filter(lambda x: masking.get(x[0], True), v.items())))
 
     def insert_one(self, item: Item | Mapping[str, Any]):
         v = item
@@ -97,15 +104,19 @@ class ZoCA(BaseCA):
         else:
             _id = uuid.uuid4().hex
             v = {**v, "_id": _id}
-        self.db[_id] = v
+        self.conn[_id] = v
+        transaction.commit()
 
     def update_one(self, filter_: Mapping[str, Any], update: Mapping[str, Any]):
         v = self.find_one(filter_)
         if v:
             _id = v["_id"]
+            print(update)
             rt = v.data
-            rt.update(update)
-            self.db[_id] = rt
+            rt.update(update.get("$set", {}))
+            self.conn[_id] = rt
+            transaction.commit()
+            print(self.conn[_id])
         else:
             self.insert_one(update)
 
@@ -113,7 +124,8 @@ class ZoCA(BaseCA):
         v = self.find_one(filter_)
         if v:
             _id = v["_id"]
-            del self.db[_id]
+            del self.conn[_id]
+            transaction.commit()
 
     def save(self, item: Item) -> bool:
         try:
@@ -125,6 +137,23 @@ class ZoCA(BaseCA):
 
 
 class Zo(BaseDBA):
+    def __init__(self, config: ConfigParser):
+        super().__init__(config)
+        self.dbs: dict[str, ZoCA] = {}
+
+    def close(self):
+        for i in self.dbs:
+            print(i)
+            if not transaction.get().isDoomed():
+                transaction.commit()
+            self.dbs[i].connection.close()
+            self.dbs[i].db.close()
+            self.dbs[i].storage.close()
 
     def get_collection(self, collection: str) -> BaseCA:
-        return ZoCA(global_config=self.global_config, config=self.config, collection=collection)
+        if collection not in self.dbs:
+            db = ZoCA(global_config=self.global_config, config=self.config, collection=collection)
+            self.dbs[collection] = db
+        else:
+            db = self.dbs[collection]
+        return db
