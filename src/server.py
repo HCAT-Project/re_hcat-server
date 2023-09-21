@@ -245,7 +245,7 @@ class Server:
         """
         # save data and exit
         self.logger.info(_('Saving data...'))
-
+        self.dba.close()
         self.running = False
 
         self.logger.info(_('Server closed.'))

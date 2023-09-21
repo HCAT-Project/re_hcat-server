@@ -67,19 +67,20 @@ class EventManager:
 
             # get auth data
             auth_data = req.cookies['auth_data']
-
             try:
                 # decrypt the auth data
                 auth_data_decrypto = AesCrypto(self.server.key).decrypt(auth_data)
-
                 # parse the auth data
                 auth_data_json = json.loads(auth_data_decrypto)
 
                 # auth the token
-                with self.server.update_user_data(auth_data_json['user_id']) as user:
-                    auth_success = user.auth_token(auth_data_json['token'])
+                user = self.server.get_user(auth_data_json['user_id'])
+                auth_success = user.auth_token(auth_data_json['token'])
             except json.JSONDecodeError as err:
                 self.logger.debug(err)
+            except KeyError as err:
+
+                auth_success = False
 
         # check if the auth is successful
         if auth_success or not event.auth:

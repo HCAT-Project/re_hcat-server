@@ -58,9 +58,12 @@ class BaseEvent(metaclass=abc.ABCMeta):
 
         # get lang
         if self.user_id is not None:
-            with self.server.update_user_data(self.user_id) as user:
-                if user is not None:
-                    self.lang = user.language
+            try:
+                user = self.server.get_user(self.user_id)
+            except KeyError:
+                user = None
+            if user is not None:
+                self.lang = user.language
 
         if 'lang' in req_data and self.lang is None:
             if req_data['lang'] in os.listdir('locale'):
@@ -108,8 +111,10 @@ class BaseEventOfSVACRecvMsg(BaseEvent, metaclass=abc.ABCMeta):
         self.cmds = {}
 
         @src.util.functools.decorator_with_parameters
-        def cmd(func, head):
+        def cmd(func, head, des=""):
             self.cmds[head] = func
+            if des != "":
+                self.cmds[head].__doc__ = des
             return func
 
         self.cmd = cmd
@@ -123,6 +128,19 @@ class BaseEventOfSVACRecvMsg(BaseEvent, metaclass=abc.ABCMeta):
         with self.server.update_user_data(self.user_id) as user:
             user.add_fri_msg2todos(self.server, self.bot_id, self.bot_name, self.bot_name,
                                    msg)
+
+    def get_cmds(self):
+        self._reg_cmds()
+        for i in self.cmds:
+            if i.__doc__ == ("str(object='') -> str\nstr(bytes_or_buffer[, encoding[, errors]]) -> str\n\nCreate a "
+                             "new string object from the given object. If encoding or\nerrors is specified, then the "
+                             "object must expose a data buffer\nthat will be decoded using the given encoding and "
+                             "error handler.\nOtherwise, returns the result of object.__str__() (if defined)\n"
+                             "or repr(object).\nencoding defaults to sys.getdefaultencoding().\n"
+                             "errors defaults to 'strict'."):
+                yield i, ''
+            else:
+                yield i, i.__doc__
 
     def _run(self, msg: str):
         self._reg_cmds()

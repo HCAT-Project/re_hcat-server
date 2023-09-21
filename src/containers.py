@@ -181,7 +181,7 @@ class User(Jelly):
 
     def _var_init(self):
         self.todo_list = []
-        self.token = ''
+        self.token = src.util.crypto.get_random_token()
         self.status = 'offline'
         self.friend_dict = {}
         self.groups_dict = {}

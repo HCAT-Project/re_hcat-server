@@ -72,8 +72,19 @@ class MongoCA(BaseCA):
 
 
 class Mongo(BaseDBA):
+    def __init__(self, config: ConfigParser):
+        super().__init__(config)
+        self.collections = {}
+
+    def close(self):
+        pass
 
     def get_collection(self, collection: str) -> BaseCA:
-        db: Database[Mapping[str, Any] | Any] = MongoClient(host=self.config['host'], port=self.config['port'])[
-            self.config['db']]
-        return MongoCA(global_config=self.global_config, config=self.config, collection=collection, db=db)
+        if collection in self.collections:
+            return self.collections[collection]
+        else:
+            db: Database[Mapping[str, Any] | Any] = MongoClient(host=self.config['host'], port=self.config['port'])[
+                self.config['db']]
+            ca = MongoCA(global_config=self.global_config, config=self.config, collection=collection, db=db)
+            self.collections[collection] = ca
+            return ca
