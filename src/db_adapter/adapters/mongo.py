@@ -87,3 +87,4 @@ class Mongo(BaseDBA):
                 self.config['db']]
             ca = MongoCA(global_config=self.global_config, config=self.config, collection=collection, db=db)
             self.collections[collection] = ca
+            return ca
