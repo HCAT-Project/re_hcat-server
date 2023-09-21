@@ -28,7 +28,7 @@
 from typing import Any, Generator
 
 
-def chunk_bytes(data, chunk_size=1024) -> Generator[bytes, Any, None]:
+def chunk_bytes(data: bytes, chunk_size=1024) -> Generator[bytes, Any, None]:
     """
     Splits bytes into chunks of specified size.
 

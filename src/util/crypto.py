@@ -73,12 +73,10 @@ class AesCrypto:
         data_bytes += bytes([0] * (16 - (len(data_bytes) % 16)))
 
         # Encrypt the data in 16-byte chunks.
-        def encrypt_data_chunks(data_):
-            for d in chunk_bytes(data_, 16):
-                yield self.aes.encrypt(d)
+        encrypted = map(self.aes.encrypt, chunk_bytes(data_bytes, 16))
 
         # Join the encrypted chunks and encode the result as base64.
-        return base64.b64encode(bytes().join(encrypt_data_chunks(data_bytes))).decode('utf8')
+        return base64.b64encode(bytes().join(encrypted)).decode('utf8')
 
     def decrypt(self, cipher_text: str) -> str:
         """
@@ -87,10 +85,8 @@ class AesCrypto:
         :return: The decrypted data as a string.
         """
         data_bytes = base64.b64decode(cipher_text)
-        rt_bytes = bytes([])
-        for i in range(int(len(data_bytes) / 16)):
-            rt_bytes += self.aes.decrypt(data_bytes[16 * i:16 * (i + 1)])
-        return rt_bytes.rstrip(b'\x00').decode('utf8')
+        decrypted = map(self.aes.decrypt, chunk_bytes(data_bytes, 16))
+        return bytes().join(decrypted).rstrip(b'\x00').decode('utf8')
 
 
 def _get_hasher(method="sha256"):
