@@ -102,14 +102,14 @@ def _get_hasher(method="sha256"):
     return hasher
 
 
-def password_hash(password, method="scrypt", salt_length=16, **kwargs):
+def password_hash(password: str, method: str = "scrypt", salt_length: int = 16, **kwargs) -> str:
     """
     Hash the password with the given method.
     :param password: The password to be hashed.
     :param method: The method of hashing to use.See https://docs.python.org/zh-cn/3.10/library/hashlib.html.
     :param salt_length: The length of the salt to be used.
     :param kwargs: The parameters of the hasher.
-    :return:
+    :return: hashed password.
     """
     # generate the salt
     salt = secrets.token_bytes(salt_length)
@@ -127,13 +127,19 @@ def password_hash(password, method="scrypt", salt_length=16, **kwargs):
     #   reporting an error if the parameter cannot be found.
     parameters = inspect.signature(hasher).parameters
     sorted_parameters = sorted(filter(lambda x: x not in ['salt', 'password'], parameters.keys()))
-    data_list = [str(kwargs.get(i, parameters[i].default)) for i in sorted_parameters]
+    data_list = (str(kwargs.get(i, parameters[i].default)) for i in sorted_parameters)
 
     # return the hash
     return f'{method}${salt.hex()}${"$".join(data_list)}${hash_}'
 
 
-def check_password_hash(password, hash_):
+def check_password_hash(password: str, hash_: str) -> bool:
+    """
+    Check if the password matches the hash.
+    :param password:
+    :param hash_:
+    :return:
+    """
     # unpack the hash to pure_hash and parameters
     method, salt, *params, hash__ = hash_.split('$')
 
@@ -152,7 +158,7 @@ def check_password_hash(password, hash_):
     return h == hash__
 
 
-def salted_sha256(data, salt, additional_string=None):
+def salted_sha256(data: str, salt: str, additional_string: str | None = None) -> str:
     """
     Generates a salted hash for the given data and salt.
     :param data: The data to be hashed.
@@ -166,7 +172,7 @@ def salted_sha256(data, salt, additional_string=None):
     return hashlib.sha256((data + hash_salt).encode('utf8')).hexdigest()
 
 
-def salted_sha1(data, salt, additional_string=None) -> str:
+def salted_sha1(data: str, salt: str, additional_string: str | None = None) -> str:
     """
     Generates a salted hash for the given data and salt.
     :param data: The data to be hashed.
@@ -180,7 +186,7 @@ def salted_sha1(data, salt, additional_string=None) -> str:
     return hashlib.sha1((data + hash_salt).encode('utf8'), usedforsecurity=False).hexdigest()
 
 
-def get_random_token(key_len=128, upper=True) -> str:
+def get_random_token(key_len: int = 128, upper: bool = True) -> str:
     """
     Generates a random token of the specified length.
     :param key_len: The length of the token to be generated.
@@ -195,7 +201,7 @@ def get_random_token(key_len=128, upper=True) -> str:
 
 
 def read_file_chunks(
-        file: Union[str, Path, PathLike, IO[bytes]],
+        file: str | Path | PathLike | IO[bytes],
         chunk_size: int = io.DEFAULT_BUFFER_SIZE) -> Generator[bytes, Any, None]:
     """
     Reads a file in chunks of specified size.
@@ -216,7 +222,7 @@ def read_file_chunks(
         yield chunk
 
 
-def file_hash(file: Union[str, PathLike, IO[bytes]], hasher=None):
+def file_hash(file: str | PathLike | IO[bytes], hasher=None) -> str:
     """
     Computes the hash of a file.
     :param file: The file to be hashed.
