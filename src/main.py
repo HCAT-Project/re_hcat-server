@@ -44,9 +44,7 @@ from src.util.i18n import gettext_func as _
 from src.util.multi_thread import run_by_multi_thread
 
 
-def load_config(path):
-    with open(path, 'r', encoding='utf8') as f:
-        return ConfigParser(f)
+
 
 
 def clone_client(repo_url="https://github.com/HCAT-Project/hcat-client.git",
@@ -123,7 +121,7 @@ def main():
     # get config
     logging.getLogger().info(_('Loading config from {}').format(args.config))
     config_path = args.config
-    config = load_config(config_path)
+    config = ConfigParser(config_path)
 
     # try to clone client
     repo = config.get_from_pointer('/client/repo', 'https://github.com/HCAT-Project/hcat-client.git')

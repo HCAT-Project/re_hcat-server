@@ -31,8 +31,10 @@ import copy
 import logging
 import os.path
 import platform
+import secrets
 import sys
 import time
+from pathlib import Path
 from typing import Any, Mapping, Dict
 
 import schedule
@@ -64,7 +66,9 @@ class Server:
     ver = '2.5.2'
 
     def __init__(self, debug: bool = False,
-                 name=__name__, config=None, dol=None):
+                 name: str = __name__,
+                 config: ConfigParser | dict | None = None,
+                 dol: DynamicObjLoader | None = None):
         """
         Initialize the server.
         :param debug:
@@ -78,10 +82,7 @@ class Server:
 
         # Create DynamicObjLoader
         self.logger.info(_('Creating DynamicObjLoader...'))
-        if dol is None:
-            self.dol = DynamicObjLoader()
-        else:
-            self.dol = dol
+        self.dol = DynamicObjLoader() if dol is None else dol
 
         # Set debug mode
         self.debug = debug
@@ -92,13 +93,13 @@ class Server:
 
         # Generate AES token
         self.logger.info(_('Generating AES token...'))
-        key_path = os.path.join(os.getcwd(), f'{name}.key')
+        key_path = Path.cwd() / f'{name}.key'
         if not os.path.exists(key_path):
-            self.key = src.util.crypto.get_random_token(16)
-            with open(key_path, 'w', encoding='utf8') as f:
+            self.key = secrets.token_hex(16)
+            with key_path.open('w', encoding='utf8') as f:
                 f.write(self.key)
         else:
-            with open(key_path, 'r', encoding='utf8') as f:
+            with key_path.open('r', encoding='utf8') as f:
                 self.key = f.read()
 
         # Set event manager
@@ -139,10 +140,7 @@ class Server:
 
         rt = self.e_mgr.create_event(RecvEvent, req, req.path)
 
-        if isinstance(rt, ReturnData):
-            return rt
-        else:
-            return ReturnData(ReturnData.OK, rt)
+        return rt if isinstance(rt, ReturnData) else ReturnData(ReturnData.OK, rt)
 
     def _schedule_activity_list(self):
         """
