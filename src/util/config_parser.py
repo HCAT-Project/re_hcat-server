@@ -78,7 +78,7 @@ class ConfigParser(UserDict):
         return all_j
 
     def __repr__(self):
-        return f'ConfigParser({self.data})'
+        return f'ConfigParser(config = {self.data})'
 
     def __contains__(self, item):
         return self.get_from_pointer(item) is not None

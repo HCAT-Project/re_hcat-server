@@ -30,7 +30,7 @@ import json
 from typing import Any
 
 
-def under_score_to_pascal_case(name) -> str:
+def under_score_to_pascal_case(name: str) -> str:
     """
     Converts a string from under_score to PascalCase.
     :param name: The string to convert.

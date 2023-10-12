@@ -39,8 +39,7 @@ class DynamicObjLoader:
 
     @staticmethod
     def load_obj(path: str | PosixPath, obj_name: str = ""):
-        if isinstance(path, Path):
-            path = str(path)
+        path = str(path)
         if obj_name == "":
             obj_name = src.util.text.under_score_to_pascal_case(Path(path).stem)
 
@@ -79,9 +78,7 @@ class DynamicObjLoader:
         for i in self.group_dict.get(group, []):
             module_path = Path(i) / path
             if module_path.with_suffix(".py").exists():
-
-                if isinstance(module_path, PosixPath):
-                    module_path = module_path.resolve()
+                module_path = module_path.resolve()
 
                 return self.load_obj(module_path.relative_to(Path.cwd()).as_posix(), obj_name=obj_name)
         return None
