@@ -29,7 +29,7 @@ import logging
 import time
 
 import src.util.text
-from src.containers import ReturnData, EventContainer
+from src.containers import ReturnData, UserEvent
 from src.event.base_event import BaseEvent
 
 
@@ -58,7 +58,7 @@ class SendFriendMsg(BaseEvent):
 
         with self.server.update_user_data(friend_id) as user:
             nick = user.friend_dict[self.user_id]['nick']
-            ec = EventContainer(self.server.db_event)
+            ec = self.server.uem.create_event()
             ec. \
                 add('type', 'friend_msg'). \
                 add('rid', ec.rid). \

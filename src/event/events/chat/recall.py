@@ -22,7 +22,7 @@
 
 @Version    : 1.0.0
 """
-from src.containers import ReturnData, User, EventContainer
+from src.containers import ReturnData, User, UserEvent
 from src.db_adapter.base_dba import BaseCA
 from src.event.base_event import BaseEvent
 
@@ -49,7 +49,7 @@ class Recall(BaseEvent):
                 if rid in user.todo_list:
                     user.todo_list.remove(rid)
                 else:
-                    ec = EventContainer(self.server.db_event).add('type', 'recall').add('rid', rid)
+                    ec = self.server.uem.create_event().add('type', 'recall').add('rid', rid)
                     user.todo_list.append(ec)
         else:
             group = self.server.get_group(de['group_id'])
@@ -60,6 +60,6 @@ class Recall(BaseEvent):
                     if rid in user.todo_list:
                         user.todo_list.remove(rid)
                     else:
-                        ec = EventContainer(self.server.db_event).add('type', 'recall').add('rid', rid)
+                        ec = self.server.uem.create_event().add('type', 'recall').add('rid', rid)
                         user.todo_list.append(ec)
         return ReturnData(ReturnData.OK)

@@ -28,7 +28,7 @@ import copy
 import time
 
 import src.util.text
-from src.containers import ReturnData, EventContainer
+from src.containers import ReturnData, UserEvent
 from src.event.base_event import BaseEvent
 
 
@@ -55,7 +55,7 @@ class SendGroupMsg(BaseEvent):
                 else:
                     return ReturnData(ReturnData.ERROR, _('You have been banned by admin.'))
             nick = group.member_dict[self.user_id]['nick']
-            ec = EventContainer(self.server.db_event)
+            ec = self.server.uem.create_event()
             ec. \
                 add('type', 'group_msg'). \
                 add('rid', ec.rid). \

@@ -26,7 +26,7 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import time
 
-from src.containers import ReturnData, EventContainer
+from src.containers import ReturnData, UserEvent
 from src.event.base_event import BaseEvent
 
 
@@ -51,7 +51,7 @@ class Ban(BaseEvent):
             except TypeError:
                 return ReturnData(ReturnData.ERROR, _('Wrong data type.'))
 
-            ec = EventContainer(self.server.db_event)
+            ec = self.server.uem.create_event()
             ec. \
                 add('type', 'banned'). \
                 add('rid', ec.rid). \

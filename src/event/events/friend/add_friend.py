@@ -26,7 +26,7 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import time
 
-from src.containers import ReturnData, EventContainer
+from src.containers import ReturnData, UserEvent
 from src.event.base_event import BaseEvent
 
 
@@ -45,7 +45,7 @@ class AddFriend(BaseEvent):
             if user_id in user.friend_dict:
                 return ReturnData(ReturnData.ERROR, _('You are already friends with each other.'))
 
-        ec = EventContainer(self.server.db_event)
+        ec = self.server.uem.create_event()
         ec. \
             add('type', 'friend_request'). \
             add('rid', ec.rid). \

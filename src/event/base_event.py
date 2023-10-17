@@ -43,9 +43,10 @@ class BaseEvent(metaclass=abc.ABCMeta):
     auth = True
 
     def __init__(self, server, req, path: str, e_mgr: EventManager, user_id=None):
+        from src.server import Server
         self.gettext_func = None
         self.req: Request = req
-        self.server: 'Server' = server
+        self.server: Server = server
         self.path = path
         self.e_mgr = e_mgr
         self.user_id = user_id

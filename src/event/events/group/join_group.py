@@ -26,7 +26,7 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import time
 
-from src.containers import ReturnData, EventContainer
+from src.containers import ReturnData, UserEvent
 from src.event.base_event import BaseEvent
 
 
@@ -35,7 +35,7 @@ class JoinGroup(BaseEvent):
 
     def _run(self, group_id, add_info):
         _ = self.gettext_func
-        ec = EventContainer(self.server.db_event)
+        ec = self.server.uem.create_event()
         ec. \
             add('type', 'group_join_request'). \
             add('rid', ec.rid). \
@@ -44,7 +44,7 @@ class JoinGroup(BaseEvent):
             add('add_info', add_info). \
             add('time', time.time())
         ec.write_in()
-        agreed_ec = EventContainer(self.server.db_event)
+        agreed_ec = self.server.uem.create_event()
         agreed_ec. \
             add('type', 'group_join_request_agreed'). \
             add('rid', ec.rid). \

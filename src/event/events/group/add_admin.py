@@ -26,7 +26,7 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import time
 
-from src.containers import ReturnData, EventContainer
+from src.containers import ReturnData, UserEvent
 from src.event.base_event import BaseEvent
 
 
@@ -49,7 +49,7 @@ class AddAdmin(BaseEvent):
                 return ReturnData(ReturnData.ERROR, _('the member is already an admin.'))
 
             group.admin_list.add(member_id)
-        ec = EventContainer(self.server.db_event)
+        ec = self.server.uem.create_event()
         ec. \
             add('type', 'admin_added'). \
             add('rid', ec.rid). \

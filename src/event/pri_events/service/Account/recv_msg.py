@@ -31,7 +31,7 @@ import os
 import re
 
 from src import util
-from src.containers import EventContainer
+from src.containers import UserEvent
 from src.event.base_event import BaseEventOfSVACRecvMsg
 from src.util.regex import regex_email
 
@@ -65,7 +65,7 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
 
                         with self.server.update_user_data(self.user_id) as user:
 
-                            ec = EventContainer(self.server.db_event)
+                            ec = self.server.uem.create_event()
                             ec.add('user_id', self.user_id)
                             ec.add('email', cmd[1])
                             ec.add('event_type', 'email')

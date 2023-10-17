@@ -26,7 +26,7 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import time
 
-from src.containers import ReturnData, EventContainer
+from src.containers import ReturnData, UserEvent
 from src.event.base_event import BaseEvent
 
 
@@ -54,7 +54,7 @@ class AgreeFriendRequest(BaseEvent):
             user.friend_dict[event['user_id']] = {'nick': fri_user_name, 'time': agree_time}
             user_name = user.user_name
 
-        ec = EventContainer(self.server.db_event)
+        ec = self.server.uem.create_event()
         ec. \
             add('type', 'friend_agree'). \
             add('rid', ec.rid). \

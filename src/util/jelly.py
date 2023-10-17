@@ -51,10 +51,13 @@ class Jelly:
         Get the state of the object for pickling
         """
         state = {k: getattr(self, k) for k in self._get_instance_variables()}
+
         # set => list
         sg = map(lambda x: (
-        x[0], {"_obj_type": ".UserSet", "data": list(x[1])} if isinstance(x[1], (set, UserSet)) else x[1]),
-                 state.items())
+            x[0], {"_obj_type": ".UserSet", "data": list(x[1])}
+            if isinstance(x[1], (set, UserSet))
+            else x[1]
+        ), state.items())
 
         return dict(sg)
 

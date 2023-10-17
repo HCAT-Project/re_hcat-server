@@ -46,6 +46,7 @@ from src.db_adapter.base_dba import BaseDBA
 from src.dynamic_obj_loader import DynamicObjLoader
 from src.event.event_manager import EventManager
 from src.event.recv_event import RecvEvent
+from src.user_event_manager import UserEventManager
 from src.util.config_parser import ConfigParser
 from src.util.crypto import get_random_token
 from src.util.file_manager import FileManager
@@ -126,6 +127,9 @@ class Server:
         # Initialize file manager
         self.upload_folder = FileManager(self.config.get_from_pointer('/network/upload/upload_folder', 'static/files'),
                                          self.db_file_info)
+
+        # Crate user event manager
+        self.uem = UserEventManager(database=self.db_event)
 
         # Initialize sid table
         self.event_sid_table: Dict[str, str] = {}

@@ -26,6 +26,7 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import time
 import uuid
+from dataclasses import dataclass, field
 from datetime import timedelta, datetime
 from typing import Any, Dict
 from uuid import uuid1
@@ -39,15 +40,16 @@ from src.util.config_parser import ConfigParser
 from src.util.jelly import Jelly
 
 
-class EventContainer:
-    def __init__(self, data_base: BaseCA):
-        # initialize a new event container
+class UserEvent:
+
+    def __init__(self, data_base: BaseCA = None):
+        # initialize a new event
         self.data_base = data_base
-        # generate an uuid for this event container
+        # generate an uuid for this event
         self.rid = str(uuid1())
         # create an empty dictionary to store the event data
         self.json: Dict[str, str | int | float | dict] = {}
-        # initialize the container with the rid and current time
+        # initialize the event with the rid and current time
         self.add('rid', self.rid).add('time', time.time())
 
     def __call__(self, key: str, value: Any) -> None:
@@ -55,11 +57,13 @@ class EventContainer:
         self.json[key] = value
 
     def write_in(self) -> None:
+        if self.data_base is None:
+            raise ValueError('data_base is None')
         # write the event data to the database
         self.data_base.insert_one(self.json)
 
-    def add(self, key: str, value: Any) -> 'EventContainer':
-        # add a new key-value pair to the event data and return the container object
+    def add(self, key: str, value: Any) -> 'UserEvent':
+        # add a new key-value pair to the event data and return the event object
         self.json[key] = value
         return self
 
@@ -134,7 +138,7 @@ class User(Jelly):
 
     user = User('jane123', 'password123', 'Jane')
 
-    Then, we can use the add_user_event() method to add an event container to the user's to-do list:
+    Then, we can use the add_user_event() method to add an event  to the user's to-do list:
 
     ec = EventContainer(db_event)
     ec.add('type', 'message')
@@ -242,7 +246,7 @@ class User(Jelly):
 
         return False
 
-    def add_user_event(self, ec: EventContainer):
+    def add_user_event(self, ec: UserEvent):
         """
         Adds an event to the user's to-do list.
         :param ec: The event to add.
@@ -251,7 +255,7 @@ class User(Jelly):
 
     def add_fri_msg2todos(self, server, user_id, name, nick, msg_):
         """
-        This function adds a friend message to the event container and writes it in.
+        This function adds a friend message to the event  and writes it in.
 
         :param user_id: the user id
         :param server: server object
@@ -260,10 +264,10 @@ class User(Jelly):
         :param msg_: the message to be added
         :return: None
         """
-        # create a new event container with the server's database event
-        ec = EventContainer(server.db_event)
+        # create a new event  with the server's database event
+        ec = server.uem.create_event()
 
-        # add event attributes to the event container
+        # add event attributes to the event
         ec.add('type', 'friend_msg')
         ec.add('rid', ec.rid)
         ec.add('user_id', user_id)  # deprecated
@@ -274,10 +278,10 @@ class User(Jelly):
         ec.add('_WARNING', 'user_id is deprecated!!!')
         ec.add('time', time.time())
 
-        # write the event container to the database
+        # write the event  to the database
         ec.write_in()
 
-        # add the event container to the user's event list
+        # add the event  to the user's event list
         self.add_user_event(ec)
 
     def auth_token(self, token: str) -> bool:
@@ -369,7 +373,7 @@ class Group(Jelly):
     def _var_init(self):
         self.pin_list = set()
 
-    def broadcast(self, ec: EventContainer, server, *, user_id: str):
+    def broadcast(self, ec: UserEvent, server, *, user_id: str):
         """
         Send an event to all group members except for the specified user.
 
@@ -403,17 +407,10 @@ class Group(Jelly):
             return False
 
 
+@dataclass
 class Request:
-    def __init__(self, path: str = '/', form=None, files=None, cookies=None):
-        super().__init__()
-        if files is None:
-            files = {}
-        if cookies is None:
-            cookies = {}
-        if form is None:
-            form = {}
-        self.id = uuid.uuid4()
-        self.cookies = cookies
-        self.form = form
-        self.path = path
-        self.files = files
+    id: uuid.UUID = uuid.uuid4()
+    cookies: dict = field(default_factory=dict)
+    form: dict = field(default_factory=dict)
+    path: str = '/'
+    files: dict = field(default_factory=dict)

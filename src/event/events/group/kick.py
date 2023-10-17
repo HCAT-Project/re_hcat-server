@@ -26,7 +26,7 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import time
 
-from src.containers import ReturnData, EventContainer
+from src.containers import ReturnData, UserEvent
 from src.event.base_event import BaseEvent
 
 
@@ -51,7 +51,7 @@ class Kick(BaseEvent):
                 group.admin_list.remove(member_id)
 
             group.member_dict.pop(member_id)
-            ec = EventContainer(self.server.db_event)
+            ec = self.server.uem.create_event()
             ec. \
                 add('type', 'member_removed'). \
                 add('rid', ec.rid). \

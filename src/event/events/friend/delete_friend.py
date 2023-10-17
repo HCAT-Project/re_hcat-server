@@ -26,7 +26,7 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import time
 
-from src.containers import ReturnData, EventContainer
+from src.containers import ReturnData, UserEvent
 from src.event.base_event import BaseEvent
 
 
@@ -41,7 +41,7 @@ class DeleteFriend(BaseEvent):
 
             user.friend_dict.pop(friend_id)
 
-        ec = EventContainer(self.server.db_event)
+        ec = self.server.uem.create_event()
         ec. \
             add('type', 'friend_deleted'). \
             add('rid', ec.rid). \

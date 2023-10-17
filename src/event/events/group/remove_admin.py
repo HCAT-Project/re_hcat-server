@@ -26,7 +26,7 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import time
 
-from src.containers import ReturnData, EventContainer
+from src.containers import ReturnData, UserEvent
 from src.event.base_event import BaseEvent
 
 
@@ -49,7 +49,7 @@ class RemoveAdmin(BaseEvent):
                 return ReturnData(ReturnData.ERROR, _('You can\'t make the group owner the admin.'))
 
             group.admin_list.remove(admin_id)
-        ec = EventContainer(self.server.db_event)
+        ec = self.server.uem.create_event()
         ec. \
             add('type', 'admin_removed'). \
             add('rid', ec.rid). \
