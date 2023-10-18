@@ -20,10 +20,13 @@
     }
   },
   "client": {
-    "repo": "https://github.com/HCAT-Project/hcat-client.git",
     "client-branch": "main",
+    "repo": "https://github.com/HCAT-Project/hcat-client.git",
     "client-folder": "static",
-    "cmds-after-update": []
+    "cmds-after-update": [
+      "npm install",
+      "npm run build"
+    ]
   },
   "network": {
     "ssl": {
@@ -32,7 +35,7 @@
       "key": "key.pem"
     },
     "upload": {
-      "upload_folder": "static/files",
+      "upload_folder": "static/dist/files",
       "max_content_length": 104857600,
       "file_timeout": 86400
     },
@@ -42,7 +45,7 @@
         "host": "0.0.0.0",
         "port": 8080,
         "enable-static": true,
-        "static-folder": "static",
+        "static-folder": "static/dist",
         "enable-cors": true
       },
       "WebsocketsWsReceiver": {
@@ -67,7 +70,7 @@
     }
   },
   "db": {
-    "use": "Mongo",
+    "use": "mongo",
     "adapters": {
       "Mongo": {
         "host": "127.0.0.1",
