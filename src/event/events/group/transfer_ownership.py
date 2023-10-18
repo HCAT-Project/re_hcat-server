@@ -24,7 +24,7 @@
 #  _
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
-from src.containers import ReturnData, UserEvent
+from src.containers import ReturnData
 from src.event.base_event import BaseEvent
 
 
@@ -54,5 +54,5 @@ class TransferOwnership(BaseEvent):
                 .add('member_id', member_id) \
                 .add('operator_id', self.user_id)
             ec.write_in()
-            group.broadcast(ec=ec, server=self.server,user_id=self.user_id)
+            group.broadcast(ec=ec, server=self.server, user_id=self.user_id)
             return ReturnData(ReturnData.OK)

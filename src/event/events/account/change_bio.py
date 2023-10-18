@@ -26,7 +26,7 @@ import re
 
 from src.containers import ReturnData
 from src.event.base_event import BaseEvent
-from src.util.regex import bio_regex, bio_invalid_regex
+from src.util.regex import bio_regex
 
 
 class ChangeBio(BaseEvent):

@@ -22,7 +22,7 @@
 
 @Version    : 1.0.0
 """
-from src.containers import ReturnData, User, UserEvent
+from src.containers import ReturnData, User
 from src.db_adapter.base_dba import BaseCA
 from src.event.base_event import BaseEvent
 

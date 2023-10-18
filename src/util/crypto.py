@@ -35,7 +35,7 @@ import string
 import time
 from os import PathLike
 from pathlib import Path
-from typing import Union, IO, Generator, Any
+from typing import IO, Generator, Any
 
 import jwt
 import pyaes

@@ -24,10 +24,7 @@
 #  _
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
-import json
 
-import src.util.crypto
-import src.util.text
 from src.containers import ReturnData
 from src.event.base_event import BaseEvent
 from src.util.crypto import JWT

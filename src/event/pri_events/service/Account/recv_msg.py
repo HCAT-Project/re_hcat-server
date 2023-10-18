@@ -31,7 +31,6 @@ import os
 import re
 
 from src import util
-from src.containers import UserEvent
 from src.event.base_event import BaseEventOfSVACRecvMsg
 from src.util.regex import regex_email
 

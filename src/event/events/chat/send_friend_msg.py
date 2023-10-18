@@ -29,7 +29,7 @@ import logging
 import time
 
 import src.util.text
-from src.containers import ReturnData, UserEvent
+from src.containers import ReturnData
 from src.event.base_event import BaseEvent
 
 

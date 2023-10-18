@@ -39,8 +39,6 @@ from typing import Any, Mapping, Dict
 
 import schedule
 
-import src.util.crypto
-import src.util.text
 from src.containers import User, ReturnData, Request, Group
 from src.db_adapter.base_dba import BaseDBA
 from src.dynamic_obj_loader import DynamicObjLoader
@@ -48,7 +46,6 @@ from src.event.event_manager import EventManager
 from src.event.recv_event import RecvEvent
 from src.user_event_manager import UserEventManager
 from src.util.config_parser import ConfigParser
-from src.util.crypto import get_random_token
 from src.util.file_manager import FileManager
 from src.util.i18n import gettext_func as _
 from src.util.jelly import dehydrate, agar

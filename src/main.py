@@ -44,9 +44,6 @@ from src.util.i18n import gettext_func as _
 from src.util.multi_thread import run_by_multi_thread
 
 
-
-
-
 def clone_client(repo_url="https://github.com/HCAT-Project/hcat-client.git",
                  folder: str | Path = 'static', branch='master',
                  cmds=None):

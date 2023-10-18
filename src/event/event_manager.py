@@ -24,18 +24,14 @@
 #  _
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
-import json
 import logging
 import time
 from typing import Union, Any
 
-import jwt
-
 from src.containers import ReturnData, Request
 from src.event.base_event import BaseEventOfAuxiliary, BaseEvent
-
 from src.util.config_parser import ConfigParser
-from src.util.crypto import AesCrypto, JWT
+from src.util.crypto import JWT
 
 
 class EventManager:
