@@ -32,10 +32,12 @@ import io
 import pathlib
 import secrets
 import string
+import time
 from os import PathLike
 from pathlib import Path
 from typing import Union, IO, Generator, Any
 
+import jwt
 import pyaes
 
 from src.dynamic_obj_loader import DynamicObjLoader
@@ -87,6 +89,21 @@ class AesCrypto:
         data_bytes = base64.b64decode(cipher_text)
         decrypted = map(self.aes.decrypt, chunk_bytes(data_bytes, 16))
         return bytes().join(decrypted).rstrip(b'\x00').decode('utf8')
+
+
+class JWT:
+    def __init__(self, key: str):
+        self.key = key
+
+    def encode(self, data: dict, *, timeout: int = 3600) -> str:
+        header = {"alg": "HS256", "typ": "JWT"}
+        exp = int(time.time()) + timeout
+        payload = {"exp": exp, **data}
+        token = jwt.encode(payload=payload, key=self.key, algorithm="HS256", headers=header)
+        return token
+
+    def decode(self, token: str) -> dict:
+        return jwt.decode(token, key=self.key, algorithms=["HS256"])
 
 
 def _get_hasher(method="sha256"):
