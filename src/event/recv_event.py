@@ -40,7 +40,7 @@ class RecvEvent(BaseEvent):
             return ReturnData(ReturnData.NULL, 'No Found.')
 
         try:
-            return self.e_mgr.create_event(event_class, self.req, self.path)
+            return self.server.e_mgr.create_event(event_class, self.req, self.path)
 
         except Exception as err:
             logging.exception(err)

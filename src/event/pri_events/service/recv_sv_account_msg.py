@@ -48,7 +48,7 @@ class RecvSvAccountMsg(BaseEvent):
                 logging.exception(e)
             return ReturnData(ReturnData.ERROR, _('Service not found.'))
         try:
-            return self.e_mgr.create_event(event_class, self.req, self.path)
+            return self.server.e_mgr.create_event(event_class, self.req, self.path)
         except Exception as e:
             logging.exception(e)
             return ReturnData(ReturnData.ERROR, _('Service error.'))

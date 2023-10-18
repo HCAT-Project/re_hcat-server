@@ -26,20 +26,26 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import json
 import logging
-from typing import Union
+import time
+from typing import Union, Any
 
-from src.containers import ReturnData
+import jwt
+
+from src.containers import ReturnData, Request
+from src.event.base_event import BaseEventOfAuxiliary, BaseEvent
+
 from src.util.config_parser import ConfigParser
-from src.util.crypto import AesCrypto
+from src.util.crypto import AesCrypto, JWT
 
 
 class EventManager:
+
     def __init__(self, server):
         self.server = server
         self.logger = logging.getLogger(__name__)
         self.auxiliary_events = {}
 
-    def add_auxiliary_event(self, event: 'BaseEventOfAuxiliary', *, main_event: 'BaseEvent' = None):
+    def add_auxiliary_event(self, event: BaseEventOfAuxiliary, *, main_event: BaseEvent = None):
         if main_event is None:
             if isinstance(event.main_event, (list, tuple)):
                 for i in event.main_event:
@@ -53,7 +59,7 @@ class EventManager:
             event.priority = 1000
         self.auxiliary_events[main_event].append({'evt': event, 'priority': event.priority})
 
-    def create_event(self, event, req, path):
+    def create_event(self, event, req: Request, path: str):
         assert isinstance(self.server.config, ConfigParser)
 
         cancel, rd_of_aux_evt = self._run_aux_events(event, path, req)
@@ -62,28 +68,24 @@ class EventManager:
         auth_success = False
         auth_data_json = {'user_id': None}
 
-        # check if the 'auth_data' is in `req.cookies`
-        if 'auth_data' in req.cookies:
+        # check if the 'token' is in `req.cookies`
+        if 'token' in req.form:
 
             # get auth data
-            auth_data = req.cookies['auth_data']
+            token = req.form['token']
             try:
-                # decrypt the auth data
-                auth_data_decrypto = AesCrypto(self.server.key).decrypt(auth_data)
-                # parse the auth data
-                auth_data_json = json.loads(auth_data_decrypto)
+                # decode the token
+                auth_data_json: dict[str, Any] = JWT(self.server.key).decode(token)
+                auth_success = True
 
-                # auth the token
-                user = self.server.get_user(auth_data_json['user_id'])
-                auth_success = user.auth_token(auth_data_json['token'])
-            except json.JSONDecodeError as err:
-                self.logger.debug(err)
             except KeyError as err:
-
+                auth_success = False
+            except Exception as err:
+                self.logger.exception(err)
                 auth_success = False
 
         # check if the auth is successful
-        if auth_success or not event.auth:
+        if auth_success or (not event.auth):
 
             # set the default value of `rt`
             rt = None
@@ -91,10 +93,16 @@ class EventManager:
             # check if the event is canceled
             if not cancel:
                 # run the code of event
-                e = event(self.server, req, path, self, auth_data_json['user_id'])
+                e = event(self.server, req, path, auth_data_json['user_id'])
                 rt = e.run()
-
-            return rt if rt else rd_of_aux_evt
+            f_rt = rt if rt else rd_of_aux_evt
+            if auth_success:
+                exp = auth_data_json['exp']
+                if exp - time.time() < 120:
+                    token = JWT(self.server.key).encode(
+                        {'user_id': auth_data_json['user_id']}, timeout=600)
+                    f_rt.add('token', token)
+            return f_rt
         else:
             return ReturnData(ReturnData.ERROR, 'Invalid token.')
 

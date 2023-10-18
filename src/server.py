@@ -161,7 +161,6 @@ class Server:
                 self.activity_dict.pop(k)
                 with self.update_user_data(k) as user:
                     user.status = 'offline'
-                    user.token = get_random_token(128)
 
     def _schedule_cleaner(self):
         # Remove expired events from the event database

@@ -46,5 +46,4 @@ class Logout(BaseEvent):
     def _run(self):
         with self.server.update_user_data(self.user_id) as user:
             user.status = 'offline'
-            user.token = src.util.crypto.get_random_token(256)
         return ReturnData(ReturnData.OK)

@@ -34,7 +34,5 @@ class SendMsg(BaseEvent):
     auth = True
 
     def _run(self, target_id: str, msg):
-        if target_id.startswith('0g'):
-            return self.e_mgr.create_event(SendGroupMsg, self.req, self.path)
-        else:
-            return self.e_mgr.create_event(SendFriendMsg, self.req, self.path)
+        e = SendGroupMsg if target_id.startswith('0g') else SendFriendMsg
+        return self.server.e_mgr.create_event(e, self.req, self.path)

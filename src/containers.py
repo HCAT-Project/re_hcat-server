@@ -185,7 +185,6 @@ class User(Jelly):
 
     def _var_init(self):
         self.todo_list = []
-        self.token = src.util.crypto.get_random_token()
         self.status = 'offline'
         self.friend_dict = {}
         self.groups_dict = {}
@@ -283,14 +282,6 @@ class User(Jelly):
 
         # add the event  to the user's event list
         self.add_user_event(ec)
-
-    def auth_token(self, token: str) -> bool:
-        """
-        Checks if the provided token matches the user's token.
-        :param token: The token to check.
-        :return: True if the token is correct, False otherwise.
-        """
-        return self.token == token
 
     def add_user_to_friend_list(self, user_id, nick):
         """

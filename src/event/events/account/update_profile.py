@@ -46,7 +46,7 @@ class UpdateProfile(BaseEvent):
 
                 req = copy.deepcopy(self.req)
                 req.form.update(profile)
-                rt = self.e_mgr.create_event(ec, req, self.path)
+                rt = self.server.e_mgr.create_event(ec, req, self.path)
                 if rt.json_data['status'] != 'ok':
                     return rt
 

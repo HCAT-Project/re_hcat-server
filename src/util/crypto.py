@@ -102,7 +102,7 @@ class JWT:
         token = jwt.encode(payload=payload, key=self.key, algorithm="HS256", headers=header)
         return token
 
-    def decode(self, token: str) -> dict:
+    def decode(self, token: str) -> dict[str, Any]:
         return jwt.decode(token, key=self.key, algorithms=["HS256"])
 
 

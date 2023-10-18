@@ -30,6 +30,7 @@ import src.util.crypto
 import src.util.text
 from src.containers import ReturnData
 from src.event.base_event import BaseEvent
+from src.util.crypto import JWT
 
 
 class Login(BaseEvent):
@@ -45,29 +46,21 @@ class Login(BaseEvent):
         with self.server.update_user_data(user_id) as user:
             if user.auth(password):
                 user.status = 'online'
-                # generate token
-                user.token = src.util.crypto.get_random_token()
 
                 # init a response
                 resp = ReturnData(ReturnData.OK)
 
-                # generate auth_data
-                auth_data = json.dumps(
-                    {'user_id': user_id, 'token': user.token, 'salt': src.util.crypto.get_random_token()})
+                # generate token
+                token = JWT(self.server.key).encode(
+                    {'user_id': user_id}, timeout=600)
 
-                # crypto
-                aes = src.util.crypto.AesCrypto(self.server.key)
-
-                # set a @Yummy_Cookies_S
-                # XD
-                if self.server.config['sys']['domain'] is not None:
-                    resp.set_cookie('auth_data', aes.encrypt(auth_data), samesite='Strict',
-                                    domain=self.server.config['sys']['domain'])
-                else:
-                    resp.set_cookie('auth_data', aes.encrypt(auth_data), samesite='Strict')
+                # # set a @Yummy_Cookies_S
+                # # XD
+                # r.i.p
 
                 # check if @0sAccount in friend_list
                 user.add_user_to_friend_list('0sAccount', _('Account_BOT'))
+                resp.add('token', token)
 
                 # return
                 return resp
