@@ -5,6 +5,8 @@ gevent
 websockets
 
 pyaes
+pyjwt
+
 schedule
 gitpython
 pillow
