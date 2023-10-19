@@ -35,17 +35,23 @@ class GetMembers(BaseEvent):
         _ = self.gettext_func
         with self.server.update_group_data(group_id) as group:
             if group is None:
-                return ReturnData(ReturnData.NULL, _('Group does not exist.'))
+                return ReturnData(ReturnData.NULL, _("Group does not exist."))
             if self.user_id in group.member_dict:
-                return ReturnData(ReturnData.OK).add('data', {
-                    k: {
-                        'permission':
-                            (
-                                'member' if (k not in group.admin_list and k != group.owner) else
-                                'owner' if k == group.owner else
-                                'admin'
-                            )
-                    }
-                    for k in group.member_dict})
+                return ReturnData(ReturnData.OK).add(
+                    "data",
+                    [
+                        {
+                            "user_id": k,
+                            "permission": (
+                                "member"
+                                if (k not in group.admin_list and k != group.owner)
+                                else "owner"
+                                if k == group.owner
+                                else "admin"
+                            ),
+                        }
+                        for k in group.member_dict
+                    ],
+                )
             else:
-                return ReturnData(ReturnData.NULL, _('You are not in the group.'))
+                return ReturnData(ReturnData.NULL, _("You are not in the group."))

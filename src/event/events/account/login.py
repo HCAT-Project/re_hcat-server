@@ -36,30 +36,29 @@ class Login(BaseEvent):
     def _run(self, user_id, password):
         _ = self.gettext_func
         if not self.server.is_user_exist(user_id):
-            return ReturnData(ReturnData.NULL, _('User does not exist.'))
+            return ReturnData(ReturnData.NULL, _("User does not exist."))
 
         self.server.activity_dict[user_id] = 30
 
         with self.server.update_user_data(user_id) as user:
             if user.auth(password):
-                user.status = 'online'
+                user.status = "online"
 
                 # init a response
                 resp = ReturnData(ReturnData.OK)
 
                 # generate token
-                token = JWT(self.server.key).encode(
-                    {'user_id': user_id}, timeout=600)
+                token = JWT(self.server.key).encode({"user_id": user_id})
 
                 # # set a @Yummy_Cookies_S
                 # # XD
                 # r.i.p
 
                 # check if @0sAccount in friend_list
-                user.add_user_to_friend_list('0sAccount', _('Account_BOT'))
-                resp.add('token', token)
+                user.add_user_to_friend_list("0sAccount", _("Account_BOT"))
+                resp.add("token", token)
 
                 # return
                 return resp
             else:
-                return ReturnData(ReturnData.ERROR, _('Incorrect user ID or password.'))
+                return ReturnData(ReturnData.ERROR, _("Incorrect user ID or password."))

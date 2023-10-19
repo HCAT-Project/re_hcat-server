@@ -51,12 +51,19 @@ class WebsocketsWsReceiver(BaseReceiver):
         for connector in self.connectors.values():
             auth_data, websocket = connector
 
-            req = Request(path="account/get_todo_list", form={}, files=None, cookies={"auth_data": auth_data})
+            req = Request(
+                path="account/get_todo_list",
+                data={},
+                files=None,
+                cookies={"auth_data": auth_data},
+            )
             rt: ReturnData = self.create_req(req)
 
             # return todo_list if data is not 'None'
-            if rt.json_data.get('data', None):
-                await websocket.send(json.dumps({"ver": 1, "type": "todo_list", "data": rt.json_data}))
+            if rt.json_data.get("data", None):
+                await websocket.send(
+                    json.dumps({"ver": 1, "type": "todo_list", "data": rt.json_data})
+                )
 
     def _start(self):
         """
@@ -74,25 +81,30 @@ class WebsocketsWsReceiver(BaseReceiver):
                 while message := await websocket.recv():
                     msg_json: dict = json.loads(message)
 
-                    # get the path, form, cookies
+                    # get the path, data, cookies
                     path: str = msg_json.get("path", "")
-                    form: dict = msg_json.get("form", {})
+                    data: dict = msg_json.get("data", {})
                     cookies: dict = msg_json.get("cookies", {})
 
                     if c := self.connectors.get(_id, None):
-                        cookies['auth_data'], _ = c
+                        cookies["auth_data"], _ = c
 
                     # create request
-                    req = Request(path=path, form=form, files=None, cookies=cookies)
+                    req = Request(path=path, data=data, files=None, cookies=cookies)
                     rt: ReturnData = self.create_req(req)
 
                     # if the path is account/login, save the auth_data
-                    if path.startswith('account/login') \
-                            and (auth_data := rt.json_data.get('_cookies', {}).get("auth_data", {}).get("value", None)):
+                    if path.startswith("account/login") and (
+                        auth_data := rt.json_data.get("_cookies", {})
+                        .get("auth_data", {})
+                        .get("value", None)
+                    ):
                         self.connectors[_id] = (auth_data, websocket)
 
                     # send the return data
-                    await websocket.send(json.dumps({"ver": 1, "type": "response", "data": rt.json_data}))
+                    await websocket.send(
+                        json.dumps({"ver": 1, "type": "response", "data": rt.json_data})
+                    )
             except websockets.ConnectionClosed:
                 pass
             except json.JSONDecodeError:
@@ -108,14 +120,14 @@ class WebsocketsWsReceiver(BaseReceiver):
         async def main():
             ssl_kwarg = {}
 
-            if self.global_config['/network/ssl/enabled']:
+            if self.global_config["/network/ssl/enabled"]:
                 ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-                ssl_cert = self.global_config['/network/ssl/cert']
-                ssl_key = self.global_config['/network/ssl/key']
+                ssl_cert = self.global_config["/network/ssl/cert"]
+                ssl_key = self.global_config["/network/ssl/key"]
 
                 ssl_context.load_cert_chain(ssl_cert, keyfile=ssl_key)
-                ssl_kwarg = {'ssl': ssl_context}
-                self.logger.debug(_('WebsocketsWsReceiver started with SSL.'))
+                ssl_kwarg = {"ssl": ssl_context}
+                self.logger.debug(_("WebsocketsWsReceiver started with SSL."))
             async with websockets.serve(handler, self.host, self.port, **ssl_kwarg):
                 await asyncio.Future()  # run forever
 

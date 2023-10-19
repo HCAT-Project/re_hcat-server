@@ -41,7 +41,6 @@ from src.util.jelly import Jelly
 
 
 class UserEvent:
-
     def __init__(self, data_base: BaseCA = None):
         # initialize a new event
         self.data_base = data_base
@@ -50,7 +49,7 @@ class UserEvent:
         # create an empty dictionary to store the event data
         self.json: Dict[str, str | int | float | dict] = {}
         # initialize the event with the rid and current time
-        self.add('rid', self.rid).add('time', time.time())
+        self.add("rid", self.rid).add("time", time.time())
 
     def __call__(self, key: str, value: Any) -> None:
         # add a new key-value pair to the event data
@@ -58,11 +57,11 @@ class UserEvent:
 
     def write_in(self) -> None:
         if self.data_base is None:
-            raise ValueError('data_base is None')
+            raise ValueError("data_base is None")
         # write the event data to the database
         self.data_base.insert_one(self.json)
 
-    def add(self, key: str, value: Any) -> 'UserEvent':
+    def add(self, key: str, value: Any) -> "UserEvent":
         # add a new key-value pair to the event data and return the event object
         self.json[key] = value
         return self
@@ -81,34 +80,46 @@ class ReturnData:
     ERROR = 1
     NULL = 2
     OK = 0
-    status_text_list = ['ok', 'error', 'null']
+    status_text_list = ["ok", "error", "null"]
 
-    def __init__(self, status: int = OK, msg: str = ''):
+    def __init__(self, status: int = OK, msg: str = ""):
         # initialize a new ReturnData object with a status and message
         status_text = self.status_text_list[status]
-        self.json_data: Dict[str, Any] = {'status': status_text, 'message': msg, '_cookies': {}}
+        self.json_data: Dict[str, Any] = {
+            "status": status_text,
+            "message": msg,
+            "_cookies": {},
+        }
 
-    def add(self, key: str, value: Any) -> 'ReturnData':
+    def add(self, key: str, value: Any) -> "ReturnData":
         # add a new key-value pair to the response data and return the object
-        if key.startswith('_'):
+        if key.startswith("_"):
             raise ValueError('key must not start with "_"', key)
         self.json_data[key] = value
         return self
 
-    def set_cookie(self,
-                   key: str,
-                   value: str = "",
-                   max_age: timedelta | int | None = None,
-                   expires: str | datetime | int | float | None = None,
-                   path: str | None = "/",
-                   domain: str | None = None,
-                   secure: bool = False,
-                   httponly: bool = False,
-                   samesite: str | None = None):
-
-        self.json_data['_cookies'][key] = {'value': value, 'max_age': max_age, 'expires': expires, 'path': path,
-                                           'domain': domain, 'secure': secure, 'httponly': httponly,
-                                           'samesite': samesite}
+    def set_cookie(
+        self,
+        key: str,
+        value: str = "",
+        max_age: timedelta | int | None = None,
+        expires: str | datetime | int | float | None = None,
+        path: str | None = "/",
+        domain: str | None = None,
+        secure: bool = False,
+        httponly: bool = False,
+        samesite: str | None = None,
+    ):
+        self.json_data["_cookies"][key] = {
+            "value": value,
+            "max_age": max_age,
+            "expires": expires,
+            "path": path,
+            "domain": domain,
+            "secure": secure,
+            "httponly": httponly,
+            "samesite": samesite,
+        }
 
     def jsonify(self):
         # convert the response data to a JSON object
@@ -116,8 +127,8 @@ class ReturnData:
 
     def flask_respify(self) -> Response:
         resp = make_response(jsonify(self.json_data), 200)
-        if self.json_data.get('_cookies', False):
-            for k, v in self.json_data['_cookies'].items():
+        if self.json_data.get("_cookies", False):
+            for k, v in self.json_data["_cookies"].items():
                 resp.set_cookie(key=k, **v)
         return resp
 
@@ -168,7 +179,13 @@ class User(Jelly):
     In this way, we have successfully created a new user and performed various operations on it, such as adding to-do items, changing passwords, verifying passwords and tokens, adding friends, etc.
     """
 
-    def __init__(self, user_id: str, password: str, user_name: str, password_hash_config: ConfigParser):
+    def __init__(
+        self,
+        user_id: str,
+        password: str,
+        user_name: str,
+        password_hash_config: ConfigParser,
+    ):
         """
         Creates a new user object.
         :param user_id: The ID of the user.
@@ -180,28 +197,33 @@ class User(Jelly):
         self.salt = None
         self.user_id = user_id
         self.user_name = user_name
-        self.change_password(password=password, method=password_hash_config.get('method', 'scrypt'),
-                             **password_hash_config['kwargs'])
+        self.change_password(
+            password=password,
+            method=password_hash_config.get("method", "scrypt"),
+            **password_hash_config["kwargs"],
+        )
 
     def _var_init(self):
         self.todo_list = []
-        self.status = 'offline'
+        self.status = "offline"
         self.friend_dict = {}
         self.groups_dict = {}
-        self.email = ''
-        self.language = 'en_US'
-        self.avatar = ''
-        self.bio = 'NULL'
-        self.gender = 'unknown'
+        self.email = ""
+        self.language = "en_US"
+        self.avatar = ""
+        self.bio = "NULL"
+        self.gender = "unknown"
 
-    def change_password(self, password: str, method='scrypt', **kwargs):
+    def change_password(self, password: str, method="scrypt", **kwargs):
         """
         Changes the user's password and generates a new salted hash.
         :param method: The method of hashing to use.See https://docs.python.org/zh-cn/3.10/library/hashlib.html.
         :param password: The new password to set.
         """
 
-        self.hash_password = src.util.crypto.password_hash(password=password, method=method, **kwargs)
+        self.hash_password = src.util.crypto.password_hash(
+            password=password, method=method, **kwargs
+        )
 
     def auth(self, password: str) -> bool:
         """
@@ -209,14 +231,22 @@ class User(Jelly):
         :param password: The password to check.
         :return: True if the password is correct, False otherwise.
         """
-        if self.hash_password.find('$') != -1:
-            return src.util.crypto.check_password_hash(password=password, hash_=self.hash_password)
+        if self.hash_password.find("$") != -1:
+            return src.util.crypto.check_password_hash(
+                password=password, hash_=self.hash_password
+            )
         else:
             # sha256 and sha1
             if len(self.hash_password) == 64:
-                return src.util.crypto.salted_sha256(password, self.salt, self.user_id) == self.hash_password
+                return (
+                    src.util.crypto.salted_sha256(password, self.salt, self.user_id)
+                    == self.hash_password
+                )
             elif len(self.hash_password) == 40:
-                return src.util.crypto.salted_sha1(password, self.salt, self.user_id) == self.hash_password
+                return (
+                    src.util.crypto.salted_sha1(password, self.salt, self.user_id)
+                    == self.hash_password
+                )
             else:
                 return False
 
@@ -267,15 +297,20 @@ class User(Jelly):
         ec = server.uem.create_event()
 
         # add event attributes to the event
-        ec.add('type', 'friend_msg')
-        ec.add('rid', ec.rid)
-        ec.add('user_id', user_id)  # deprecated
-        ec.add('friend_id', user_id)
-        ec.add('friend_nick', nick)
-        ec.add('friend_name', name)
-        ec.add('msg', {"msg_chain": [{"type": "text", "msg": msg_}]} if not isinstance(msg_, dict) else msg_)
-        ec.add('_WARNING', 'user_id is deprecated!!!')
-        ec.add('time', time.time())
+        ec.add("type", "friend_msg")
+        ec.add("rid", ec.rid)
+        ec.add("user_id", user_id)  # deprecated
+        ec.add("friend_id", user_id)
+        ec.add("friend_nick", nick)
+        ec.add("friend_name", name)
+        ec.add(
+            "msg",
+            {"msg_chain": [{"type": "text", "msg": msg_}]}
+            if not isinstance(msg_, dict)
+            else msg_,
+        )
+        ec.add("_WARNING", "user_id is deprecated!!!")
+        ec.add("time", time.time())
 
         # write the event  to the database
         ec.write_in()
@@ -292,7 +327,7 @@ class User(Jelly):
         """
         # Check if the user is already in the friend list.
         if user_id not in self.friend_dict:
-            self.friend_dict[user_id] = {'nick': nick, 'time': time.time()}
+            self.friend_dict[user_id] = {"nick": nick, "time": time.time()}
             return True
         return False
 
@@ -330,6 +365,7 @@ class Group(Jelly):
 
     In this way, we have successfully created a new group, added members to it, set a group owner and administrator, and broadcasted a message to the group.
     """
+
     # Define permission constants
     PERMISSION_OWNER = 0
     PERMISSION_ADMIN = 1
@@ -341,24 +377,24 @@ class Group(Jelly):
         self.id = group_id
         # Initialize variables for group name, member dictionary, owner ID,
         # admin list, member settings, and ban dictionary
-        self.name = ''
+        self.name = ""
         self.member_dict = {}
-        self.owner = ''
+        self.owner = ""
         self.admin_list = set()
         self.member_settings = {}
         self.ban_dict = {}
         # Initialize group settings with default values
-        '''
+        """
                 verification_method:
                 ac:administrator consent--需要管理同意
                 fr:free--自由进出
                 aw:answer question--需要回答问题
                 na:not allowed--不允许加入
-        '''
+        """
         self.group_settings = {
-            'verification_method': 'ac',
-            'question': '',
-            'answer': ''
+            "verification_method": "ac",
+            "question": "",
+            "answer": "",
         }
 
     def _var_init(self):
@@ -402,6 +438,7 @@ class Group(Jelly):
 class Request:
     id: uuid.UUID = uuid.uuid4()
     cookies: dict = field(default_factory=dict)
-    form: dict = field(default_factory=dict)
-    path: str = '/'
+    headers: dict = field(default_factory=dict)
+    data: dict = field(default_factory=dict)
+    path: str = "/"
     files: dict = field(default_factory=dict)
