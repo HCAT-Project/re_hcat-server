@@ -35,13 +35,14 @@ from src.util.crypto import JWT
 
 
 class EventManager:
-
     def __init__(self, server):
         self.server = server
         self.logger = logging.getLogger(__name__)
         self.auxiliary_events = {}
 
-    def add_auxiliary_event(self, event: BaseEventOfAuxiliary, *, main_event: BaseEvent = None):
+    def add_auxiliary_event(
+        self, event: BaseEventOfAuxiliary, *, main_event: BaseEvent = None
+    ):
         if main_event is None:
             if isinstance(event.main_event, (list, tuple)):
                 for i in event.main_event:
@@ -51,9 +52,11 @@ class EventManager:
 
         if main_event not in self.auxiliary_events:
             self.auxiliary_events[main_event] = []
-        if event.__dict__.get('priority') is None:
+        if event.__dict__.get("priority") is None:
             event.priority = 1000
-        self.auxiliary_events[main_event].append({'evt': event, 'priority': event.priority})
+        self.auxiliary_events[main_event].append(
+            {"evt": event, "priority": event.priority}
+        )
 
     def create_event(self, event, req: Request, path: str):
         assert isinstance(self.server.config, ConfigParser)
@@ -62,13 +65,12 @@ class EventManager:
 
         # set the default value of variables
         auth_success = False
-        auth_data_json = {'user_id': None}
+        auth_data_json = {"user_id": None}
 
         # check if the 'token' is in `req.cookies`
-        if 'token' in req.form:
-
+        if "Authorization" in req.headers:
             # get auth data
-            token = req.form['token']
+            token = req.headers["Authorization"]
             try:
                 # decode the token
                 auth_data_json: dict[str, Any] = JWT(self.server.key).decode(token)
@@ -82,25 +84,25 @@ class EventManager:
 
         # check if the auth is successful
         if auth_success or (not event.auth):
-
             # set the default value of `rt`
             rt = None
 
             # check if the event is canceled
             if not cancel:
                 # run the code of event
-                e = event(self.server, req, path, auth_data_json['user_id'])
+                e = event(self.server, req, path, auth_data_json["user_id"])
                 rt = e.run()
             f_rt = rt if rt else rd_of_aux_evt
             if auth_success:
-                exp = auth_data_json['exp']
+                exp = auth_data_json["exp"]
                 if exp - time.time() < 120:
                     token = JWT(self.server.key).encode(
-                        {'user_id': auth_data_json['user_id']}, timeout=600)
-                    f_rt.add('token', token)
+                        {"user_id": auth_data_json["user_id"]}
+                    )
+                    f_rt.add("token", token)
             return f_rt
         else:
-            return ReturnData(ReturnData.ERROR, 'Invalid token.')
+            return ReturnData(ReturnData.ERROR, "Invalid token.")
 
     def _run_aux_events(self, event, path, req):
         # run auxiliary events
@@ -108,9 +110,10 @@ class EventManager:
         cancel = False
         # get aux event
         aux_events: dict = self.auxiliary_events.get(event, [])
-        aux_e_sorted = map(lambda x: x['evt'], sorted(aux_events, key=lambda x: x['priority']))
+        aux_e_sorted = map(
+            lambda x: x["evt"], sorted(aux_events, key=lambda x: x["priority"])
+        )
         for e in aux_e_sorted:
-
             # get the return value
             aux_evt_rt_tuple = self.create_event(e, req, path)
 
@@ -135,5 +138,7 @@ def _auto_complete(ae_rt_temp: Union[bool, ReturnData, tuple]):
     if not isinstance(ae_rt_temp, tuple) or len(ae_rt_temp) == 1:
         # set return value to NULL if the value instance is bool
         # else set the bool to False
-        return (ae_rt_temp, None) if isinstance(ae_rt_temp, bool) else (False, ae_rt_temp)
+        return (
+            (ae_rt_temp, None) if isinstance(ae_rt_temp, bool) else (False, ae_rt_temp)
+        )
     return ae_rt_temp

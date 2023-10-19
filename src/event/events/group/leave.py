@@ -35,13 +35,16 @@ class Leave(BaseEvent):
         _ = self.gettext_func
         with self.server.update_group_data(group_id) as group:
             if group is None:
-                return ReturnData(ReturnData.NULL, _('Group does not exist.'))
+                return ReturnData(ReturnData.NULL, _("Group does not exist."))
 
             if self.user_id not in group.member_dict:
-                return ReturnData(ReturnData.NULL, _('You are not in the group.'))
+                return ReturnData(ReturnData.NULL, _("You are not in the group."))
 
             if self.user_id == group.owner:
-                return ReturnData(ReturnData.ERROR, _('You are the group owner, you can not leave the group.'))
+                return ReturnData(
+                    ReturnData.ERROR,
+                    _("You are the group owner, you can not leave the group."),
+                )
 
             if self.user_id in list(group.admin_list):
                 group.admin_list.remove(self.user_id)

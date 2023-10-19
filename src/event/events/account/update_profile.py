@@ -39,15 +39,17 @@ class UpdateProfile(BaseEvent):
             try:
                 profile = json.loads(profile)
             except json.JSONDecodeError:
-                return ReturnData(ReturnData.ERROR, _('Illegal profile.'))
+                return ReturnData(ReturnData.ERROR, _("Illegal profile."))
         try:
             for k in profile:
-                ec = self.server.dol.load_obj_from_group(path=f'account/change_{k}', group='req_events')
+                ec = self.server.dol.load_obj_from_group(
+                    path=f"account/change_{k}", group="req_events"
+                )
 
                 req = copy.deepcopy(self.req)
-                req.form.update(profile)
+                req.data.update(profile)
                 rt = self.server.e_mgr.create_event(ec, req, self.path)
-                if rt.json_data['status'] != 'ok':
+                if rt.json_data["status"] != "ok":
                     return rt
 
         except Exception as err:

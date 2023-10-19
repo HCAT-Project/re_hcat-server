@@ -43,6 +43,7 @@ class BaseEvent(metaclass=abc.ABCMeta):
 
     def __init__(self, server, req, path: str, user_id=None):
         from src.server import Server
+
         self.gettext_func = None
         self.req: Request = req
         self.server: Server = server
@@ -51,9 +52,8 @@ class BaseEvent(metaclass=abc.ABCMeta):
         self.lang = None
 
     def run(self):
-
         # get req_data
-        req_data = self.req.form
+        req_data = self.req.data
 
         # get lang
         if self.user_id is not None:
@@ -64,12 +64,12 @@ class BaseEvent(metaclass=abc.ABCMeta):
             if user is not None:
                 self.lang = user.language
 
-        if 'lang' in req_data and self.lang is None:
-            if req_data['lang'] in os.listdir('locale'):
-                self.lang = req_data['lang']
+        if "lang" in req_data and self.lang is None:
+            if req_data["lang"] in os.listdir("locale"):
+                self.lang = req_data["lang"]
 
         if self.lang is None:
-            self.lang = 'en_US'
+            self.lang = "en_US"
 
         l10n = gettext.translation("all", localedir="locale", languages=[self.lang])
         l10n.install()
@@ -78,18 +78,30 @@ class BaseEvent(metaclass=abc.ABCMeta):
         # get the parameters of the function
         params = inspect.signature(self._run).parameters
         requirements = [i for i in params]
-        m_requirements = list(filter(lambda x: str(params[x].default) == '<class \'inspect._empty\'>', requirements))
+        m_requirements = list(
+            filter(
+                lambda x: str(params[x].default) == "<class 'inspect._empty'>",
+                requirements,
+            )
+        )
 
         # check if the parameters meet the requirements
         if util.ins(m_requirements, req_data):
             if len(requirements) > 0:
-                return self._run(**{k: req_data[k] for k in filter(lambda x: x in requirements, req_data)})
+                return self._run(
+                    **{
+                        k: req_data[k]
+                        for k in filter(lambda x: x in requirements, req_data)
+                    }
+                )
             else:
                 return self._run()
         else:
             req_str = ",".join(filter(lambda x: x not in req_data, m_requirements))
-            return ReturnData(ReturnData.ERROR,
-                              _('Parameters do not meet the requirements:[{}]').format(req_str))
+            return ReturnData(
+                ReturnData.ERROR,
+                _("Parameters do not meet the requirements:[{}]").format(req_str),
+            )
 
     @abc.abstractmethod
     def _run(self, **kwargs):
@@ -118,26 +130,29 @@ class BaseEventOfSVACRecvMsg(BaseEvent, metaclass=abc.ABCMeta):
 
         self.cmd = cmd
 
-        @cmd(head='help')
+        @cmd(head="help")
         def help_(_):
             _ = self.gettext_func
-            self.send_msg(_('Commands') + ':' + '\\n/'.join(self.cmds.keys()))
+            self.send_msg(_("Commands") + ":" + "\\n/".join(self.cmds.keys()))
 
     def send_msg(self, msg: str):
         with self.server.update_user_data(self.user_id) as user:
-            user.add_fri_msg2todos(self.server, self.bot_id, self.bot_name, self.bot_name,
-                                   msg)
+            user.add_fri_msg2todos(
+                self.server, self.bot_id, self.bot_name, self.bot_name, msg
+            )
 
     def get_cmds(self):
         self._reg_cmds()
         for i in self.cmds:
-            if i.__doc__ == ("str(object='') -> str\nstr(bytes_or_buffer[, encoding[, errors]]) -> str\n\nCreate a "
-                             "new string object from the given object. If encoding or\nerrors is specified, then the "
-                             "object must expose a data buffer\nthat will be decoded using the given encoding and "
-                             "error handler.\nOtherwise, returns the result of object.__str__() (if defined)\n"
-                             "or repr(object).\nencoding defaults to sys.getdefaultencoding().\n"
-                             "errors defaults to 'strict'."):
-                yield i, ''
+            if i.__doc__ == (
+                "str(object='') -> str\nstr(bytes_or_buffer[, encoding[, errors]]) -> str\n\nCreate a "
+                "new string object from the given object. If encoding or\nerrors is specified, then the "
+                "object must expose a data buffer\nthat will be decoded using the given encoding and "
+                "error handler.\nOtherwise, returns the result of object.__str__() (if defined)\n"
+                "or repr(object).\nencoding defaults to sys.getdefaultencoding().\n"
+                "errors defaults to 'strict'."
+            ):
+                yield i, ""
             else:
                 yield i, i.__doc__
 
@@ -145,8 +160,7 @@ class BaseEventOfSVACRecvMsg(BaseEvent, metaclass=abc.ABCMeta):
         self._reg_cmds()
         _ = self.gettext_func
         try:
-
-            cmd = Command(json.loads(msg)['msg_chain'][0]['msg'])
+            cmd = Command(json.loads(msg)["msg_chain"][0]["msg"])
 
             if cmd[0] in self.cmds:
                 if len(cmd) >= 1:
@@ -154,10 +168,12 @@ class BaseEventOfSVACRecvMsg(BaseEvent, metaclass=abc.ABCMeta):
                 else:
                     self.cmds[cmd[0]](cmd)
             else:
-                self.send_msg(_("Sorry,i can't understand, please use `/help` for help."))
+                self.send_msg(
+                    _("Sorry,i can't understand, please use `/help` for help.")
+                )
         except Exception as err:
             logging.exception(err)
-            self.send_msg(_('Hello, please use `/help` for help.'))
+            self.send_msg(_("Hello, please use `/help` for help."))
         return ReturnData(ReturnData.OK)
 
     @abc.abstractmethod

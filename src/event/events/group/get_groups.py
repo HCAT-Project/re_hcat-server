@@ -33,11 +33,13 @@ class GetGroups(BaseEvent):
 
     def _run(self):
         user = self.server.get_user(self.user_id)
-
-        return ReturnData(ReturnData.OK) \
-            .add('data',
-                 {i: {
-                     'remark': user.groups_dict[i]['remark'],
-                     'group_name': self.server.get_group(i).name,
-                     'nick': self.server.get_group(i).member_dict[self.user_id]['nick']
-                 } for i in list(user.groups_dict)})
+        data = [
+            {
+                "id": i,
+                "group_name": self.server.get_group(i).name,
+                "nick": self.server.get_group(i).member_dict[self.user_id]["nick"],
+                "remark": user.groups_dict[i]["remark"],
+            }
+            for i in list(user.groups_dict)
+        ]
+        return ReturnData(ReturnData.OK).add("data", data)

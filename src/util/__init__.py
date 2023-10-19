@@ -62,9 +62,9 @@ def request_parse(req_data: Request) -> dict:
     :param req_data: ImmutableMultiDict representing the data in the request.
     :return: A dictionary containing the data in the request.
     """
-    if req_data.method == 'POST':
-        data = dict(req_data.form)
-    elif req_data.method == 'GET':
+    if req_data.method == "POST":
+        data = dict(req_data.get_json())
+    elif req_data.method == "GET":
         data_dict = {}
         for key, value in req_data.args.items():
             data_dict[key] = value
@@ -74,14 +74,25 @@ def request_parse(req_data: Request) -> dict:
     return data
 
 
-def send_email(mail_host, mail_user, mail_password, receiver_address, subject='', content='', receiver='', sender=''):
+def send_email(
+    mail_host,
+    mail_user,
+    mail_password,
+    receiver_address,
+    subject="",
+    content="",
+    receiver="",
+    sender="",
+):
     receivers = [receiver_address]
 
-    message = MIMEText(content, 'plain', 'utf-8') if isinstance(content, str) else content
-    message['From'] = Header(sender, 'utf-8')
-    message['To'] = Header(receiver, 'utf-8')
+    message = (
+        MIMEText(content, "plain", "utf-8") if isinstance(content, str) else content
+    )
+    message["From"] = Header(sender, "utf-8")
+    message["To"] = Header(receiver, "utf-8")
 
-    message['Subject'] = Header(subject, 'utf-8')
+    message["Subject"] = Header(subject, "utf-8")
 
     smtp_obj = smtplib.SMTP()
     smtp_obj.connect(mail_host, 25)
@@ -89,7 +100,11 @@ def send_email(mail_host, mail_user, mail_password, receiver_address, subject=''
     smtp_obj.sendmail(mail_user, receivers, message.as_string())
 
 
-def multi_line_log(logger: logging.Logger = logging.getLogger(), level: int = logging.INFO, msg: str = ""):
+def multi_line_log(
+    logger: logging.Logger = logging.getLogger(),
+    level: int = logging.INFO,
+    msg: str = "",
+):
     for line in msg.splitlines():
         logger.log(level, line)
 
