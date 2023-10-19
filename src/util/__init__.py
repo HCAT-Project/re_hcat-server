@@ -9,7 +9,7 @@
 
 @Version    : 1.0.0
 """
-
+import json
 #  Copyright (C) 2023. HCAT-Project-Team
 #  _
 #  This program is free software: you can redistribute it and/or modify
@@ -63,7 +63,10 @@ def request_parse(req_data: Request) -> dict:
     :return: A dictionary containing the data in the request.
     """
     if req_data.method == "POST":
-        data = dict(req_data.get_json())
+        try:
+            data = json.loads(req_data.data)
+        except json.JSONDecodeError:
+            data = {}
     elif req_data.method == "GET":
         data_dict = {}
         for key, value in req_data.args.items():
@@ -75,14 +78,14 @@ def request_parse(req_data: Request) -> dict:
 
 
 def send_email(
-    mail_host,
-    mail_user,
-    mail_password,
-    receiver_address,
-    subject="",
-    content="",
-    receiver="",
-    sender="",
+        mail_host,
+        mail_user,
+        mail_password,
+        receiver_address,
+        subject="",
+        content="",
+        receiver="",
+        sender="",
 ):
     receivers = [receiver_address]
 
@@ -101,9 +104,9 @@ def send_email(
 
 
 def multi_line_log(
-    logger: logging.Logger = logging.getLogger(),
-    level: int = logging.INFO,
-    msg: str = "",
+        logger: logging.Logger = logging.getLogger(),
+        level: int = logging.INFO,
+        msg: str = "",
 ):
     for line in msg.splitlines():
         logger.log(level, line)
