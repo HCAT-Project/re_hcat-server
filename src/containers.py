@@ -69,7 +69,7 @@ class UserEvent:
     def get_sid(self, table: dict) -> str:
         # get a 4 digit random string
         while True:
-            sid = src.util.crypto.get_random_token(4).lower()
+            sid = src.util.text.random_str(4).lower()
             if sid not in table:
                 break
         table[sid] = self.rid

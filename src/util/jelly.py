@@ -7,7 +7,9 @@
 
 @Date       : 01/15/2023(MM/DD/YYYY)
 
-@Version    : 2.0.0
+@Version    : 2.0.1
+
+@Description: A class for pickling and unpickling instances of itself
 """
 from collections.abc import MutableSet, Hashable
 from typing import Mapping, Any
@@ -69,7 +71,7 @@ class Jelly:
 
         for k, v in state.items():
             if isinstance(v, dict) and "_obj_type" in v:
-                v = agar(v)
+                v = jelly_load(v)
 
             setattr(self, k, v)
 
@@ -117,12 +119,12 @@ class UserSet(Hashable, MutableSet, Jelly):
         self.data.discard(item)
 
 
-def dehydrate(class_: Jelly):
-    return {'_obj_type': f'{class_.__module__}.{class_.__class__.__name__}', **class_.__getstate__()}
+def jelly_dump(_class: Jelly):
+    return {'_obj_type': f'{_class.__module__}.{_class.__class__.__name__}', **_class.__getstate__()}
 
 
-def agar(dict_: Mapping[str, Any]):
-    if (name := dict_['_obj_type'].rsplit('.', 1))[0]:
+def jelly_load(_dict: Mapping[str, Any]):
+    if (name := _dict['_obj_type'].rsplit('.', 1))[0]:
         module_name, class_name = name
         module = __import__(module_name, fromlist=[class_name])
         class_ = getattr(module, class_name)
@@ -131,5 +133,5 @@ def agar(dict_: Mapping[str, Any]):
         class_ = globals()[class_name]
 
     obj = class_.__new__(class_)
-    obj.__setstate__(dict_)
+    obj.__setstate__(_dict)
     return obj

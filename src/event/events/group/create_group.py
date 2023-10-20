@@ -38,7 +38,7 @@ class CreateGroup(BaseEvent):
     def _run(self, group_name):
         group_name_ = group_name
         while True:
-            group_id = '0g' + src.util.crypto.get_random_token(5, upper=False)
+            group_id = '0g' + src.util.text.random_str(5, upper=False)
             if not self.server.db_group.find_one(group_id):
                 break
         group = Group(group_id)

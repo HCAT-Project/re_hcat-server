@@ -48,7 +48,7 @@ from src.user_event_manager import UserEventManager
 from src.util.config_parser import ConfigParser
 from src.util.file_manager import FileManager
 from src.util.i18n import gettext_func as _
-from src.util.jelly import dehydrate, agar
+from src.util.jelly import jelly_dump, jelly_load
 from src.util.text import pascal_case_to_under_score
 
 ''' markdown
@@ -256,25 +256,25 @@ class Server:
         :return:
         """
         with self.db_account.enter_one({'user_id': user_id}) as i:
-            user: User = agar(i.data)
+            user: User = jelly_load(i.data)
             yield user
-            i.data = dehydrate(user)
+            i.data = jelly_dump(user)
 
     def new_user(self, user: User):
-        self.db_account.insert_one(dehydrate(user))
+        self.db_account.insert_one(jelly_dump(user))
 
     def get_user(self, user_id: str) -> User:
         if d := self.db_account.find_one({'user_id': user_id}):
-            return agar(d.data)
+            return jelly_load(d.data)
         else:
             raise KeyError('User not found.')
 
     def new_group(self, group: Group):
-        self.db_group.insert_one(dehydrate(group))
+        self.db_group.insert_one(jelly_dump(group))
 
     def get_group(self, group_id: str) -> Group:
         if d := self.db_group.find_one({'id': group_id}):
-            return agar(d.data)
+            return jelly_load(d.data)
         else:
             raise KeyError('Group not found.')
 
@@ -286,9 +286,9 @@ class Server:
         :return:
         """
         with self.db_group.enter_one({'id': group_id}) as i:
-            group: Group = agar(i.data)
+            group: Group = jelly_load(i.data)
             yield group
-            i.data = dehydrate(group)
+            i.data = jelly_dump(group)
 
     def is_user_exist(self, user_id: str) -> bool:
         """

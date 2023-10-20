@@ -27,6 +27,8 @@
 """
 import copy
 import json
+import secrets
+import string
 from typing import Any
 
 
@@ -112,3 +114,18 @@ def _check_msg_type(msg_):
     for i in msg_['msg_chain']:
         if i['type'] not in ['text', 'img', 'file', 'sticker', 'at', 'reply', 'voice']:
             raise ValueError("Illegal type in message chain.")
+
+
+def random_str(_len: int = 128, upper: bool = True) -> str:
+    """
+    Generates a random string of the specified length.
+    :param _len: The length of the string to be generated.
+    :param upper: Whether to include uppercase letters in the string.
+    :return:
+    """
+
+    if upper:
+        choices = string.ascii_letters + string.digits
+    else:
+        choices = string.ascii_lowercase + string.digits
+    return "".join(secrets.choice(choices) for _ in range(_len))

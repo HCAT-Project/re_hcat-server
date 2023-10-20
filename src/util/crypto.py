@@ -31,7 +31,6 @@ import inspect
 import io
 import pathlib
 import secrets
-import string
 import time
 from os import PathLike
 from pathlib import Path
@@ -217,20 +216,6 @@ def salted_sha1(data: str, salt: str, additional_string: str | None = None) -> s
     return hashlib.sha1(
         (data + hash_salt).encode("utf8"), usedforsecurity=False
     ).hexdigest()
-
-
-def get_random_token(key_len: int = 128, upper: bool = True) -> str:
-    """
-    Generates a random token of the specified length.
-    :param key_len: The length of the token to be generated.
-    :param upper: If True, include uppercase letters in the token. Otherwise, only use lowercase and digits.
-    :return: The generated token as a string.
-    """
-    if upper:
-        choices = string.ascii_letters + string.digits
-    else:
-        choices = string.ascii_lowercase + string.digits
-    return "".join(secrets.choice(choices) for _ in range(key_len))
 
 
 def read_file_chunks(
