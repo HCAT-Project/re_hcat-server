@@ -1,7 +1,7 @@
 Flask
 flask-cors
 Werkzeug
-gevent
+gevent>=23.9.0
 websockets
 
 pyaes
