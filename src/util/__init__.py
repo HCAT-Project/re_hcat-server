@@ -24,7 +24,6 @@ import json
 #  _
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
-import logging
 import smtplib
 from email.header import Header
 from email.mime.text import MIMEText
@@ -101,15 +100,6 @@ def send_email(
     smtp_obj.connect(mail_host, 25)
     smtp_obj.login(mail_user, mail_password)
     smtp_obj.sendmail(mail_user, receivers, message.as_string())
-
-
-def multi_line_log(
-        logger: logging.Logger = logging.getLogger(),
-        level: int = logging.INFO,
-        msg: str = "",
-):
-    for line in msg.splitlines():
-        logger.log(level, line)
 
 
 class AutoValidateDescriptor:

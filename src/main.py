@@ -89,13 +89,18 @@ def main():
     start_time = time.time()
     parser = argparse.ArgumentParser()
     parser.add_argument('--debug', dest='debug', action='store_true')
-    parser.add_argument('--config', dest='config', action='store', default='config.json')
+    parser.add_argument('--config', dest='config', action='store', default='config.toml')
     parser.add_argument('--name', dest='name', action='store', default='server')
 
     args = parser.parse_args()
 
     # check debug mode
     debug = args.debug
+
+    # set logger
+    logging.basicConfig(level=logging.DEBUG if debug else logging.INFO,
+                        format='[%(asctime)s][%(filename)s(%(lineno)d)][%(levelname)s] %(message)s',
+                        datefmt='%b/%d/%Y-%H:%M:%S')
 
     # create logs folder
     if not os.path.exists('logs'):
@@ -105,12 +110,10 @@ def main():
     now = datetime.datetime.now()
     formatted_time = now.strftime("%m-%d-%Y_%H:%M:%S")
     f_name = Path('logs') / f'log_{formatted_time}_{int(now.now().timestamp() % 1 * 10 ** 6)}.log'.replace(':', '_')
-
-    # set logger
-    logging.basicConfig(level=logging.DEBUG if debug else logging.INFO,
-                        format='[%(asctime)s][%(filename)s(%(lineno)d)][%(levelname)s] %(message)s',
-                        datefmt='%b/%d/%Y-%H:%M:%S',
-                        filename=f_name)
+    # add file handler
+    handler = logging.FileHandler(filename=f_name, encoding='utf-8')
+    handler.setFormatter(logging.Formatter('[%(asctime)s][%(filename)s(%(lineno)d)][%(levelname)s] %(message)s'))
+    logging.getLogger().addHandler(handler)
 
     # get config
     logging.getLogger().info(_('Loading config from {}').format(args.config))
