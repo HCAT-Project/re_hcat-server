@@ -90,7 +90,7 @@ class Server:
         self.config = ConfigParser({}) if config is None else ConfigParser(copy.deepcopy(config))
 
         # Generate AES token
-        self.logger.info(_('Generating AES token...'))
+        self.logger.info(_('Generating token...'))
         key_path = Path.cwd() / f'{name}.key'
         if not os.path.exists(key_path):
             self.key = secrets.token_hex(16)
@@ -112,6 +112,7 @@ class Server:
 
         # Get DBA
         dba_name = pascal_case_to_under_score(self.config.get_from_pointer('/db/use', 'Mongo'))
+        self.logger.info(_('Loading DBA "{}"...').format(dba_name))
         self.dba: BaseDBA = self.dol.load_obj_from_group(dba_name, group='db_adapters')(config=self.config)
 
         # Initialize databases

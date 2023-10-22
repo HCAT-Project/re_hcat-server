@@ -26,7 +26,7 @@
 @Version    : 1.1.0
 """
 import copy
-import json
+import tomllib
 from collections import UserDict
 from io import TextIOWrapper, BytesIO, BufferedRandom
 from os import PathLike
@@ -38,44 +38,24 @@ class ConfigParser(UserDict):
 
     def __init__(self,
                  config: Union[
-                     'ConfigParser', dict, PathLike, str, IO, TextIOWrapper, BytesIO, BufferedRandom] = 'config.json'):
+                     'ConfigParser', dict, PathLike, str, IO, TextIOWrapper, BytesIO, BufferedRandom] = 'config.toml'):
         if isinstance(config, dict):
             data: dict = config
+
         elif isinstance(config, (str, PathLike)):
-            with open(config, 'r') as f:
-                data: dict = json.loads(self._del_comments(f.read()))
+            with open(config, 'rb') as f:
+                data: dict = tomllib.load(f)
+
         elif isinstance(config, (IO, TextIOWrapper, BytesIO, BufferedRandom, ZipFile)):
-            data: dict = json.loads(self._del_comments(config.read()))
+            data: dict = tomllib.load(config)
+
         elif isinstance(config, ConfigParser):
             data = config.data
+
         else:
             raise TypeError('config type error')
+
         super().__init__(data)
-
-    @staticmethod
-    def _del_comments(j: str):
-        quote_lock = False
-        comment_lock1 = False
-        comment_lock2 = False
-        all_j = ''
-        for i, s in enumerate(j):
-
-            if s == '"':
-                quote_lock = not quote_lock
-
-            if not quote_lock and s == '/':
-                if j[i + 1] == '/' and not comment_lock2:
-                    comment_lock1 = True
-                elif j[i + 1] == '*' and not comment_lock1:
-                    comment_lock2 = True
-                elif j[i - 1] == '*' and comment_lock2:
-                    comment_lock2 = False
-            if not quote_lock and s == '\n' and comment_lock1:
-                comment_lock1 = False
-            if not comment_lock1 and not comment_lock2:
-                all_j += s
-
-        return all_j
 
     def __repr__(self):
         return f'ConfigParser(config = {self.data})'
