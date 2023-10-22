@@ -97,11 +97,6 @@ def main():
     # check debug mode
     debug = args.debug
 
-    # set logger
-    logging.basicConfig(level=logging.DEBUG if debug else logging.INFO,
-                        format='[%(asctime)s][%(filename)s(%(lineno)d)][%(levelname)s] %(message)s',
-                        datefmt='%b/%d/%Y-%H:%M:%S')
-
     # create logs folder
     if not os.path.exists('logs'):
         os.mkdir('logs')
@@ -109,12 +104,14 @@ def main():
     # format the time
     now = datetime.datetime.now()
     formatted_time = now.strftime("%m-%d-%Y_%H:%M:%S")
+    f_name = Path('logs') / f'log_{formatted_time}_{int(now.now().timestamp() % 1 * 10 ** 6)}.log'.replace(':', '_')
 
-    # add file handler
-    handler = logging.FileHandler(
-        os.path.join('logs', f'log_{formatted_time}_{int(now.now().timestamp() % 1 * 10 ** 6)}.log').replace(':', '_'),
-        encoding='utf8')
-    logging.getLogger().addHandler(handler)
+    # set logger
+    logging.basicConfig(level=logging.DEBUG if debug else logging.INFO,
+                        format='[%(asctime)s][%(filename)s(%(lineno)d)][%(levelname)s] %(message)s',
+                        datefmt='%b/%d/%Y-%H:%M:%S',
+                        filename=f_name)
+
     # get config
     logging.getLogger().info(_('Loading config from {}').format(args.config))
     config_path = args.config
