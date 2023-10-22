@@ -61,7 +61,7 @@ class Server:
     """
     The core of the server.
     """
-    ver = '2.5.2'
+    ver = '2.6.0'
 
     def __init__(self, debug: bool = False,
                  name: str = __name__,
