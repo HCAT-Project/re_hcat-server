@@ -43,6 +43,14 @@ pip install -r requirements.txt
 If you have downloaded and configured git correctly, the client will be automatically cloned from the GitHub repository
 when the server starts. And it will be available at [http://localhost:8080/](http://localhost:8080/).
 
+Laptops for unknown reasons you may need to manually execute the following command.
+
+```shell
+cd static
+npm install
+npm run build
+```
+
 Of course, you can disable or change the client version by modifying the `/client/client-branch` setting in the
 configuration file.
 
@@ -56,7 +64,7 @@ The following table shows the version number and corresponding branch of the cli
 
 # Running
 
-**Please run with `Python 3.10` and above!**
+**Please run with `Python 3.11` and above!**
 
 ```shell
 python start.py

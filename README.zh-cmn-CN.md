@@ -38,6 +38,14 @@ git clone https://github.com/HCAT-Project/re_hcat-server.git
 如果您下载并正确配置了git,那当服务端启动时,会自动从github仓库克隆客户端.
 并在[http://localhost:8080/](http://localhost:8080/)开放.
 
+因为不知名原因您可能需要手动执行以下命令:
+
+```shell
+cd static
+npm install
+npm run build
+```
+
 当然您可以修改配置文件中的`/client/client-branch`以关闭或更改客户端版本.
 
 下表是客户端的版本号和对应的分支:
@@ -50,7 +58,7 @@ git clone https://github.com/HCAT-Project/re_hcat-server.git
 
 # 运行
 
-**请使用`Python 3.10`及以上版本运行!**
+**请使用`Python 3.11`及以上版本运行!**
 
 ```shell
 python start.py
