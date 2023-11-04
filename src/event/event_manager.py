@@ -28,6 +28,8 @@ import logging
 import time
 from typing import Union, Any
 
+import jwt
+
 from src.containers import ReturnData, Request
 from src.event.base_event import BaseEventOfAuxiliary, BaseEvent
 from src.util.config_parser import ConfigParser
@@ -68,15 +70,20 @@ class EventManager:
         auth_data_json = {"user_id": None}
 
         # check if the 'token' is in `req.cookies`
-        if "Authorization" in req.headers:
+        if "Authorization" in req.headers or "authorization" in req.headers:
             # get auth data
-            token = req.headers["Authorization"]
+            token = req.headers.get("Authorization",None)
+            if not token:
+                token = req.headers.get("authorization",None)
+
             try:
                 # decode the token
                 auth_data_json: dict[str, Any] = JWT(self.server.key).decode(token)
                 auth_success = True
 
             except KeyError as err:
+                auth_success = False
+            except jwt.exceptions.ExpiredSignatureError:
                 auth_success = False
             except Exception as err:
                 self.logger.exception(err)

@@ -84,7 +84,7 @@ class ZoCA(BaseCA):
             filter_ = {}
         if masking is None:
             masking = {}
-        for i, v in self.conn.items():
+        for i, v in list(self.conn.items()):
 
             for f in filter_:
                 if f not in v:

@@ -3,6 +3,9 @@ flask-cors
 Werkzeug
 gevent>=23.9.0
 websockets
+fastapi
+uvicorn[standard]
+python-multipart
 
 pyaes
 pyjwt

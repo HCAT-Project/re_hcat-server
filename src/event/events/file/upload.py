@@ -38,6 +38,7 @@ class Upload(BaseEvent):
 
     def _run(self, file_type='file'):
         _ = self.gettext_func
+        print(self.req.files)
         # check if the file is in the request
         if len(self.req.files) != 1:
             return ReturnData(ReturnData.NULL, _('No file uploaded.'))

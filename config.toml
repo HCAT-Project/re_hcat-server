@@ -35,6 +35,14 @@ max_content_length = 104_857_600
 file_timeout = 86400
 
 [network.receivers.FlaskHttpReceiver]
+enable = false
+host = "0.0.0.0"
+port = 8080
+enable-static = true
+static-folder = "static/dist"
+enable-cors = true
+
+[network.receivers.FastapiReceiver]
 enable = true
 host = "0.0.0.0"
 port = 8080
