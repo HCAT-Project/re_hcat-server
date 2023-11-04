@@ -38,18 +38,18 @@ class Upload(BaseEvent):
 
     def _run(self, file_type='file'):
         _ = self.gettext_func
-        print(self.req.files)
+
         # check if the file is in the request
         if len(self.req.files) != 1:
             return ReturnData(ReturnData.NULL, _('No file uploaded.'))
 
         # get the file
-        _file: FileStorage = list(self.req.files.values())[0]
+        _file = list(self.req.files.values())[0]
 
         assert isinstance(self.server.upload_folder, FileManager)
         file_timeout = self.server.config.get_from_pointer('/network/upload/file_timeout', default=86400)
         if file_type == 'profile_photo':
             file_timeout = 300
 
-        _hash = self.server.upload_folder.save_file(_file.stream, timeout=file_timeout)
+        _hash = self.server.upload_folder.save_file(_file, timeout=file_timeout)
         return ReturnData(ReturnData.OK).add('hash', _hash)

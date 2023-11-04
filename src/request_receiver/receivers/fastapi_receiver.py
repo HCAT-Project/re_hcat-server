@@ -32,7 +32,6 @@ from pathlib import Path
 import fastapi
 import uvicorn
 from fastapi import FastAPI, UploadFile
-from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import FileResponse, Response
 
 from src.containers import Request, ReturnData
@@ -43,6 +42,7 @@ from src.util.i18n import gettext_func as _
 class FastapiReceiver(BaseReceiver):
     def _start(self):
         self.app = FastAPI(debug=True)
+
         # self.app.config["UPLOAD_FOLDER"] = self.global_config.get_from_pointer(
         #     "/network/upload/upload_folder", "static/files"
         # )
@@ -51,28 +51,31 @@ class FastapiReceiver(BaseReceiver):
         # )
 
         # Enable Cross-Origin Resource Sharing (CORS)
-        if self.receiver_config.get_from_pointer("enable-cors", True):
-            self.app.add_middleware(
-                CORSMiddleware,
-                allow_credentials=True,
-                allow_methods=["*"],
-                allow_headers=["*"],
-            )
+        # if self.receiver_config.get_from_pointer("enable-cors", True):
+        #     self.app.add_middleware(
+        #         CORSMiddleware,
+        #         allow_credentials=True,
+        #         allow_methods=["*"],
+        #         allow_headers=["*"],
+        #     )`
 
         @self.app.get("/api/{path:path}")
         @self.app.post("/api/{path:path}")
         async def recv(path, request: fastapi.Request, file: UploadFile | None = None):
+            data = {}
+            f = {}
             if request.method == "GET":
                 data = dict(request.query_params)
             elif request.method == "POST":
-                data = await request.json()
-            else:
-                data = {}
+                if file:
+                    f = {file.filename: file.file}
+                else:
+                    data = await request.json()
 
             req = Request(
                 path=path,
                 data=data,
-                files={file.filename: file.file} if file else {},
+                files=f,
                 cookies=request.cookies,
                 headers=dict(request.headers)
             )
