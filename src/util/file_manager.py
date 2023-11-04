@@ -51,11 +51,12 @@ class FileManager:
         except FileNotFoundError:
             raise FileNotFoundError(f"File {sha1} not found")
 
-    def save_file(self, file: IO[bytes], timeout=7 * 24 * 60) -> str:
+    def save_file(self, file: IO[bytes], timeout=7 * 24 * 60, max_size: int = -1) -> str:
         tmp_file = tempfile.TemporaryFile()
         while chunk := file.read(1024):
             tmp_file.write(chunk)
-
+        if tmp_file.seek(0, 2) > max_size >= 0:
+            raise Exception("File too large")
         tmp_file.seek(0)
         hash_ = file_hash(tmp_file)
 

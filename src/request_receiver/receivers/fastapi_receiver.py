@@ -32,6 +32,7 @@ from pathlib import Path
 import fastapi
 import uvicorn
 from fastapi import FastAPI, UploadFile
+from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import FileResponse, Response
 
 from src.containers import Request, ReturnData
@@ -43,21 +44,14 @@ class FastapiReceiver(BaseReceiver):
     def _start(self):
         self.app = FastAPI(debug=True)
 
-        # self.app.config["UPLOAD_FOLDER"] = self.global_config.get_from_pointer(
-        #     "/network/upload/upload_folder", "static/files"
-        # )
-        # self.app.config["MAX_CONTENT_LENGTH"] = self.global_config.get_from_pointer(
-        #     "/network/upload/max_content_length", 16 * 1024 * 1024
-        # )
-
         # Enable Cross-Origin Resource Sharing (CORS)
-        # if self.receiver_config.get_from_pointer("enable-cors", True):
-        #     self.app.add_middleware(
-        #         CORSMiddleware,
-        #         allow_credentials=True,
-        #         allow_methods=["*"],
-        #         allow_headers=["*"],
-        #     )`
+        if self.receiver_config.get_from_pointer("enable-cors", True):
+            self.app.add_middleware(
+                CORSMiddleware,
+                allow_credentials=True,
+                allow_methods=["*"],
+                allow_headers=["*"],
+            )
 
         @self.app.get("/api/{path:path}")
         @self.app.post("/api/{path:path}")

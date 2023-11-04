@@ -26,8 +26,6 @@
 @Version    : 1.0.0
 """
 
-from werkzeug.datastructures import FileStorage
-
 from src.containers import ReturnData
 from src.event.base_event import BaseEvent
 from src.util.file_manager import FileManager
@@ -51,5 +49,8 @@ class Upload(BaseEvent):
         if file_type == 'profile_photo':
             file_timeout = 300
 
-        _hash = self.server.upload_folder.save_file(_file, timeout=file_timeout)
+        _hash = self.server.upload_folder.save_file(_file, timeout=file_timeout,
+                                                    max_size=self.server.config.get_from_pointer(
+                                                        "/network/upload/max_content_length", 16 * 1024 * 1024
+                                                    ))
         return ReturnData(ReturnData.OK).add('hash', _hash)
