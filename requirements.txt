@@ -6,7 +6,6 @@ websockets
 fastapi
 uvicorn[standard]
 python-multipart
-starlette
 
 pyaes
 pyjwt
