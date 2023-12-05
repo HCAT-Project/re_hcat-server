@@ -60,7 +60,7 @@ The following table shows the version number and corresponding branch of the cli
 |----------------|--------|------------------|
 | Main (stable)  | "main" | Stable? Maybe... |
 | Development    | "dev"  |                  |
-| Disable client | null   |                  |
+| Disable client | "null" |                  |
 
 # Running
 

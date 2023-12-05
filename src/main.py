@@ -125,7 +125,7 @@ def main():
     logging.getLogger().info(_('Cloning client from github...'))
     logging.getLogger().info(_('Repo: {}').format(repo))
     try:
-        if config['client'].get('client-branch', None) is not None:
+        if config['client'].get('client-branch', None) != "null":
             client_folder = Path(config.get_from_pointer('/client/client-folder', 'static'))
 
             @run_by_multi_thread(enable=Path(client_folder).exists())
