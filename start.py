@@ -35,8 +35,10 @@ if __name__ == '__main__':
 
         main()
     except ImportError:
+
         # update the requirements when `main` func throw 'ImportError'
-        subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-r', 'requirements.txt', '--upgrade'])
+        # subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-r', 'requirements.txt', '--upgrade'])
+        subprocess.check_call([sys.executable, '-m', 'pdm', 'sync'])
 
         # retry
         from src.main import main
