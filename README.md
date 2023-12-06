@@ -1,23 +1,15 @@
-English | [中文(普通话-大陆)](README.zh-cmn-CN.md)
 
-# Table of Contents
+<div align="center">
+<img src="https://github.com/HCAT-Project/.github/blob/main/profile/assets/logo.png?raw=true" width = 300 height = 300  alt="hcat"/>
 
-<!-- TOC -->
+[![Static Badge](https://img.shields.io/badge/dev_doc-blue?style=for-the-badge)](https://github.com/HCAT-Project/re_hcat-server/blob/master/doc/dev-guide_en-US.md)
 
-* [Table of Contents](#table-of-contents)
-* [Introduction](#introduction)
-* [Installation](#installation)
-    * [Server](#server)
-    * [Client](#client)
-* [Running](#running)
-* [Features Implemented](#features-implemented)
-* [To-Do List](#to-do-list)
-* [Document](#document)
-* [Maintainers](#maintainers)
-* [License](#license)
-* [Disclaimer](#disclaimer)
+[![Static Badge](https://img.shields.io/badge/python-3.11-blue)](https://docs.python.org/3.11/)
+[![pdm-managed](https://img.shields.io/badge/pdm-managed-blueviolet)](https://pdm-project.org)
 
-<!-- TOC -->
+_English | [中文(普通话-大陆)](README.zh-cmn-CN.md)_
+
+</div>
 
 # Introduction
 
@@ -35,6 +27,21 @@ get the server:
 
 ```shell
 git clone https://github.com/HCAT-Project/re_hcat-server.git
+```
+
+### Method-1: PDM
+
+Please make sure that PDM is installed on your computer and that the environment variables for PDM are configured correctly. Otherwise, please use ``method-2``.
+
+```shell
+cd re_hcat-server
+pdm install
+```
+
+### Method-2: pip
+
+```shell
+cd re_hcat-server
 pip install -r requirements.txt
 ```
 

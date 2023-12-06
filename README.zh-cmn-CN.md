@@ -1,21 +1,11 @@
-# 目录
+<div align="center">
+<img src="https://github.com/HCAT-Project/.github/blob/main/profile/assets/logo.png?raw=true" width = 300 height = 300  alt="hcat"/>
 
-<!-- TOC -->
+[![Static Badge](https://img.shields.io/badge/dev_doc-blue?style=for-the-badge)](https://github.com/HCAT-Project/re_hcat-server/blob/master/doc/dev-guide_en-US.md)
 
-* [目录](#目录)
-* [介绍](#介绍)
-* [安装](#安装)
-    * [服务端](#服务端)
-    * [客户端](#客户端)
-* [运行](#运行)
-* [已实现的功能](#已实现的功能)
-* [待办列表](#待办列表)
-* [文档](#文档)
-* [维护者](#维护者)
-* [许可证](#许可证)
-* [免责声明](#免责声明)
-
-<!-- TOC -->
+[![Static Badge](https://img.shields.io/badge/python-3.11-blue)](https://docs.python.org/3.11/)
+[![pdm-managed](https://img.shields.io/badge/pdm-managed-blueviolet)](https://pdm-project.org)
+</div>
 
 # 介绍
 
@@ -31,6 +21,22 @@ re_hcat-server是[HCat](https://hcat.online)的重置版服务器,基于Python�
 
 ```shell
 git clone https://github.com/HCAT-Project/re_hcat-server.git
+```
+
+### 方式-1: PDM
+
+请确保您的电脑上已经安装了PDM,并且已经正确配置了PDM的环境变量. 否则请使用`方式-2`.
+
+```shell
+cd re_hcat-server
+pdm install
+```
+
+### 方式-2: pip
+
+```shell
+cd re_hcat-server
+pip install -r requirements.txt
 ```
 
 ## 客户端
