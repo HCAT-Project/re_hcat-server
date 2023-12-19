@@ -40,14 +40,14 @@ class UserEventManager:
     def write_in(self, event: UserEvent):
         self.db.insert_one(event.json)
 
-    def get_event(self, rid):
+    def get_event(self, rid: str):
         if e := self.db.find_one({'rid': rid}) is not None:
             e: Item
             return e.data
         else:
             raise ValueError(f'rid {rid} not found')
 
-    def is_event_exist(self, rid):
+    def is_event_exist(self, rid: str):
         try:
             self.get_event(rid)
             return True

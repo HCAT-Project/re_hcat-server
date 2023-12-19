@@ -33,7 +33,7 @@ from src.event.base_event import BaseEvent
 class AgreeJoinGroupRequest(BaseEvent):
     auth = True
 
-    def _run(self, rid):
+    def _run(self, rid:str):
         _ = self.gettext_func
         if not self.server.db_event.find_one({'rid': rid}):
             return ReturnData(ReturnData.NULL, _('Event does not exist.'))

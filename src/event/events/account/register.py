@@ -35,7 +35,7 @@ from src.util.regex import name_regex
 class Register(BaseEvent):
     auth = False
 
-    def _run(self, user_id, password, username):
+    def _run(self, user_id: str, password: str, username: str):
         _ = self.gettext_func
         if self.server.is_user_exist(user_id):
             return ReturnData(ReturnData.ERROR, _('ID has been registered.'))

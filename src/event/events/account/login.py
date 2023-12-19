@@ -33,7 +33,7 @@ from src.util.crypto import JWT
 class Login(BaseEvent):
     auth = False
 
-    def _run(self, user_id, password):
+    def _run(self, user_id:str, password:str):
         _ = self.gettext_func
         if not self.server.is_user_exist(user_id):
             return ReturnData(ReturnData.NULL, _("User does not exist."))
