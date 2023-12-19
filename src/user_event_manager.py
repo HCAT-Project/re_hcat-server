@@ -46,3 +46,10 @@ class UserEventManager:
             return e.data
         else:
             raise ValueError(f'rid {rid} not found')
+
+    def is_event_exist(self, rid):
+        try:
+            self.get_event(rid)
+            return True
+        except ValueError:
+            return False
