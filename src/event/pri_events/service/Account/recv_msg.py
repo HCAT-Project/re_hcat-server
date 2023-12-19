@@ -108,8 +108,8 @@ class RecvMsg(BaseEventOfSVACRecvMsg):
                     self.send_msg(_('Email binding is not enabled.'))
 
             elif cmd[0] == 'code':
-                if self.server.is_user_event_exist(str(cmd[1]).lower()):
-                    e = self.server.get_user_event(str(cmd[1]).lower())
+                if self.server.uem.is_event_exist(str(cmd[1]).lower()):
+                    e = self.server.uem.get_event(str(cmd[1]).lower())
                     with self.server.update_user_data(e['user_id']) as user:
                         user.email = e['email']
 

@@ -35,7 +35,7 @@ import secrets
 import sys
 import time
 from pathlib import Path
-from typing import Any, Mapping, Dict
+from typing import Dict
 
 import schedule
 
@@ -173,7 +173,7 @@ class Server:
 
         for k, v in list(self.event_sid_table.items()):
             try:
-                allow_del = self.db_event.find_one({'rid': v}) or time.time() - self.get_user_event(v)[
+                allow_del = self.db_event.find_one({'rid': v}) or time.time() - self.uem.get_event(v)[
                     'time'] > self.short_id_timeout
             except KeyError:
                 allow_del = True
@@ -303,29 +303,6 @@ class Server:
             return False
         else:
             return True
-
-    def get_user_event(self, event_id: str) -> Mapping[str, Any]:
-        """
-        Get the event data.
-        :param event_id:
-        :return:
-        """
-        eid = copy.copy(event_id)
-
-        if eid in self.event_sid_table:
-            eid = self.event_sid_table[eid]
-        if d := self.db_event.find_one({'rid': eid}):
-            return d.data
-        else:
-            raise KeyError('Event not found.')
-
-    def is_user_event_exist(self, event_id: str) -> bool:
-        """
-        Check if the event exists.
-        :param event_id:
-        :return:
-        """
-        return self.get_user_event(event_id) is not None
 
     def check_file_exists(self, file_hash: str):
         """

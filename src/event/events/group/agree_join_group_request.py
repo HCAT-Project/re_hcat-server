@@ -38,7 +38,7 @@ class AgreeJoinGroupRequest(BaseEvent):
         if not self.server.db_event.find_one({'rid': rid}):
             return ReturnData(ReturnData.NULL, _('Event does not exist.'))
 
-        event: dict = self.server.get_user_event(rid)
+        event: dict = self.server.uem.get_event(rid)
         req_user_id = event['user_id']
         group_id = event['group_id']
 
