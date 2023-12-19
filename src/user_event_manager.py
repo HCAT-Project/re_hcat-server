@@ -25,7 +25,7 @@
 from functools import partial
 
 from src.containers import UserEvent
-from src.db_adapter.base_dba import BaseCA
+from src.db_adapter.base_dba import BaseCA, Item
 
 
 class UserEventManager:
@@ -39,3 +39,10 @@ class UserEventManager:
 
     def write_in(self, event: UserEvent):
         self.db.insert_one(event.json)
+
+    def get_event(self, rid):
+        if e := self.db.find_one({'rid': rid}) is not None:
+            e: Item
+            return e.data
+        else:
+            raise ValueError(f'rid {rid} not found')
