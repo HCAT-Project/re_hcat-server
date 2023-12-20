@@ -66,14 +66,12 @@ class UserEvent:
         self.json[key] = value
         return self
 
-    def get_sid(self, table: dict) -> str:
-        # get a 4 digit random string
-        while True:
-            sid = src.util.text.random_str(4).lower()
-            if sid not in table:
-                break
-        table[sid] = self.rid
-        return sid
+    def get_sid(self) -> str:
+        """
+        src.user_event_manager.UserEventManager.get_sid
+        :return:
+        """
+        ...
 
 
 class ReturnData:
@@ -99,16 +97,16 @@ class ReturnData:
         return self
 
     def set_cookie(
-        self,
-        key: str,
-        value: str = "",
-        max_age: timedelta | int | None = None,
-        expires: str | datetime | int | float | None = None,
-        path: str | None = "/",
-        domain: str | None = None,
-        secure: bool = False,
-        httponly: bool = False,
-        samesite: str | None = None,
+            self,
+            key: str,
+            value: str = "",
+            max_age: timedelta | int | None = None,
+            expires: str | datetime | int | float | None = None,
+            path: str | None = "/",
+            domain: str | None = None,
+            secure: bool = False,
+            httponly: bool = False,
+            samesite: str | None = None,
     ):
         self.json_data["_cookies"][key] = {
             "value": value,
@@ -180,11 +178,11 @@ class User(Jelly):
     """
 
     def __init__(
-        self,
-        user_id: str,
-        password: str,
-        user_name: str,
-        password_hash_config: ConfigParser,
+            self,
+            user_id: str,
+            password: str,
+            user_name: str,
+            password_hash_config: ConfigParser,
     ):
         """
         Creates a new user object.
@@ -205,10 +203,15 @@ class User(Jelly):
 
     def _var_init(self):
         self.todo_list = []
+
         self.status = "offline"
+
         self.friend_dict = {}
         self.groups_dict = {}
+
         self.email = ""
+        self.email_verified = False
+
         self.language = "en_US"
         self.avatar = ""
         self.bio = "NULL"
@@ -239,13 +242,13 @@ class User(Jelly):
             # sha256 and sha1
             if len(self.hash_password) == 64:
                 return (
-                    src.util.crypto.salted_sha256(password, self.salt, self.user_id)
-                    == self.hash_password
+                        src.util.crypto.salted_sha256(password, self.salt, self.user_id)
+                        == self.hash_password
                 )
             elif len(self.hash_password) == 40:
                 return (
-                    src.util.crypto.salted_sha1(password, self.salt, self.user_id)
-                    == self.hash_password
+                        src.util.crypto.salted_sha1(password, self.salt, self.user_id)
+                        == self.hash_password
                 )
             else:
                 return False

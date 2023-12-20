@@ -312,3 +312,14 @@ class Server:
         """
         upl_folder = self.config.get_from_pointer('/network/upload/upload_folder', default='static/files')
         return os.path.exists(os.path.join(upl_folder, file_hash))
+
+    def get_user_by_email(self, email: str) -> User:
+        """
+        Get the user by email.
+        :param email: The email of user.
+        :return:
+        """
+        if d := self.db_account.find_one({'email': email}):
+            return jelly_load(d.data)
+        else:
+            raise KeyError('User not found.')
