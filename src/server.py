@@ -316,6 +316,7 @@ class Server:
     def get_user_by_email(self, email: str) -> User:
         """
         Get the user by email.
+        :raises KeyError: If the user is not found.
         :param email: The email of user.
         :return:
         """
