@@ -69,4 +69,4 @@ class Bind(BaseEvent):
                 subject = _('HCAT Email Binding')
                 send_email(mail_host, mail_user, mail_pass, email, subject, content, '@' + self.user_id,sender)
                 # print(mail_host, mail_user, mail_pass, email, subject, content, '@' + self.user_id, sender)
-            return ReturnData(ReturnData.OK)
+            return ReturnData(ReturnData.OK, msg=_('Email binding successful.') + '\n' + _('Please check your email.'))
