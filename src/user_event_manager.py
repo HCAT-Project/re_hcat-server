@@ -58,7 +58,7 @@ class UserEventManager:
         else:
             rid_ = rid
 
-        if e := self.db.find_one({'rid': rid_}) is not None:
+        if (e := self.db.find_one({'rid': rid_})) is not None:
             e: Item
             return e.data
         else:
