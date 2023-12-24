@@ -209,7 +209,7 @@ class User(Jelly):
         self.friend_dict = {}
         self.groups_dict = {}
 
-        self.email = ""
+        self.email: str | None = None
         self.email_verified = False
 
         self.language = "en_US"
