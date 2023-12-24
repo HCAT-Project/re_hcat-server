@@ -60,7 +60,7 @@ class EventManager:
             {"evt": event, "priority": event.priority}
         )
 
-    def create_event(self, event, req: Request, path: str):
+    def create_event(self, event:BaseEvent, req: Request, path: str):
         assert isinstance(self.server.config, ConfigParser)
 
         cancel, rd_of_aux_evt = self._run_aux_events(event, path, req)
