@@ -21,6 +21,7 @@ dependencies = [
     "pillow",
     "pymongo",
     "ZODB",
+    "flask-socketio>=5.3.6",
 ]
 requires-python = ">=3.11"
 readme = "README.md"
