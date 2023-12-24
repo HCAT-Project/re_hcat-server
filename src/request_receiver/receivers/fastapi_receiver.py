@@ -34,6 +34,8 @@ import uvicorn
 from fastapi import FastAPI, UploadFile
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import FileResponse, Response
+import socketio
+from ...util.sockets import sio_server
 
 from src.containers import Request, ReturnData
 from src.request_receiver.base_receiver import BaseReceiver
@@ -53,6 +55,12 @@ class FastapiReceiver(BaseReceiver):
                 allow_headers=["*"],
             )
 
+        sio_asgi_app = socketio.ASGIApp(
+            socketio_server=sio_server, other_asgi_app=self.app
+        )
+        self.app.add_route("/socket.io/", route=sio_asgi_app, methods=["GET", "POST"])
+        self.app.add_websocket_route("/socket.io/", sio_asgi_app)
+
         @self.app.get("/api/{path:path}")
         @self.app.post("/api/{path:path}")
         async def recv(path, request: fastapi.Request, file: UploadFile | None = None):
@@ -71,7 +79,7 @@ class FastapiReceiver(BaseReceiver):
                 data=data,
                 files=f,
                 cookies=request.cookies,
-                headers=dict(request.headers)
+                headers=dict(request.headers),
             )
 
             rt = self.create_req(req)
@@ -118,7 +126,7 @@ class FastapiReceiver(BaseReceiver):
             log_level="info",
             reload=False,
             workers=1,
-            **ssl_kwargs
+            **ssl_kwargs,
         )
         server = uvicorn.Server(config)
         self.asgi_server = server
