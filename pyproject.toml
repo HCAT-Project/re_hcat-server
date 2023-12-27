@@ -29,4 +29,4 @@ license = { text = "AGPL-3.0" }
 
 [tool.pdm.scripts]
 start = { call = "start:__main__" }
-doc-gen = { call = "tools.doc_tool.genereate:main" }
+doc-gen = { call = "tools.doc_tool.generate:main" }
