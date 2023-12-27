@@ -30,7 +30,7 @@ from src.event.base_event import BaseEvent
 
 class GetSetting(BaseEvent):
     auth = True
-
+    returns = {"data": dict}
     def _run(self, group_id):
         _ = self.gettext_func
         with self.server.update_user_data(self.user_id) as user:

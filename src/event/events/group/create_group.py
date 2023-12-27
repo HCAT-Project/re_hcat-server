@@ -34,6 +34,7 @@ from src.event.base_event import BaseEvent
 
 class CreateGroup(BaseEvent):
     auth = True
+    returns = {'group_id': str}
 
     def _run(self, group_name):
         group_name_ = group_name

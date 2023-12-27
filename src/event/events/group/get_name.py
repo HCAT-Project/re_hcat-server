@@ -30,7 +30,7 @@ from src.event.base_event import BaseEvent
 
 class GetName(BaseEvent):
     auth = False
-
+    returns = {"group_name": str, "remark": str}
     def _run(self, group_id):
         _ = self.gettext_func
         if not self.server.db_group.exists(group_id):

@@ -33,6 +33,7 @@ from src.util.file_manager import FileManager
 
 class Upload(BaseEvent):
     auth = True
+    returns = {'hash': str}
 
     def _run(self, file_type='file'):
         _ = self.gettext_func

@@ -32,6 +32,7 @@ from src.util.crypto import JWT
 
 class Login(BaseEvent):
     auth = False
+    returns = {'token': str, 'profile': dict}
 
     def _run(self, user_id: str, password: str):
         _ = self.gettext_func

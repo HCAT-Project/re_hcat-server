@@ -30,7 +30,7 @@ from src.event.base_event import BaseEvent
 
 class Status(BaseEvent):
     auth = False
-
+    returns = {'status': str}
     def _run(self, user_id):
         _ = self.gettext_func
         if user_id[0] in [str(i) for i in range(10)] and user_id[1] == 's':

@@ -30,6 +30,7 @@ from src.event.base_event import BaseEvent
 
 class GetAdmins(BaseEvent):
     auth = True
+    returns = {"data": list}
 
     def _run(self, group_id):
         _ = self.gettext_func

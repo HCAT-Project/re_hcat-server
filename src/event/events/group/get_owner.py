@@ -30,7 +30,7 @@ from src.event.base_event import BaseEvent
 
 class GetOwner(BaseEvent):
     auth = True
-
+    returns = {"data": str}
     def _run(self, group_id):
         _ = self.gettext_func
         with self.server.update_group_data(group_id) as group:

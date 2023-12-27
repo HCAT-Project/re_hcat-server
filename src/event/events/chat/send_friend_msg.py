@@ -35,7 +35,7 @@ from src.event.base_event import BaseEvent
 
 class SendFriendMsg(BaseEvent):
     auth = True
-
+    returns = {'rid': str}
     def _run(self, friend_id, msg):
         _ = self.gettext_func
         # {"msg_chain":[{"type":type,"msg":msg},{"type":type,"msg":msg}]}

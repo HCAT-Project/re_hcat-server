@@ -30,7 +30,7 @@ from src.event.base_event import BaseEvent
 
 class GetVerificationMethod(BaseEvent):
     auth = True
-
+    returns = {"data": dict}
     def _run(self, group_id):
         _ = self.gettext_func
         try:

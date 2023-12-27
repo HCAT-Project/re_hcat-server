@@ -32,7 +32,7 @@ from src.event.base_event import BaseEvent
 
 class SendMsg(BaseEvent):
     auth = True
-
+    returns = {'rid': str}
     def _run(self, target_id: str, msg):
         e = SendGroupMsg if target_id.startswith('0g') else SendFriendMsg
         return self.server.e_mgr.create_event(e, self.req, self.path)

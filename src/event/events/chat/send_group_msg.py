@@ -34,7 +34,7 @@ from src.event.base_event import BaseEvent
 
 class SendGroupMsg(BaseEvent):
     auth = True
-
+    returns = {'rid': str}
     def _run(self, group_id, msg):
         _ = self.gettext_func
         msg_ = copy.copy(msg)

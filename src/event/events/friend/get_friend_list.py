@@ -30,7 +30,7 @@ from src.event.base_event import BaseEvent
 
 class GetFriendList(BaseEvent):
     auth = True
-
+    returns = {'data': list}
     def _run(self):
         with self.server.update_user_data(self.user_id) as user:
             return ReturnData(ReturnData.OK).add('data', [i for i in user.friend_dict])

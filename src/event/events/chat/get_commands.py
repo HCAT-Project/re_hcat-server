@@ -31,7 +31,7 @@ from src.event.base_event import BaseEvent, BaseEventOfSVACRecvMsg
 
 class GetCommands(BaseEvent):
     auth = True
-
+    returns = {'commands': dict}
     def _run(self, bot_id):
         _ = self.gettext_func
         if not (bot_id[0] in [str(i) for i in range(10)] and bot_id[1] == 's'):

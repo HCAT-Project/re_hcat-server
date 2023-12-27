@@ -30,7 +30,7 @@ from src.event.base_event import BaseEvent
 
 class GetFriendNick(BaseEvent):
     auth = True
-
+    returns = {'nick': str}
     def _run(self, friend_id):
         with self.server.update_user_data(self.user_id) as user:
             if friend_id not in user.friend_dict:

@@ -30,7 +30,7 @@ from src.event.base_event import BaseEvent
 
 class GetGroups(BaseEvent):
     auth = True
-
+    returns = {"data": list}
     def _run(self):
         user = self.server.get_user(self.user_id)
         data = [

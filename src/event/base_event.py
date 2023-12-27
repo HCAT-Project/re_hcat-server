@@ -40,6 +40,7 @@ from src.util.command_parser import Command
 
 class BaseEvent(metaclass=abc.ABCMeta):
     auth = True
+    returns = {}
 
     def __init__(self, server, req, path: str, user_id=None):
         from src.server import Server
