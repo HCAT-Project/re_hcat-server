@@ -48,3 +48,4 @@ class ChangeUserNick(BaseEvent):
                 return ReturnData(ReturnData.ERROR, _('You are not in the group.'))
 
             group.member_dict[_user_id]['nick'] = nick
+            return ReturnData(ReturnData.OK)
