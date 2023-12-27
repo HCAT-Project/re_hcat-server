@@ -33,7 +33,7 @@ from src.util.crypto import JWT
 class Login(BaseEvent):
     auth = False
 
-    def _run(self, user_id:str, password:str):
+    def _run(self, user_id: str, password: str):
         _ = self.gettext_func
         if not self.server.is_user_exist(user_id):
             return ReturnData(ReturnData.NULL, _("User does not exist."))
@@ -44,9 +44,6 @@ class Login(BaseEvent):
             if user.auth(password):
                 user.status = "online"
 
-                # init a response
-                resp = ReturnData(ReturnData.OK)
-
                 # generate token
                 token = JWT(self.server.key).encode({"user_id": user_id})
 
@@ -56,7 +53,19 @@ class Login(BaseEvent):
 
                 # check if @0sAccount in friend_list
                 user.add_user_to_friend_list("0sAccount", _("Account_BOT"))
-                resp.add("token", token)
+
+                rt = {
+                    'avatar': user.avatar,
+                    'name': user.user_name,
+                    'id': user.user_id,
+                    'bio': user.bio,
+                    'status': user.status,
+                    'gender': user.gender
+                }
+
+                # init a response
+                resp = ReturnData(ReturnData.OK)
+                resp.add("token", token).add("profile", rt)
 
                 # return
                 return resp
