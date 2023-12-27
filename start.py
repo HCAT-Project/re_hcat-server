@@ -26,7 +26,8 @@ import logging
 import subprocess
 import sys
 
-if __name__ == '__main__':
+
+def __main__():
     # try to run thr `main` func
     try:
         from src.util.i18n import gettext_func as _
@@ -52,3 +53,7 @@ if __name__ == '__main__':
         logging.critical(_('The function "main" could not be loaded, please check if the file is complete.'))
         logging.exception(err)
         sys.exit()
+
+
+if __name__ == '__main__':
+    __main__()
