@@ -59,9 +59,12 @@ class DynamicObjLoader:
 
     def load_objs(self, path: Union[str, Path], *, _type: type = None):
         modules_dir = path if isinstance(path, Path) else Path(path)
+        modules_dir = modules_dir.resolve()
 
-        for i in filter(lambda p: p.suffix == '.py', modules_dir.iterdir()):
+        for i in filter(lambda p: p.suffix == '.py' and p.stem != '__init__' or p.is_dir(), modules_dir.iterdir()):
+
             if i.is_dir():
+
                 yield from self.load_objs(path=i, _type=_type)
             else:
                 obj_name = src.util.text.under_score_to_pascal_case(name=i.stem)
