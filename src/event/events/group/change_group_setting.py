@@ -42,7 +42,7 @@ class ChangeGroupSetting(BaseEvent):
             if self.user_id not in list(group.admin_list) + [group.owner]:
                 return ReturnData(ReturnData.ERROR, _('You don\'t have permission.'))
             try:
-                setting_ = setting if type(setting) == dict else json.loads(setting)
+                setting_ = setting if isinstance(setting,dict) else json.loads(setting)
             except json.JSONDecodeError:
                 return ReturnData(ReturnData.ERROR, _('Illegal setting.'))
 

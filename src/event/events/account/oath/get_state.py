@@ -14,28 +14,18 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
-@File       : get_avatar_url.py
+@File       : get_state.py
 
 @Author     : hsn
 
-@Date       : 7/4/23 8:56 PM
-
-@Version    : 1.0.0
+@Date       : 12/8/23 9:38 PM
 """
-from src.containers import ReturnData
-from src.event.base_event import BaseEvent
+from event.base_event import BaseEvent
 
 
-class GetAvatarUrl(BaseEvent):
-    auth = True
+class GetState(BaseEvent):
+    auth = False
 
-    def _run(self, user_id=None, hash_=None):
+    def _run(self):
         _ = self.gettext_func
-        # get user data
-        if self.server.is_user_exist(user_id):
-            user = self.server.get_user(user_id)
-            hash_ = user.avatar
-        elif not self.server.upload_folder.get_file_path(hash_):
-            return ReturnData(ReturnData.ERROR, _('File not found.'))
-        return ReturnData(ReturnData.OK).add('url', f'/files/{hash_}')
-    # todo:add default avatar
+        return self.server.uem.create_event().rid

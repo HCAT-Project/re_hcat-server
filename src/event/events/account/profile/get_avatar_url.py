@@ -2,36 +2,42 @@
 # -*- coding: UTF-8 -*-
 
 #  Copyright (C) 2023. HCAT-Project-Team
-#  _
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU Affero General Public License as
 #  published by the Free Software Foundation, either version 3 of the
 #  License, or (at your option) any later version.
-#  _
 #  This program is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU Affero General Public License for more details.
-#  _
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
-@File       : check_file_exist.py
+@File       : get_avatar_url.py
 
 @Author     : hsn
 
-@Date       : 4/9/23 8:25 AM
+@Date       : 7/4/23 8:56 PM
 
 @Version    : 1.0.0
 """
+
 from src.containers import ReturnData
 from src.event.base_event import BaseEvent
 
 
-class CheckFileExist(BaseEvent):
-    auth = False
+class GetAvatarUrl(BaseEvent):
+    auth = True
+    returns = {'url': str}
 
-    def _run(self, sha1):
-        return (ReturnData(ReturnData.OK if self.server.check_file_exists(sha1) else ReturnData.NULL)
-                .add('_WARNING', 'This event is deprecated.Please use file/check instead.'))
+    def _run(self, user_id=None, hash_=None):
+        _ = self.gettext_func
+        # get user data
+        if self.server.is_user_exist(user_id):
+            user = self.server.get_user(user_id)
+            hash_ = user.avatar
+        elif not self.server.upload_folder.get_file_path(hash_):
+            return ReturnData(ReturnData.ERROR, _('File not found.'))
+        return ReturnData(ReturnData.OK).add('url', f'/files/{hash_}')
+    # todo:add default avatar

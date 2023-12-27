@@ -14,11 +14,11 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
-@File       : get_profile.py
+@File       : get_gender.py
 
 @Author     : hsn
 
-@Date       : 7/4/23 8:41 PM
+@Date       : 8/17/23 9:14 PM
 
 @Version    : 1.0.0
 """
@@ -26,25 +26,14 @@ from src.containers import ReturnData
 from src.event.base_event import BaseEvent
 
 
-class GetProfile(BaseEvent):
-    auth = False
+class GetGender(BaseEvent):
+    auth = True
 
-    def _run(self, user_id):
+    def _run(self, user_id=None):
         _ = self.gettext_func
         # get user data
-        user = self.server.get_user(user_id)
-        rt = {
-            'avatar': user.avatar,
-            'name': user.user_name,
-            'id': user.user_id,
-            'bio': user.bio,
-            'status': user.status,
-            'gender': user.gender
-        }
-        if self.user_id is not None:
-            is_fri = self.server.get_user(self.user_id).is_in_contact(user_id)
-            rt['is_friend'] = is_fri
-            if is_fri:
-                rt['nick'] = self.server.get_user(self.user_id).get_friend(user_id)['nick']
-                rt['time'] = self.server.get_user(self.user_id).get_friend(user_id)['time']
-        return ReturnData(ReturnData.OK).add('data', rt)
+        if self.server.is_user_exist(user_id):
+            user = self.server.get_user(user_id)
+            return ReturnData(ReturnData.OK).add('gender', user.gender)
+        else:
+            return ReturnData(ReturnData.ERROR, _('User not found.'))

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 """
-@File       : get_user_name.py
+@File       : get_name.py
 
 @Author     : hsn
 
@@ -30,9 +30,9 @@ from src.containers import ReturnData
 from src.event.base_event import BaseEvent
 
 
-class GetUserName(BaseEvent):
+class GetName(BaseEvent):
     auth = False
-
+    returns = {'data': str, 'nick': str}
     def _run(self, user_id: str):
         _ = self.gettext_func
         if len(user_id) >= 2:

@@ -14,28 +14,46 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
-@File       : set_language.py
+@File       : update.py
 
 @Author     : hsn
 
-@Date       : 8/17/23 9:18 PM
+@Date       : 8/17/23 9:41 PM
 
 @Version    : 1.0.0
 """
-from pathlib import Path
+import copy
+import json
+import logging
 
 from src.containers import ReturnData
 from src.event.base_event import BaseEvent
 
 
-class SetLanguage(BaseEvent):
+class Update(BaseEvent):
     auth = True
 
-    def _run(self, lang: str):
+    def _run(self, profile: str | dict):
         _ = self.gettext_func
-        with self.server.update_user_data(self.user_id) as user:
-            if not Path('locale', lang).exists():
-                return ReturnData(ReturnData.ERROR,
-                                  _('Language not supported.'))
-            user.language = lang
+        if isinstance(profile, str):
+            try:
+                profile = json.loads(profile)
+            except json.JSONDecodeError:
+                return ReturnData(ReturnData.ERROR, _("Illegal profile."))
+        try:
+            print(1)
+            for k in profile:
+                ec = self.server.dol.load_obj_from_group(
+                    path=f"account/profile/change_{k}", group="req_events"
+                )
+
+                req = self.req
+                req.data.update(profile)
+                rt = self.server.e_mgr.create_event(ec, req, self.path)
+                if rt.json_data["status"] != "ok":
+                    return rt
+
+        except Exception as err:
+            logging.exception(err)
+            return ReturnData(ReturnData.ERROR, str(err))
         return ReturnData(ReturnData.OK)
