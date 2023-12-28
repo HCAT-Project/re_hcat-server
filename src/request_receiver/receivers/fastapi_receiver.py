@@ -30,16 +30,75 @@ import logging
 from pathlib import Path
 
 import fastapi
+import socketio
 import uvicorn
 from fastapi import FastAPI, UploadFile
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import FileResponse, Response
-import socketio
-from ...util.sockets import sio_server
 
+from dynamic_obj_loader import DynamicObjLoader
 from src.containers import Request, ReturnData
 from src.request_receiver.base_receiver import BaseReceiver
 from src.util.i18n import gettext_func as _
+from ...util.sockets import sio_server
+
+
+def gen_api_doc():
+    dol = DynamicObjLoader()
+    objs = dol.load_objs('src/event/events')
+    base_path = Path('tools/doc_tool/doc')
+
+    paths_json = {}
+    for i in objs:
+        paths_json['api/' + '/'.join(i.__module__.split('.')[3:])] = gen(i)
+    return {'openapi': '3.1.0', 'info': {'title': 'HCAT', 'description': 'HCAT API', 'version': '0.0.1'},
+            'paths': paths_json}
+
+
+def gen(obj_):
+    docs = str(obj_.__doc__).split('\n')
+    return {
+        "post": {
+            "summary": docs[0] or '',
+            "description": '\n'.join(docs[1:]) or '',
+            "operationId": obj_.__name__,
+            "requestBody": {
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                i.name: {
+                                    "type": "string"
+                                } for i in obj_(None, None, None).parameters
+                            }
+                        }
+                    }
+                }
+            },
+            "responses": {
+                "200": {
+                    "description": "OK",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {**{
+                                    i: {
+                                        "type": obj_.returns.get(i, str).__name__
+                                    } for i in obj_.returns
+
+                                }, "status": {"type": "string"}, "message": {"type": "string"}}
+                            }
+                        }
+                    }
+                }
+
+            }
+
+        }
+    }
+
 
 
 class FastapiReceiver(BaseReceiver):
@@ -110,7 +169,12 @@ class FastapiReceiver(BaseReceiver):
                 if not path or (not (Path.cwd() / static_folder / path).exists()):
                     path = "index.html"
                 return FileResponse(Path.cwd() / static_folder / path)
-
+        self.app.openapi = gen_api_doc
+        # def custom_openapi():
+        #     return {'openapi': '3.1.0', 'info': {'title': 'HCAT', 'description': 'HCAT API', 'version': '0.0.1'},
+        #             'paths': {}}
+        #
+        # self.app.openapi = custom_openapi
         # ssl
         ssl_kwargs = {}
         if self.global_config.get_from_pointer("/network/ssl/enable", False):

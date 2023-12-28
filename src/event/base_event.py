@@ -52,6 +52,10 @@ class BaseEvent(metaclass=abc.ABCMeta):
         self.user_id = user_id
         self.lang = None
 
+    @property
+    def parameters(self):
+        return inspect.signature(self._run).parameters
+
     def run(self):
         # get req_data
         req_data = self.req.data
