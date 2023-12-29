@@ -28,6 +28,7 @@
 import json
 import logging
 from pathlib import Path
+from textwrap import dedent
 
 import fastapi
 import socketio
@@ -56,11 +57,11 @@ def gen_api_doc():
 
 
 def gen(obj_):
-    docs = str(obj_.__doc__).split('\n')
+    docs = dedent(str(obj_.__doc__)).split('\n')
     return {
         "post": {
-            "summary": docs[0] or '',
-            "description": '\n'.join(docs[1:]) or '',
+            "summary": docs[1] if len(docs) >= 2 else '',
+            "description": '\n'.join(docs[2:]) or '',
             "operationId": obj_.__name__,
             "requestBody": {
                 "content": {
@@ -68,7 +69,7 @@ def gen(obj_):
                         "schema": {
                             "type": "object",
                             "properties": {
-                                i.name: {
+                                i: {
                                     "type": "string"
                                 } for i in obj_(None, None, None).parameters
                             }
@@ -98,7 +99,6 @@ def gen(obj_):
 
         }
     }
-
 
 
 class FastapiReceiver(BaseReceiver):
@@ -131,7 +131,11 @@ class FastapiReceiver(BaseReceiver):
                 if file:
                     f = {file.filename: file.file}
                 else:
-                    data = await request.json()
+                    content = await request.body()
+                    if content:
+                        data = json.loads(content)
+                    else:
+                        data = {}
 
             req = Request(
                 path=path,
