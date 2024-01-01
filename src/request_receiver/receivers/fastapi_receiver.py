@@ -57,6 +57,7 @@ def gen_api_doc():
 
 
 def gen(obj_):
+    request_params = {i: {"type": "string"} for i in obj_(None, None, None).parameters}
     docs = dedent(str(obj_.__doc__)).split('\n')
     return {
         "post": {
@@ -68,15 +69,12 @@ def gen(obj_):
                     "application/json": {
                         "schema": {
                             "type": "object",
-                            "properties": {
-                                i: {
-                                    "type": "string"
-                                } for i in obj_(None, None, None).parameters
-                            }
+                            "properties": request_params
                         }
                     }
                 }
-            },
+            } if request_params else None
+            ,
             "responses": {
                 "200": {
                     "description": "OK",
