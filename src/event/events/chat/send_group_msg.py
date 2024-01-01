@@ -33,9 +33,14 @@ from src.event.base_event import BaseEvent
 
 
 class SendGroupMsg(BaseEvent):
+    """
+    Send group message
+    Success -> {status: 'ok',rid: rid}
+    Error -> {status: 'error', message: error message}
+    """
     auth = True
     returns = {'rid': str}
-    def _run(self, group_id, msg):
+    def _run(self, group_id:str, msg:str):
         _ = self.gettext_func
         msg_ = copy.copy(msg)
         with self.server.update_user_data(self.user_id) as user:

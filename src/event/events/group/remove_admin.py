@@ -31,9 +31,13 @@ from src.event.base_event import BaseEvent
 
 
 class RemoveAdmin(BaseEvent):
+    """
+    Remove admin
+    Success -> {status: 'ok', message: message}
+    """
     auth = True
 
-    def _run(self, group_id, admin_id):
+    def _run(self, group_id:str, admin_id:str):
         _ = self.gettext_func
         with self.server.update_group_data(group_id) as group:
             if group is None:
@@ -61,4 +65,4 @@ class RemoveAdmin(BaseEvent):
         for m in group.member_dict:
             with self.server.update_user_data(m) as user:
                 user.add_user_event(ec)
-        return ReturnData(ReturnData.OK)
+        return ReturnData(ReturnData.OK, _('Admin removed.'))

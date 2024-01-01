@@ -30,6 +30,11 @@ from src.util.regex import gender_regex
 
 
 class ChangeGender(BaseEvent):
+    """
+    Change the gender
+    Success -> {status: 'ok',message: 'Gender changed successfully.'}
+    Error -> {status: 'error', message: 'Bio does not match {} .'}
+    """
     auth = True
 
     def _run(self, gender: str):
@@ -41,4 +46,4 @@ class ChangeGender(BaseEvent):
                               _('Gender does not match {} .').format(gender_regex))
         with self.server.update_user_data(self.user_id) as user:
             user.gender = gender
-        return ReturnData(ReturnData.OK)
+        return ReturnData(ReturnData.OK,msg='Gender changed successfully.')

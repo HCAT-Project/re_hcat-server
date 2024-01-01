@@ -33,6 +33,11 @@ from src.util.regex import name_regex
 
 
 class Register(BaseEvent):
+    """
+    Register
+    Success -> {status: 'ok',msg: 'Successfully registered.'}
+    Error -> {status: 'error', message: error message}
+    """
     auth = False
 
     def _run(self, user_id: str, password: str, username: str):
@@ -74,4 +79,4 @@ class Register(BaseEvent):
                                  'After that, you can use `/email unbind` to unbind your email if you want.\\n'
                                  'Have fun!'))
         self.server.new_user(user)
-        return ReturnData(ReturnData.OK)
+        return ReturnData(ReturnData.OK, _('Successfully registered.'))

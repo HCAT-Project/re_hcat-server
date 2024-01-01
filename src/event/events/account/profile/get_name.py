@@ -31,6 +31,11 @@ from src.event.base_event import BaseEvent
 
 
 class GetName(BaseEvent):
+    """
+    Get name
+    Success -> {status: 'ok', data: data}
+    Error -> {status: 'error', message: error message}
+    """
     auth = False
     returns = {'data': str, 'nick': str}
     def _run(self, user_id: str):

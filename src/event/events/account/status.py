@@ -29,9 +29,15 @@ from src.event.base_event import BaseEvent
 
 
 class Status(BaseEvent):
+    """
+    Get status
+    Success -> {status: 'ok', status: status}
+    Error -> {status: 'error', message: error message}
+    """
     auth = False
     returns = {'status': str}
-    def _run(self, user_id):
+
+    def _run(self, user_id: str):
         _ = self.gettext_func
         if user_id[0] in [str(i) for i in range(10)] and user_id[1] == 's':
             return ReturnData(ReturnData.OK).add('status', 'online')

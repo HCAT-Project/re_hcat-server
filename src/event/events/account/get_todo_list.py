@@ -29,8 +29,14 @@ from src.event.base_event import BaseEvent
 
 
 class GetTodoList(BaseEvent):
+    """
+    Get the todo list
+    Success -> {status: 'ok', data: [event1, event2, ...]}
+    Error -> {status: 'error', message: error message}
+    """
     auth = True
     returns = {'data': list}
+
     def _run(self):
         # add activity
 

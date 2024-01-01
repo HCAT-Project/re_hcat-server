@@ -31,9 +31,14 @@ from src.event.base_event import BaseEvent
 
 
 class Kick(BaseEvent):
+    """
+    Kick member
+    Success -> {status: 'ok', message: 'Member removed.'}
+    Error -> {status: 'error', message: error message}
+    """
     auth = True
 
-    def _run(self, group_id, member_id):
+    def _run(self, group_id:str, member_id:str):
         _ = self.gettext_func
         with self.server.update_group_data(group_id) as group:
             if self.user_id == member_id:
@@ -64,4 +69,4 @@ class Kick(BaseEvent):
         with self.server.update_user_data(member_id) as user:
             user.groups_dict.pop(group_id)
 
-        return ReturnData(ReturnData.OK)
+        return ReturnData(ReturnData.OK, _('Member removed.'))

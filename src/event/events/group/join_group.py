@@ -31,9 +31,14 @@ from src.event.base_event import BaseEvent
 
 
 class JoinGroup(BaseEvent):
+    """
+    Join group
+    Success -> {status: 'ok'}
+    Error -> {status: 'error', message: error message}
+    """
     auth = True
 
-    def _run(self, group_id, add_info):
+    def _run(self, group_id:str, add_info:str):
         _ = self.gettext_func
         ec = self.server.uem.create_event()
         ec. \

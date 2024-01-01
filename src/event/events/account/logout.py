@@ -39,9 +39,14 @@ from src.event.base_event import BaseEvent
 
 
 class Logout(BaseEvent):
+    """
+    Logout
+    Success -> {status: 'ok',message: 'Logout successfully.'}
+    Error -> {status: 'error', message: error message}
+    """
     auth = True
 
     def _run(self):
         with self.server.update_user_data(self.user_id) as user:
             user.status = 'offline'
-        return ReturnData(ReturnData.OK)
+        return ReturnData(ReturnData.OK, msg='Logout successfully.')

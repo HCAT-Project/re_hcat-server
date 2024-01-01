@@ -31,9 +31,14 @@ from src.event.base_event import BaseEvent
 
 
 class AddAdmin(BaseEvent):
+    """
+    Add admin
+    Success -> {status: 'ok',message: 'Add successfully.'}
+    Error -> {status: 'error', message: error message}
+    """
     auth = True
 
-    def _run(self, group_id, member_id):
+    def _run(self, group_id: str, member_id: str):
         _ = self.gettext_func
         with self.server.update_group_data(group_id) as group:
             if group is None:
@@ -61,4 +66,4 @@ class AddAdmin(BaseEvent):
         for m in group.member_dict:
             with self.server.update_user_data(m) as user:
                 user.add_user_event(ec)
-        return ReturnData(ReturnData.OK)
+        return ReturnData(ReturnData.OK, _('Add successfully.'))

@@ -24,11 +24,16 @@ import re
 
 from src.containers import ReturnData
 from src.event.base_event import BaseEvent
-from src.util.regex import regex_email
 from src.util import send_email
+from src.util.regex import regex_email
 
 
 class Bind(BaseEvent):
+    """
+    Bind the email
+    Bind successful -> {status: 'ok', message: 'Email binding successful.'}
+    Bind failed -> {status: 'error', message: error message}
+    """
     auth = True
 
     def _run(self, email: str):
@@ -67,6 +72,6 @@ class Bind(BaseEvent):
                 content = _('Your verification code is: {} \nValid in 3 minutes, please do not send to anyone.') \
                     .format(email_code.upper())
                 subject = _('HCAT Email Binding')
-                send_email(mail_host, mail_user, mail_pass, email, subject, content, '@' + self.user_id,sender)
+                send_email(mail_host, mail_user, mail_pass, email, subject, content, '@' + self.user_id, sender)
                 # print(mail_host, mail_user, mail_pass, email, subject, content, '@' + self.user_id, sender)
             return ReturnData(ReturnData.OK, msg=_('Email binding successful.') + '\n' + _('Please check your email.'))

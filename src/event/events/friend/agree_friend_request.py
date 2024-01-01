@@ -31,6 +31,11 @@ from src.event.base_event import BaseEvent
 
 
 class AgreeFriendRequest(BaseEvent):
+    """
+    Agree friend request
+    Success -> {status: 'ok',message: 'Agree successfully.'}
+    Error -> {status: 'error', message: error message}
+    """
     auth = True
 
     def _run(self, rid):
@@ -65,4 +70,4 @@ class AgreeFriendRequest(BaseEvent):
         with self.server.update_user_data(event['user_id']) as user:
             user.friend_dict[self.user_id] = {'nick': user_name, 'time': agree_time}
             user.add_user_event(ec)
-        return ReturnData(ReturnData.OK)
+        return ReturnData(ReturnData.OK, _('Agree successfully.'))

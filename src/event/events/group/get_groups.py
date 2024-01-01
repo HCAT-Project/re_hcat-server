@@ -29,6 +29,11 @@ from src.event.base_event import BaseEvent
 
 
 class GetGroups(BaseEvent):
+    """
+    Get groups
+    Success -> {status: 'ok', data: [{id: group_id, group_name: group_name, nick: nick, remark: remark}, ...]}
+    Error -> {status: 'error', message: error message}
+    """
     auth = True
     returns = {"data": list}
     def _run(self):

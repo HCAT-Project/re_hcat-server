@@ -29,9 +29,14 @@ from src.event.base_event import BaseEvent
 
 
 class GetVerificationMethod(BaseEvent):
+    """
+    Get verification method
+    Success -> {status: 'ok', data: {verification_method: verification_method, question: question}}
+    Error -> {status: 'error', message: error message}
+    """
     auth = True
     returns = {"data": dict}
-    def _run(self, group_id):
+    def _run(self, group_id:str):
         _ = self.gettext_func
         try:
             self.server.get_group(group_id)

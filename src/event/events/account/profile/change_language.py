@@ -29,6 +29,11 @@ from src.event.base_event import BaseEvent
 
 
 class ChangeLanguage(BaseEvent):
+    """
+    Change the language
+    Success -> {status: 'ok', message: 'Language changed successfully.'}
+    Error -> {status: 'error', message: error message}
+    """
     auth = True
 
     def _run(self, lang: str):
@@ -38,4 +43,4 @@ class ChangeLanguage(BaseEvent):
                 return ReturnData(ReturnData.ERROR,
                                   _('Language not supported.'))
             user.language = lang
-        return ReturnData(ReturnData.OK)
+        return ReturnData(ReturnData.OK, msg=_('Language changed successfully.'))

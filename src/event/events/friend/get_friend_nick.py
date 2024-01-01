@@ -29,9 +29,15 @@ from src.event.base_event import BaseEvent
 
 
 class GetFriendNick(BaseEvent):
+    """
+    Get friend nick
+    Success -> {status: 'ok', nick: nick}
+    Error -> {status: 'error', message: error message}
+    """
     auth = True
     returns = {'nick': str}
-    def _run(self, friend_id):
+
+    def _run(self, friend_id: str):
         with self.server.update_user_data(self.user_id) as user:
             if friend_id not in user.friend_dict:
                 return ReturnData(ReturnData.NULL, 'The person is not your friend.')

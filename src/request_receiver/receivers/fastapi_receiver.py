@@ -61,7 +61,7 @@ def gen(obj_):
     return {
         "post": {
             "summary": docs[1] if len(docs) >= 2 else '',
-            "description": '\n'.join(docs[2:]) or '',
+            "description": '</br>'.join(docs[2:]) or '',
             "operationId": obj_.__name__,
             "requestBody": {
                 "content": {

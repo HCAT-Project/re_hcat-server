@@ -31,9 +31,14 @@ from src.event.base_event import BaseEvent
 
 
 class AddFriend(BaseEvent):
+    """
+    Add friend
+    Success -> {status: 'ok',message: 'Request sent successfully.'}
+    Error -> {status: 'error', message: error message}
+    """
     auth = True
 
-    def _run(self, user_id, add_info=''):
+    def _run(self, user_id: str, add_info: str = ''):
         _ = self.gettext_func
         if not self.server.is_user_exist(user_id):
             return ReturnData(ReturnData.NULL, _('User does not exist.'))
@@ -58,4 +63,4 @@ class AddFriend(BaseEvent):
         with self.server.update_user_data(user_id) as user:
 
             user.add_user_event(ec)
-            return ReturnData(ReturnData.OK)
+            return ReturnData(ReturnData.OK, _('Request sent successfully.'))

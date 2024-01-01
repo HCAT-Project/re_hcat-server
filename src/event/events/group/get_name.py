@@ -29,9 +29,14 @@ from src.event.base_event import BaseEvent
 
 
 class GetName(BaseEvent):
+    """
+    Get group name
+    Success -> {status: 'ok', group_name: group_name, remark: remark}
+    Error -> {status: 'error', message: error message}
+    """
     auth = False
     returns = {"group_name": str, "remark": str}
-    def _run(self, group_id):
+    def _run(self, group_id:str):
         _ = self.gettext_func
         if not self.server.db_group.exists(group_id):
             return ReturnData(ReturnData.NULL, _('Group does not exist.'))

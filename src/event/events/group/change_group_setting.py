@@ -31,9 +31,14 @@ from src.event.base_event import BaseEvent
 
 
 class ChangeGroupSetting(BaseEvent):
+    """
+    Change group setting
+    Success -> {status: 'ok',message: 'Setting changed.'}
+    Error -> {status: 'error', message: error message}
+    """
     auth = True
 
-    def _run(self, group_id, setting):
+    def _run(self, group_id:str, setting:str):
         _ = self.gettext_func
         with self.server.update_group_data(group_id) as group:
             if group is None:
@@ -52,4 +57,4 @@ class ChangeGroupSetting(BaseEvent):
                 return ReturnData(ReturnData.NULL, _('key:"{}" does not exist').format(str(error_list)))
             group.group_settings = {k: (setting_[k] if k in setting_ else group.group_settings[k]) for k in
                                     group.group_settings}
-            return ReturnData(ReturnData.OK)
+            return ReturnData(ReturnData.OK,msg=_('Setting changed.'))

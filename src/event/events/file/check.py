@@ -30,7 +30,12 @@ from src.event.base_event import BaseEvent
 
 
 class Check(BaseEvent):
+    """
+    Check if the file exists
+    Success -> {status: 'ok'}
+    File not exists -> {status: 'null'}
+    """
     auth = False
 
-    def _run(self, sha1):
+    def _run(self, sha1: str):
         return ReturnData(ReturnData.OK if self.server.check_file_exists(sha1) else ReturnData.NULL)

@@ -29,6 +29,11 @@ from src.event.base_event import BaseEvent
 
 
 class GetVer(BaseEvent):
+    """
+    Get server version
+    Success -> {status: 'ok', data: version}
+    Error -> {status: 'error', message: error message}
+    """
     auth = False
 
     def _run(self):

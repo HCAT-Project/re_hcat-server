@@ -25,6 +25,11 @@ from src.event.base_event import BaseEvent
 
 
 class Verify(BaseEvent):
+    """
+    Verify the binding code
+    Verify successful -> {status: 'ok', message: 'Email verified.'}
+    Verify failed -> {status: 'error', message: error message}
+    """
     auth = False
 
     def _run(self, code: str):

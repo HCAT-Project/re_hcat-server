@@ -29,9 +29,14 @@ from src.event.base_event import BaseEvent
 
 
 class TransferOwnership(BaseEvent):
+    """
+    Transfer ownership
+    Success -> {status: 'ok',message: 'Ownership transferred.'}
+    Error -> {status: 'error', message: error message}
+    """
     auth = True
 
-    def _run(self, group_id, member_id):
+    def _run(self, group_id:str, member_id:str):
         _ = self.gettext_func
         with self.server.update_group_data(group_id) as group:
             if group is None:
@@ -55,4 +60,4 @@ class TransferOwnership(BaseEvent):
                 .add('operator_id', self.user_id)
             ec.write_in()
             group.broadcast(ec=ec, server=self.server, user_id=self.user_id)
-            return ReturnData(ReturnData.OK)
+            return ReturnData(ReturnData.OK, _('Ownership transferred.'))

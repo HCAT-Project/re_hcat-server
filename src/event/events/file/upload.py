@@ -32,10 +32,15 @@ from src.util.file_manager import FileManager
 
 
 class Upload(BaseEvent):
+    """
+    Upload file
+    Success -> {status: 'ok', hash: hash}
+    Error -> {status: 'error', message: error message}
+    """
     auth = True
     returns = {'hash': str}
 
-    def _run(self, file_type='file'):
+    def _run(self, file_type: str = 'file'):
         _ = self.gettext_func
 
         # check if the file is in the request

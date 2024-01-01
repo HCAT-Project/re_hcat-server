@@ -27,9 +27,14 @@ from src.event.base_event import BaseEvent
 
 
 class GetPinList(BaseEvent):
+    """
+    Get pin list
+    Success -> {status: 'ok', data: [event, ...]}
+    Error -> {status: 'error', message: error message}
+    """
     auth = True
     returns = {'data': list}
-    def _run(self, group_id):
+    def _run(self, group_id:str):
         _ = self.gettext_func
 
         def get_pin_list(group_: Group):

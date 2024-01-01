@@ -31,12 +31,17 @@ from src.event.base_event import BaseEvent
 
 
 class SetFriendNick(BaseEvent):
+    """
+    Set friend nick
+    Success -> {status: 'ok',message: 'Set successfully.'}
+    Error -> {status: 'error', message: error message}
+    """
     auth = True
 
-    def _run(self, friend_id, nick):
+    def _run(self, friend_id: str, nick: str):
         _ = self.gettext_func
         with self.server.update_user_data(self.user_id) as user:
             if friend_id not in user.friend_dict:
                 return ReturnData(ReturnData.NULL, _('The person is not your friend.'))
             user.friend_dict[friend_id]['nick'] = nick
-            return ReturnData(ReturnData.OK)
+            return ReturnData(ReturnData.OK, _('Set successfully.'))

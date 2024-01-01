@@ -30,9 +30,14 @@ from src.util.regex import bio_regex
 
 
 class ChangeBio(BaseEvent):
+    """
+    Change the bio
+    Success -> {status: 'ok', message: 'Bio changed successfully.'}
+    Error -> {status: 'error', message: 'Bio does not match {} .'}
+    """
     auth = True
 
-    def _run(self, bio):
+    def _run(self, bio: str):
         _ = self.gettext_func
         # check if is valid
         if not re.match(bio_regex, bio):
@@ -43,4 +48,4 @@ class ChangeBio(BaseEvent):
         #                       _('Bio has invalid characters.'))
         with self.server.update_user_data(self.user_id) as user:
             user.bio = bio
-        return ReturnData(ReturnData.OK)
+        return ReturnData(ReturnData.OK, msg=_('Bio changed successfully.'))

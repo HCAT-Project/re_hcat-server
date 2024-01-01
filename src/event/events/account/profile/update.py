@@ -31,6 +31,11 @@ from src.event.base_event import BaseEvent
 
 
 class Update(BaseEvent):
+    """
+    Update profile
+    Success -> {status: 'ok',message: 'Profile updated successfully.'}
+    Error -> {status: 'error', message: error message}
+    """
     auth = True
 
     def _run(self, profile: str | dict):
@@ -56,4 +61,4 @@ class Update(BaseEvent):
         except Exception as err:
             logging.exception(err)
             return ReturnData(ReturnData.ERROR, str(err))
-        return ReturnData(ReturnData.OK)
+        return ReturnData(ReturnData.OK, msg=_("Profile updated successfully."))

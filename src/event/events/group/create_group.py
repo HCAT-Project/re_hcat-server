@@ -33,10 +33,15 @@ from src.event.base_event import BaseEvent
 
 
 class CreateGroup(BaseEvent):
+    """
+    Create group
+    Success -> {status: 'ok',message: 'Group created.',group_id: group_id}
+    Error -> {status: 'error', message: error message}
+    """
     auth = True
     returns = {'group_id': str}
 
-    def _run(self, group_name):
+    def _run(self, group_name:str):
         group_name_ = group_name
         while True:
             group_id = '0g' + src.util.text.random_str(5, upper=False)

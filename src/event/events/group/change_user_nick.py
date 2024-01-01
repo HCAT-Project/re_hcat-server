@@ -31,9 +31,14 @@ from src.event.base_event import BaseEvent
 
 
 class ChangeUserNick(BaseEvent):
+    """
+    Change user nick
+    Success -> {status: 'ok',message: 'Nick changed.'}
+    Error -> {status: 'error', message: error message}
+    """
     auth = True
 
-    def _run(self, group_id, nick, member_id=None):
+    def _run(self, group_id:str, nick:str, member_id:str|None=None):
         _ = self.gettext_func
         _user_id = self.user_id if member_id is None else member_id
 
@@ -48,4 +53,4 @@ class ChangeUserNick(BaseEvent):
                 return ReturnData(ReturnData.ERROR, _('You are not in the group.'))
 
             group.member_dict[_user_id]['nick'] = nick
-            return ReturnData(ReturnData.OK)
+            return ReturnData(ReturnData.OK, _('Nick changed.'))

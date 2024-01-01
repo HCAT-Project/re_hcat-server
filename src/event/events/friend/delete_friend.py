@@ -31,9 +31,14 @@ from src.event.base_event import BaseEvent
 
 
 class DeleteFriend(BaseEvent):
+    """
+    Delete friend
+    Success -> {status: 'ok',message: 'Delete successfully.'}
+    Error -> {status: 'error', message: error message}
+    """
     auth = True
 
-    def _run(self, friend_id):
+    def _run(self, friend_id: str):
         _ = self.gettext_func
         with self.server.update_user_data(self.user_id) as user:
             if friend_id not in user.friend_dict:
@@ -52,4 +57,4 @@ class DeleteFriend(BaseEvent):
         with self.server.update_user_data(friend_id) as user:
             user.friend_dict.pop(self.user_id)
             user.add_user_event(ec)
-            return ReturnData(ReturnData.OK)
+            return ReturnData(ReturnData.OK, _('Delete successfully.'))

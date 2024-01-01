@@ -34,9 +34,15 @@ from src.event.base_event import BaseEvent
 
 
 class SendFriendMsg(BaseEvent):
+    """
+    Send friend message
+    Success -> {status: 'ok',rid: rid}
+    Error -> {status: 'error', message: error message}
+    """
     auth = True
     returns = {'rid': str}
-    def _run(self, friend_id, msg):
+
+    def _run(self, friend_id: str, msg: str):
         _ = self.gettext_func
         # {"msg_chain":[{"type":type,"msg":msg},{"type":type,"msg":msg}]}
         msg_ = copy.copy(msg)

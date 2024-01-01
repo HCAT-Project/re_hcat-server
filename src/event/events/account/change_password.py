@@ -29,9 +29,14 @@ from src.event.base_event import BaseEvent
 
 
 class ChangePassword(BaseEvent):
+    """
+    Change the password
+    Success -> {status: 'ok', message: 'Password changed successfully.'}
+    Error -> {status: 'error', message: error message}
+    """
     auth = True
 
-    def _run(self, password):
+    def _run(self, password: str):
         _ = self.gettext_func
         # check if the password is longer than 6 digits
         if len(password) < 6:
@@ -39,4 +44,4 @@ class ChangePassword(BaseEvent):
         # get user and change password
         with self.server.update_user_data(self.user_id) as user:
             user.change_password(password)
-            return ReturnData(ReturnData.OK)
+            return ReturnData(ReturnData.OK, msg=_('Password changed successfully.'))

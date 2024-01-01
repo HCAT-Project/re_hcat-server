@@ -27,9 +27,14 @@ from src.event.base_event import BaseEvent
 
 
 class GetGender(BaseEvent):
+    """
+    Get gender
+    Success -> {status: 'ok', gender: gender}
+    Error -> {status: 'error', message: error message}
+    """
     auth = True
 
-    def _run(self, user_id=None):
+    def _run(self, user_id: str):
         _ = self.gettext_func
         # get user data
         if self.server.is_user_exist(user_id):

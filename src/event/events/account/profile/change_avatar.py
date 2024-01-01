@@ -30,9 +30,13 @@ from src.util.file_manager import FileManager
 
 
 class ChangeAvatar(BaseEvent):
+    """
+    Change the avatar
+    Success -> {status: 'ok', message: 'Avatar changed successfully.'}
+    """
     auth = True
 
-    def _run(self, file_hash):
+    def _run(self, file_hash:str):
         _ = self.gettext_func
         with self.server.update_user_data(self.user_id) as user:
             f_mgr: FileManager = self.server.upload_folder
@@ -47,6 +51,6 @@ class ChangeAvatar(BaseEvent):
                 except IOError:
                     return ReturnData(ReturnData.ERROR, _('Image is not valid.'))
                 user.user_avatar = file_hash
-                return ReturnData(ReturnData.OK)
+                return ReturnData(ReturnData.OK, msg=_('Avatar changed successfully.'))
             else:
                 return ReturnData(ReturnData.ERROR, _('File not found.'))

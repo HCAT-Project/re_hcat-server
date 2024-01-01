@@ -28,9 +28,14 @@ from src.event.base_event import BaseEvent
 
 
 class Recall(BaseEvent):
+    """
+    Recall a message
+    Success -> {status: 'ok',msg: 'Recall successfully.'}
+    Error -> {status: 'error', message: error message}
+    """
     auth = True
 
-    def _run(self, rid):
+    def _run(self, rid: str):
         _ = self.gettext_func
         db: BaseCA = self.server.db_event
         if (
@@ -62,4 +67,4 @@ class Recall(BaseEvent):
                     else:
                         ec = self.server.uem.create_event().add('type', 'recall').add('rid', rid)
                         user.todo_list.append(ec)
-        return ReturnData(ReturnData.OK)
+        return ReturnData(ReturnData.OK, _('Recall successfully'))

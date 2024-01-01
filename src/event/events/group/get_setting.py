@@ -29,9 +29,14 @@ from src.event.base_event import BaseEvent
 
 
 class GetSetting(BaseEvent):
+    """
+    Get group setting
+    Success -> {status: 'ok', data: {setting_name: setting_value, ...}}
+    Error -> {status: 'error', message: error message}
+    """
     auth = True
     returns = {"data": dict}
-    def _run(self, group_id):
+    def _run(self, group_id:str):
         _ = self.gettext_func
         with self.server.update_user_data(self.user_id) as user:
             if group_id not in user.groups_dict:

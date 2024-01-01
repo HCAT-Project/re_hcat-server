@@ -31,9 +31,14 @@ from src.event.base_event import BaseEvent
 
 
 class ChangeName(BaseEvent):
+    """
+    Change the name
+    Success -> {status: 'ok',message: 'Name changed successfully.'}
+    Error -> {status: 'error', message: error message}
+    """
     auth = True
 
-    def _run(self, name):
+    def _run(self, name:str):
         with self.server.update_user_data(self.user_id) as user:
             user.user_name = name
-            return ReturnData(ReturnData.OK)
+            return ReturnData(ReturnData.OK, msg='Name changed successfully.')

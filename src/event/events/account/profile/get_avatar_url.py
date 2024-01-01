@@ -28,10 +28,15 @@ from src.event.base_event import BaseEvent
 
 
 class GetAvatarUrl(BaseEvent):
+    """
+    Get avatar url
+    Success -> {status: 'ok', url: url}
+    Error -> {status: 'error', message: error message}
+    """
     auth = True
     returns = {'url': str}
 
-    def _run(self, user_id=None, hash_=None):
+    def _run(self, user_id: str | None = None, hash_: str | None = None):
         _ = self.gettext_func
         # get user data
         if self.server.is_user_exist(user_id):

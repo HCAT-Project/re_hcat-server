@@ -27,9 +27,14 @@ from src.event.base_event import BaseEvent
 
 
 class DelPin(BaseEvent):
+    """
+    Del pin
+    Success -> {status: 'ok', message: 'Pin removed.'}
+    Error -> {status: 'error', message: 'You are not an admin.'}
+    """
     auth = True
 
-    def _run(self, group_id, rid):
+    def _run(self, group_id:str, rid:str):
         _ = self.gettext_func
         with self.server.update_group_data(group_id) as group:
             if group.permission_match(self.user_id, Group.PERMISSION_ADMIN):

@@ -29,7 +29,12 @@ from src.event.base_event import BaseEvent
 
 
 class AuthenticateToken(BaseEvent):
+    """
+    Authenticate the token
+    Timeout or invalid token -> {status: 'error', message: 'Invalid token.'}
+    Valid token -> {status: 'ok', message: 'Token is valid.'}
+    """
     auth = True
 
     def _run(self):
-        return ReturnData(ReturnData.OK)
+        return ReturnData(ReturnData.OK, msg='Token is valid.')

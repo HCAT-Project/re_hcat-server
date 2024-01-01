@@ -30,9 +30,15 @@ from src.event.base_event import BaseEvent, BaseEventOfSVACRecvMsg
 
 
 class GetCommands(BaseEvent):
+    """
+    Get commands of a service account
+    Success -> {status: 'ok', commands: commands}
+    Error -> {status: 'error', message: error message}
+    """
     auth = True
     returns = {'commands': dict}
-    def _run(self, bot_id):
+
+    def _run(self, bot_id: str):
         _ = self.gettext_func
         if not (bot_id[0] in [str(i) for i in range(10)] and bot_id[1] == 's'):
             return ReturnData(ReturnData.ERROR, _('Not a service account.'))

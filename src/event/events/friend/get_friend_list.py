@@ -29,6 +29,11 @@ from src.event.base_event import BaseEvent
 
 
 class GetFriendList(BaseEvent):
+    """
+    Get friend list
+    Success -> {status: 'ok', data: data}
+    Error -> {status: 'error', message: error message}
+    """
     auth = True
     returns = {'data': list}
     def _run(self):

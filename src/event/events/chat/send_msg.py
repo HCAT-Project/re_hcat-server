@@ -31,8 +31,14 @@ from src.event.base_event import BaseEvent
 
 
 class SendMsg(BaseEvent):
+    """
+    Send message to friend or group
+    Success -> {status: 'ok',rid: rid}
+    Error -> {status: 'error', message: error message}
+    """
     auth = True
     returns = {'rid': str}
-    def _run(self, target_id: str, msg):
+
+    def _run(self, target_id: str, msg:str):
         e = SendGroupMsg if target_id.startswith('0g') else SendFriendMsg
         return self.server.e_mgr.create_event(e, self.req, self.path)

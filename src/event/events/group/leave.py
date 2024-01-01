@@ -29,9 +29,14 @@ from src.event.base_event import BaseEvent
 
 
 class Leave(BaseEvent):
+    """
+    Leave group
+    Success -> {status: 'ok', message: message}
+    Error -> {status: 'error', message: error message}
+    """
     auth = True
 
-    def _run(self, group_id):
+    def _run(self, group_id:str):
         _ = self.gettext_func
         with self.server.update_group_data(group_id) as group:
             if group is None:
@@ -52,4 +57,4 @@ class Leave(BaseEvent):
             group.member_dict.pop(self.user_id)
             with self.server.update_user_data(self.user_id) as user:
                 user.groups_dict.pop(group_id)
-            return ReturnData(ReturnData.OK)
+            return ReturnData(ReturnData.OK, _("You have left the group."))

@@ -27,8 +27,14 @@ from src.event.base_event import BaseEvent
 
 
 class Get(BaseEvent):
+    """
+    Get profile
+    Success -> {status: 'ok', data: data}
+    Error -> {status: 'error', message: error message}
+    """
     auth = False
     returns = {'data': dict}
+
     def _run(self, user_id: str | None = None):
         _ = self.gettext_func
         if user_id is None and self.user_id is not None:

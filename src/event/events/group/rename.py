@@ -29,9 +29,14 @@ from src.event.base_event import BaseEvent
 
 
 class Rename(BaseEvent):
+    """
+    Rename group
+    Success -> {status: 'ok',message: 'Group renamed successfully.'}
+    Error -> {status: 'error', message: error message}
+    """
     auth = True
 
-    def _run(self, group_id, group_name):
+    def _run(self, group_id:str, group_name:str):
         _ = self.gettext_func
         with self.server.update_group_data(group_id) as group:
             if group is None:
@@ -41,4 +46,4 @@ class Rename(BaseEvent):
                 return ReturnData(ReturnData.ERROR, _('You don\'t have permission.'))
 
             group.name = group_name
-            return ReturnData(ReturnData.OK)
+            return ReturnData(ReturnData.OK, _('Group renamed successfully.'))

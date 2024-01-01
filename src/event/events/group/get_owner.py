@@ -29,9 +29,14 @@ from src.event.base_event import BaseEvent
 
 
 class GetOwner(BaseEvent):
+    """
+    Get owner
+    Success -> {status: 'ok', data: owner_id}
+    Error -> {status: 'error', message: error message}
+    """
     auth = True
     returns = {"data": str}
-    def _run(self, group_id):
+    def _run(self, group_id:str):
         _ = self.gettext_func
         with self.server.update_group_data(group_id) as group:
             if self.user_id in group.member_dict:

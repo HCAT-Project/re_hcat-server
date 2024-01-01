@@ -31,6 +31,11 @@ from src.event.base_event import BaseEvent
 
 
 class AgreeJoinGroupRequest(BaseEvent):
+    """
+    Agree join group request
+    Success -> {status: 'ok',message: 'Successfully.'}
+    Error -> {status: 'error', message: error message}
+    """
     auth = True
 
     def _run(self, rid:str):
@@ -53,4 +58,4 @@ class AgreeJoinGroupRequest(BaseEvent):
 
         with self.server.update_user_data(req_user_id) as user:
             user.groups_dict[group_id] = {'remark': group_name, 'time': time.time()}
-            return ReturnData(ReturnData.OK)
+            return ReturnData(ReturnData.OK, _('Successfully.'))

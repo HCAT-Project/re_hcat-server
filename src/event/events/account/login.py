@@ -31,6 +31,11 @@ from src.util.crypto import JWT
 
 
 class Login(BaseEvent):
+    """
+    Login
+    Success -> {status: 'ok', token: token, profile: profile}
+    Error -> {status: 'error', message: error message}
+    """
     auth = False
     returns = {'token': str, 'profile': dict}
 

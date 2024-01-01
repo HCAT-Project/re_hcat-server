@@ -29,9 +29,14 @@ from src.event.base_event import BaseEvent
 
 
 class ChangeRemark(BaseEvent):
+    """
+    Change remark
+    Success -> {status: 'ok',message: 'Remark changed.'}
+    Error -> {status: 'error', message: error message}
+    """
     auth = True
 
-    def _run(self, group_id, remark):
+    def _run(self, group_id:str, remark:str):
         _ = self.gettext_func
         with self.server.update_user_data(self.user_id) as user:
             if group_id not in user.groups_dict:
