@@ -29,7 +29,6 @@ import copy
 import json
 import secrets
 import string
-from typing import Any
 
 
 def under_score_to_pascal_case(name: str) -> str:
@@ -58,7 +57,7 @@ def pascal_case_to_under_score(name) -> str:
     return ''.join(temp())
 
 
-def msg_process(msg: Any) -> dict:
+def msg_process(msg: str | dict) -> dict:
     """
     Processes a message, escaping text messages and raising an error if the message chain is empty.
 

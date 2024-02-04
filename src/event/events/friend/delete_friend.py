@@ -53,8 +53,7 @@ class DeleteFriend(BaseEvent):
             add('user_id', self.user_id). \
             add('time', time.time())
         ec.write_in()
-
+        self.server.add_event_to_user(friend_id, ec)
         with self.server.update_user_data(friend_id) as user:
             user.friend_dict.pop(self.user_id)
-            user.add_user_event(ec)
             return ReturnData(ReturnData.OK, _('Delete successfully.'))

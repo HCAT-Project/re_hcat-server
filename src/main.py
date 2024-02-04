@@ -155,7 +155,11 @@ def main():
     )
     server_manager = ServerManager(server_kwargs=server_kwargs, dol=dol, config=ConfigParser(config), plugin_mgr=p_mgr)
     server_manager.start()
+    server = server_manager.server
     server_manager.load_receivers()
+    for i in server_manager.receivers:
+        server.register_user_event_handler(server_manager.receivers[i].msg_handler)
+
     total_time = time.time() - start_time
     display_time = str(total_time).split('.')[0] + '.' + str(total_time).split('.')[1][:1]
     logging.info(_('Server started, cost {}s').format(display_time))

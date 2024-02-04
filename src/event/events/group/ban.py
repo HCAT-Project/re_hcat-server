@@ -65,7 +65,6 @@ class Ban(BaseEvent):
                 add('ban_time', ban_time)  # second
             ec.write_in()
 
-        with self.server.update_user_data(member_id) as user:
-            user.add_user_event(ec)
+        self.server.add_event_to_user(member_id, ec)
 
         return ReturnData(ReturnData.OK, msg=_('Banned.'))

@@ -64,18 +64,18 @@ class SendFriendMsg(BaseEvent):
 
         with self.server.update_user_data(friend_id) as user:
             nick = user.friend_dict[self.user_id]['nick']
-            ec = self.server.uem.create_event()
-            ec. \
-                add('type', 'friend_msg'). \
-                add('rid', ec.rid). \
-                add('user_id', self.user_id). \
-                add('friend_id', self.user_id). \
-                add('friend_nick', nick). \
-                add('friend_name', name). \
-                add('receiver', friend_id). \
-                add('msg', msg_). \
-                add('_WARNING', 'user_id is deprecated!!!'). \
-                add('time', time.time())
-            ec.write_in()
-            user.add_user_event(ec)
-            return ReturnData(ReturnData.OK).add('rid', ec.rid)
+        ec = self.server.uem.create_event()
+        ec. \
+            add('type', 'friend_msg'). \
+            add('rid', ec.rid). \
+            add('user_id', self.user_id). \
+            add('friend_id', self.user_id). \
+            add('friend_nick', nick). \
+            add('friend_name', name). \
+            add('receiver', friend_id). \
+            add('msg', msg_). \
+            add('_WARNING', 'user_id is deprecated!!!'). \
+            add('time', time.time())
+        ec.write_in()
+        self.server.add_event_to_user(friend_id, ec)
+        return ReturnData(ReturnData.OK).add('rid', ec.rid)

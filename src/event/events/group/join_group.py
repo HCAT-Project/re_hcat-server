@@ -83,9 +83,9 @@ class JoinGroup(BaseEvent):
                         return ReturnData(ReturnData.ERROR, _('Wrong answer.'))
         finally:  # "finally" has a higher priority than return, so this statement will be executed no matter what.
             if join_success:
+                self.server.add_event_to_user(self.user_id, agreed_ec)
                 with self.server.update_user_data(self.user_id) as user:
                     user.groups_dict[group_id] = {'remark': group_name, 'time': time.time()}
-                    user.add_user_event(agreed_ec)
 
         if verif_method == 'na':
             return ReturnData(ReturnData.ERROR, _('This group don\'t allow anyone join.'))
@@ -93,6 +93,5 @@ class JoinGroup(BaseEvent):
         elif verif_method == 'ac':
             for admin_id in admin_list:
                 # add to admin todo_list
-                with self.server.update_user_data(admin_id) as user:
-                    user.add_user_event(ec)
+                self.server.add_admin_todo(admin_id, ec)
             return ReturnData(ReturnData.OK, _('Awaiting administrator review.'))

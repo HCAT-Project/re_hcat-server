@@ -77,9 +77,12 @@ class EventManager:
                 token = req.headers.get("authorization",None)
 
             try:
-                # decode the token
-                auth_data_json: dict[str, Any] = JWT(self.server.key).decode(token)
-                auth_success = True
+                if token:
+                    # decode the token
+                    auth_data_json: dict[str, Any] = JWT(self.server.key).decode(token)
+                    auth_success = True
+                else:
+                    auth_success = False
 
             except KeyError as err:
                 auth_success = False

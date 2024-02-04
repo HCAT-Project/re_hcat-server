@@ -71,3 +71,6 @@ class BaseReceiver(metaclass=abc.ABCMeta):
             self.lock.release()
         # format return data
         return rt
+
+    def msg_handler(self, user_id, msg):
+        ...

@@ -24,10 +24,9 @@
 @Version    : 1.0.0
 """
 
-from send_friend_msg import SendFriendMsg
-from send_group_msg import SendGroupMsg
-
 from src.event.base_event import BaseEvent
+from src.event.events.chat.send_friend_msg import SendFriendMsg
+from src.event.events.chat.send_group_msg import SendGroupMsg
 
 
 class SendMsg(BaseEvent):
@@ -39,6 +38,11 @@ class SendMsg(BaseEvent):
     auth = True
     returns = {'rid': str}
 
-    def _run(self, target_id: str, msg:str):
-        e = SendGroupMsg if target_id.startswith('0g') else SendFriendMsg
+    def _run(self, target_id: str, msg: str):
+        if target_id.startswith('0g'):
+            e = SendGroupMsg
+            self.req.data['group_id'] = target_id
+        else:
+            e = SendFriendMsg
+            self.req.data['friend_id'] = target_id
         return self.server.e_mgr.create_event(e, self.req, self.path)

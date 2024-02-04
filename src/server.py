@@ -39,7 +39,7 @@ from typing import Dict
 
 import schedule
 
-from src.containers import User, ReturnData, Request, Group
+from src.containers import User, ReturnData, Request, Group, UserEvent
 from src.db_adapter.base_dba import BaseDBA
 from src.dynamic_obj_loader import DynamicObjLoader
 from src.event.event_manager import EventManager
@@ -74,6 +74,7 @@ class Server:
         :param config: Server config.
         :param dol: DynamicObjLoader.
         """
+        self.thread = None
         # Get logger
         self.running = True
         self.logger = logging.getLogger(__name__)
@@ -132,6 +133,8 @@ class Server:
         # Initialize sid table
         self.event_sid_table: Dict[str, str] = {}
 
+        self.ue_callback_dict: Dict[str, callable] = {}
+
     def request_handler(self, req: Request):
         """
         The handler of requests.
@@ -143,6 +146,33 @@ class Server:
         rt = self.e_mgr.create_event(RecvEvent, req, req.path)
 
         return rt if isinstance(rt, ReturnData) else ReturnData(ReturnData.OK, rt)
+
+    def send_user_event2receiver(self, user_id: str, ue: UserEvent):
+        """
+        Send a user event to the user.
+        :param user_id: The id of user.
+        :param ue: The user event.
+        :return:
+        """
+        for i in self.ue_callback_dict:
+            self.ue_callback_dict[i](user_id, ue.json)
+
+    def register_user_event_handler(self, callback: callable, handler_name: str = None):
+        """
+        Set the handler of user events.
+        :param handler_name: The name of handler.
+        :param callback: Callback function.
+        :return:
+        """
+        self.ue_callback_dict[handler_name] = callback
+
+    def unregister_user_event_handler(self, handler_name: str):
+        """
+        Remove the handler of user events.
+        :param handler_name: The name of handler.
+        :return:
+        """
+        self.ue_callback_dict.pop(handler_name)
 
     def _schedule_activity_list(self):
         """
@@ -324,3 +354,9 @@ class Server:
             return jelly_load(d.data)
         else:
             raise KeyError('User not found.')
+
+    def add_event_to_user(self, user_id: str, ue: UserEvent):
+        with self.update_user_data(user_id) as user:
+            user.add_user_event(ue)
+            self.send_user_event2receiver(user_id, ue)
+

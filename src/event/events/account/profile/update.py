@@ -46,7 +46,6 @@ class Update(BaseEvent):
             except json.JSONDecodeError:
                 return ReturnData(ReturnData.ERROR, _("Illegal profile."))
         try:
-            print(1)
             for k in profile:
                 ec = self.server.dol.load_obj_from_group(
                     path=f"account/profile/change_{k}", group="req_events"

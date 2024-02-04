@@ -63,6 +63,5 @@ class RemoveAdmin(BaseEvent):
         ec.write_in()
 
         for m in group.member_dict:
-            with self.server.update_user_data(m) as user:
-                user.add_user_event(ec)
+            self.server.add_event_to_user(m, ec)
         return ReturnData(ReturnData.OK, _('Admin removed.'))

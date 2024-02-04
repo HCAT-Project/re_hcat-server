@@ -25,12 +25,15 @@
 
 @Version    : 1.0.0
 """
+import asyncio
 import json
 import logging
 from pathlib import Path
 from textwrap import dedent
+from typing import Any
 
 import fastapi
+import jwt
 import socketio
 import uvicorn
 from fastapi import FastAPI, UploadFile
@@ -41,7 +44,7 @@ from dynamic_obj_loader import DynamicObjLoader
 from src.containers import Request, ReturnData
 from src.request_receiver.base_receiver import BaseReceiver
 from src.util.i18n import gettext_func as _
-from ...util.sockets import sio_server
+from util.crypto import JWT
 
 
 def gen_api_doc():
@@ -100,9 +103,56 @@ def gen(obj_):
 
 
 class FastapiReceiver(BaseReceiver):
-    def _start(self):
-        self.app = FastAPI(debug=True)
 
+    def msg_handler(self, user_id, msg):
+        if user_id in self.connection_table:
+            asyncio.create_task(self.sio_server.emit("message", msg, room=self.connection_table[user_id]))
+
+    def _start(self):
+        self.connection_table = {}  # user_id:sid
+        self.auth_table = {}  # sid:token
+        self.sio_server = socketio.AsyncServer(async_mode="asgi", cors_allowed_origins="*")
+
+        @self.sio_server.event
+        async def connect(sid, environ):
+            self.logger.debug(f"Client {sid} connected.")
+
+        @self.sio_server.event
+        async def disconnect(sid):
+            self.logger.debug(f"Client {sid} disconnected.")
+
+        @self.sio_server.event
+        async def auth(sid, data):
+            token = data.get("token")
+            key = Path("server.key").read_text()
+            try:
+                # decode the token
+                auth_data_json: dict[str, Any] = JWT(key).decode(token)
+                self.connection_table[auth_data_json["user_id"]] = sid
+                self.auth_table[sid] = token
+                await self.sio_server.emit("auth", {"status": "ok"}, room=sid)
+                return
+            except [KeyError, jwt.exceptions.ExpiredSignatureError]:
+                pass
+            except Exception as err:
+                self.logger.exception(err)
+            await self.sio_server.emit("auth", {"status": "error"}, room=sid)
+
+        @self.sio_server.event
+        async def message(sid, data):
+            target: str = data.get("target_id")
+            msg = data.get("msg")
+            req = Request(
+                path="chat/send_msg",
+                data={"target_id": target, "msg": msg},
+                headers={"Authorization": self.auth_table[sid]},
+            )
+            rt = self.create_req(req)
+
+        self.app = FastAPI(debug=True)
+        sio_asgi_app = socketio.ASGIApp(
+            socketio_server=self.sio_server, other_asgi_app=self.app
+        )
         # Enable Cross-Origin Resource Sharing (CORS)
         if self.receiver_config.get_from_pointer("enable-cors", True):
             self.app.add_middleware(
@@ -112,9 +162,6 @@ class FastapiReceiver(BaseReceiver):
                 allow_headers=["*"],
             )
 
-        sio_asgi_app = socketio.ASGIApp(
-            socketio_server=sio_server, other_asgi_app=self.app
-        )
         self.app.add_route("/socket.io/", route=sio_asgi_app, methods=["GET", "POST"])
         self.app.add_websocket_route("/socket.io/", sio_asgi_app)
 

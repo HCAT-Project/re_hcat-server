@@ -30,6 +30,7 @@ import subprocess
 import threading
 import time
 
+from request_receiver.base_receiver import BaseReceiver
 from src.containers import Request, ReturnData
 from src.dynamic_obj_loader import DynamicObjLoader
 from src.plugin_manager import PluginManager
@@ -58,8 +59,8 @@ class ServerManager:
         self.dol = DynamicObjLoader() if dol is None else dol
         self.plugin_mgr = PluginManager(config=config, dol=dol) if plugin_mgr is None else plugin_mgr
 
-        self.server = {}
-        self.receivers = {}
+        self.server: Server | None = None
+        self.receivers: dict[str, BaseReceiver] = {}
 
         self.server_kwargs = server_kwargs
 
@@ -74,7 +75,7 @@ class ServerManager:
         :param timeout: The timeout of join.
         :return:
         """
-        t = self.server.get('thread', None)
+        t = self.server.thread
         if isinstance(t, threading.Thread):
             t.join(timeout=timeout)
 
@@ -83,7 +84,7 @@ class ServerManager:
         Close the server.
         :return:
         """
-        s = self.server.get('server', None)
+        s = self.server
         if isinstance(s, Server):
             s.close()
 
@@ -120,7 +121,7 @@ class ServerManager:
 
         # Init the server.
         s = Server(**server_kwargs)
-
+        s.register_user_event_handler(self.send_msg2user, 'default')
         # Load plugins
         logging.info(_('Loading plugins...'))
         for plugin_info, plugin_work_folder in self.plugin_mgr.load_plugins():
@@ -131,7 +132,8 @@ class ServerManager:
         # Start the thread of server.
         t = threading.Thread(target=s.server_forever, name='ServerThread')
         t.start()
-        self.server = {'server': s, 'thread': t}
+        s.thread = t
+        self.server = s
 
     def request(self, req: Request) -> ReturnData:
         """
@@ -141,7 +143,7 @@ class ServerManager:
         """
         if req is None:
             req = Request()
-        return self.server['server'].request_handler(req)
+        return self.server.request_handler(req)
 
     def load_receivers(self):
         """
@@ -187,3 +189,14 @@ class ServerManager:
         self.start()
         for i in self.receivers:
             i.resume()
+
+    def send_msg2user(self, user_id: str, msg: str):
+        """
+        Send message to user.
+        :param user_id: The user id.
+        :param msg: The message.
+        :return:
+        """
+
+        for r in self.receivers:
+            self.receivers[r].msg_handler(user_id, msg)

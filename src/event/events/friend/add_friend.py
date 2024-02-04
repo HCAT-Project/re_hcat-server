@@ -59,8 +59,5 @@ class AddFriend(BaseEvent):
             add('add_info', add_info). \
             add('time', time.time())
         ec.write_in()
-
-        with self.server.update_user_data(user_id) as user:
-
-            user.add_user_event(ec)
-            return ReturnData(ReturnData.OK, _('Request sent successfully.'))
+        self.server.add_event_to_user(user_id, ec)
+        return ReturnData(ReturnData.OK, _('Request sent successfully.'))

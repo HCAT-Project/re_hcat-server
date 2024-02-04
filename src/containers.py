@@ -403,20 +403,20 @@ class Group(Jelly):
     def _var_init(self):
         self.pin_list = set()
 
-    def broadcast(self, ec: UserEvent, server, *, user_id: str):
-        """
-        Send an event to all group members except for the specified user.
-
-        :param server: Server object
-        :param user_id: ID of the user who triggered the event
-        :param ec: EventContainer object to broadcast
-        """
-        # Iterate over all members except for the specified user
-        for member_id in filter(lambda j: j != user_id, self.member_dict.keys()):
-            # Get the User object for the member
-            with server.update_user_data(member_id) as user:
-                # Add the event to the user's todo_list
-                user.add_user_event(ec)
+    # def broadcast(self, ec: UserEvent, server, *, user_id: str):
+    #     """
+    #     Send an event to all group members except for the specified user.
+    #
+    #     :param server: Server object
+    #     :param user_id: ID of the user who triggered the event
+    #     :param ec: EventContainer object to broadcast
+    #     """
+    #     # Iterate over all members except for the specified user
+    #     for member_id in filter(lambda j: j != user_id, self.member_dict.keys()):
+    #         # Get the User object for the member
+    #         with server.update_user_data(member_id) as user:
+    #             # Add the event to the user's todo_list
+    #             user.add_user_event(ec)
 
     def permission_match(self, user_id: str, permission=PERMISSION_ADMIN) -> bool:
         """

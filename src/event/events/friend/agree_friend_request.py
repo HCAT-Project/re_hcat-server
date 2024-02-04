@@ -66,8 +66,7 @@ class AgreeFriendRequest(BaseEvent):
             add('user_id', self.user_id). \
             add('time', time.time())
         ec.write_in()
-
+        self.server.add_event_to_user(event['user_id'], ec)
         with self.server.update_user_data(event['user_id']) as user:
             user.friend_dict[self.user_id] = {'nick': user_name, 'time': agree_time}
-            user.add_user_event(ec)
         return ReturnData(ReturnData.OK, _('Agree successfully.'))
